@@ -1,0 +1,27 @@
+<odoo>
+<record id="wizard_pool_payment_form" model="ir.ui.view">
+   <field name="name">wizard_pool_payment_form</field>
+   <field name="model">pool.payment</field>
+   <field name="type">form</field>
+   <field name="arch" type="xml">
+       <form>
+           <sheet>
+           <group>
+               <group>
+                   <field name="licensor_id"/>
+                   <field name="available_balance"/>
+               </group>
+               <group>
+                   <field name="balance_to_pay"/>
+                   <field name="balance_amount"/>
+               </group>
+           </group>
+           </sheet>
+           <footer>
+               <button name="make_payment" string="Make Payment" type="object" class="oe_highlight"/>
+               <button string="Cancel" class="btn btn-default" special="cancel"/>
+           </footer>
+       </form>
+   </field>
+</record>
+</odoo>

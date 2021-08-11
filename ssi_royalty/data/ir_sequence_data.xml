@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sequence_license_seq" model="ir.sequence">
+            <field name="name">Contract sequence</field>
+            <field name="code">license.license.sequence</field>
+            <field name="prefix">CON</field>
+            <field name="padding">4</field>
+            <field eval="False" name="company_id"/>
+        </record>
+        
+        <record id="sequence_license_item_seq" model="ir.sequence">
+            <field name="name">Item sequence</field>
+            <field name="code">license.item.sequence</field>
+            <field name="prefix">ART</field>
+            <field name="padding">4</field>
+            <field eval="False" name="company_id"/>
+        </record>
+        <record id="sequence_royalty_seq" model="ir.sequence">
+            <field name="name">Royalty sequence</field>
+            <field name="code">royalty.royalty.sequence</field>
+            <field name="prefix">ROL</field>
+            <field name="padding">4</field>
+            <field eval="False" name="company_id"/>
+        </record>
+        <record id="sequence_royalty_report_seq" model="ir.sequence">
+            <field name="name">Royalty Report sequence</field>
+            <field name="code">royalty.report.sequence</field>
+            <field name="prefix">ROL-REPORT-</field>
+            <field name="padding">4</field>
+            <field eval="False" name="company_id"/>
+        </record>
+        <record id="sequence_royalty_pool_seq" model="ir.sequence">
+            <field name="name">Artist Pool</field>
+            <field name="code">royalty.pool.sequence</field>
+            <field name="prefix">POOL-</field>
+            <field name="padding">4</field>
+            <field eval="False" name="company_id"/>
+        </record>
+        <record id="sequence_license_item_pool_seq" model="ir.sequence">
+            <field name="name">License Item Pool</field>
+            <field name="code">license.item.pool.sequence</field>
+            <field name="prefix">ITEMPOOL-</field>
+            <field name="padding">4</field>
+            <field eval="False" name="company_id"/>
+        </record>
+    </data>
+</odoo>
