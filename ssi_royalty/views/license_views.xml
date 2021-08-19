@@ -44,7 +44,7 @@
                      <page string="License Items">
                         <group>
                            <field name="license_item" nolabel="1">
-                              <tree editable="bottom">
+                              <tree>
                                  <field name="art_license_number" />
                                  <field name="territory" />
                                  <field name="end_date" />

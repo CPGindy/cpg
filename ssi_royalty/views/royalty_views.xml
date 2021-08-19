@@ -17,9 +17,9 @@
                <field name="date" />
                <field name="source_document" />
                <field name="payment_status" />
-               <field name="royality_rate" widget="percentage" />
-               <field name="royality_value" />
-               <field name="royality_report_id" />
+               <field name="royalty_rate" widget="percentage" />
+               <field name="royalty_value" />
+               <field name="royalty_report_id" />
             </tree>
          </field>
       </record>
@@ -30,7 +30,7 @@
          <field name="arch" type="xml">
             <form string="Royalty">
                <header>
-                  <button name="action_generate_report" string="Generate Report" type="object" class="btn-primary" />
+                  <button name="action_generate_report" string="Generate Report" type="object" class="btn-primary" attrs="{'invisible': [('royalty_report_id','=',True)]}"/>
                   <field name="payment_status" widget="statusbar" options="{'clickable': '1'}" />
                </header>
                <sheet>
@@ -52,9 +52,9 @@
                         <field name="date" />
                         <field name="source_document" />
                         <field name="item_value" />
-                        <field name="royality_rate" widget="percentage" />
-                        <field name="royality_value" />
-                        <field name="royality_report_id" />
+                        <field name="royalty_rate" widget="percentage" />
+                        <field name="royalty_value" />
+                        <field name="royalty_report_id" />
                      </group>
                   </group>
                </sheet>

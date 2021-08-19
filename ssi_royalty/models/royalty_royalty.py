@@ -30,13 +30,13 @@ class Royalty(models.Model):
     license_id = fields.Many2one('license.license', string='License')
     artist_id = fields.Many2one('res.partner', string='Artist')
     item_value = fields.Float(string='Item Value')
-    licensor_id = fields.Many2one('res.partner', string='Licensor')
+    licensor_id = fields.Many2one('res.partner', string='Licensor', related='license_id.licensor_id')
     date = fields.Date(string='Date')
     source_document = fields.Char(string='Source Document')
     payment_status = fields.Selection([('draft', 'Draft'),('posted', 'Posted'),('paid', 'Paid')], string='Payment Status',track_visibility="onchange")
-    royality_rate = fields.Float(string='Royality Rate')
-    royality_value = fields.Float(string='Royality Value')
-    royality_report_id = fields.Many2one('ssi_royalty.report', string='Royalty Report')
+    royalty_rate = fields.Float(string='Royalty Rate')
+    royalty_value = fields.Float(string='Royalty Value')
+    royalty_report_id = fields.Many2one('ssi_royalty.report', string='Royalty Report')
     invoice_id = fields.Many2one('account.move', string='Invoice')
     currency_id = fields.Many2one('res.currency', string='Currency')
     account_id = fields.Many2one('account.account', store=True, readonly=False, string='Account',
@@ -56,14 +56,14 @@ class Royalty(models.Model):
                 royalty_line = [(6, 0, [rec.id])]
                 search_report = self.env['ssi_royalty.report'].search([('artist_id', '=', rec.artist_id.id)], limit=1)
                 if search_report and search_report.status not in ['posted', 'paid']:
-                    search_report.update({'royality_line_id' : [(4, rec.id)]})
+                    search_report.update({'royalty_line_id' : [(4, rec.id)]})
                 else:
                     header_vals = {
                         'artist_id': rec.artist_id.id,
                         'status': 'draft',
                         'licensor_id': rec.licensor_id.id,
                         'report_date': date.today(),
-                        'royality_line_id' : royalty_line
+                        'royalty_line_id' : royalty_line
                     }
                     self.env['ssi_royalty.report'].create(header_vals)
             else:
@@ -98,8 +98,8 @@ class RoyaltyReport(models.Model):
     licensor_id = fields.Many2one('res.partner', string='Licensor')
     memo = fields.Char(string='Memo')
     total_due = fields.Float(string='Total Due', compute='_compute_total_due')
-    royality_line_id = fields.One2many('ssi_royalty.ssi_royalty', 'royality_report_id', string='Royality Lines')
-    status = fields.Selection([('draft', 'Draft'),('partial_paid', 'Partial Paid'),('posted', 'Posted'),('paid', 'Paid')], string='Status')
+    royalty_line_id = fields.One2many('ssi_royalty.ssi_royalty', 'royalty_report_id', string='Royalty Lines')
+    status = fields.Selection([('draft', 'Draft'),('posted', 'Posted'),('paid', 'Paid')], string='Status')
     report_date = fields.Date(string='Initial Report Date')
     currency_id = fields.Many2one('res.currency', string='Currency')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
@@ -107,21 +107,33 @@ class RoyaltyReport(models.Model):
         default=_default_vendor_journal_id, help="The payment method used when the expense is paid by the Vendor.")
     move_id = fields.Many2one('account.move', string='Vendor Bill', readonly=1, track_visibility="onchange")
     paid_by_pool = fields.Float(string='Balance Paid By Pool')
+    advanced_payment = fields.Float(string='Advanced Payment', compute='_compute_advanced_paid')
     remaining_balance = fields.Float(string='Remaining Balance', compute='_compute_remaining_balance')
     paid_by_vendor_bill = fields.Float(string='Paid By Vendor Bill')
 
 
     
-    @api.depends('royality_line_id')
+    @api.depends('royalty_line_id')
     def _compute_total_due(self):
         for rec in self:
             total = 0
-            if rec.royality_line_id:
-                for line in rec.royality_line_id:
-                    total += line.royality_value
+            if rec.royalty_line_id:
+                for line in rec.royalty_line_id:
+                    total += line.royalty_value
                 rec.total_due = total
             else:
                 rec.total_due = 0
+                
+    @api.depends('royalty_line_id')
+    def _compute_advanced_paid(self):
+        for rec in self:
+            total = 0
+            if rec.royalty_line_id.filtered(lambda r: r.type == 'advance'):
+                for line in rec.royalty_line_id.filtered(lambda r: r.type == 'advance'):
+                    total += line.royalty_value
+                rec.advanced_payment = total
+            else:
+                rec.advanced_payment = 0
                 
     @api.depends('paid_by_pool','total_due')
     def _compute_remaining_balance(self):
@@ -151,7 +163,7 @@ class RoyaltyReport(models.Model):
         if search_pool:
             available_balance = search_pool.balance
             return {
-            'name': _("Payment With Pool Balance"),
+            'name': _("Make a Payment"),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
@@ -162,46 +174,12 @@ class RoyaltyReport(models.Model):
                 'default_licensor_id': self.licensor_id.id,
                 'default_available_balance': available_balance,
                 'default_balance_to_pay': self.remaining_balance,
+                'default_advance_payment': self.advanced_payment,
                 'default_memo': self.name,
-                'default_pool_report_id': self.id
+                'default_pool_report_id': self.id,
+                'default_vendor_journal_id': self.vendor_journal_id.id,
             }}
         else:
             raise UserError(_('No Pool Payment Record Found For This Licensor'))
     
-    
-    def create_vendor_bill(self):
-        journal = self.vendor_journal_id
-        account_date = date.today()
-        move_values = {
-            'journal_id': journal.id,
-            'company_id': self.company_id.id,
-            'partner_id': self.licensor_id.id,
-            'move_type': 'in_invoice',
-            'invoice_date': account_date,
-            'ref': self.name,
-            'name': '/',
-        }
-        move_rec = self.env['account.move'].create(move_values)
-        self.move_id = move_rec.id
-        pro_id = self.env['ir.config_parameter'].get_param('royalty_product_item')
-        product = self.env['product.product'].search([('id', '=', pro_id)])
-        line_vals = {
-            'product_id': product.id,
-            'name': self.name,
-            'account_id': self.royality_line_id[0].account_id.id,
-            'quantity': 1,
-            'price_unit': self.remaining_balance
-        }
-        move_rec.write({'invoice_line_ids': [(0,0,line_vals)]})
-        self.write({'status': 'posted','paid_by_vendor_bill': self.paid_by_vendor_bill + self.remaining_balance})
-        notification = {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Vendor Bill has been successfully created'),
-                'type': 'success',
-                'next': {'type': 'ir.actions.act_window_close'},
-            },
-        }
-        return notification 
-            
+

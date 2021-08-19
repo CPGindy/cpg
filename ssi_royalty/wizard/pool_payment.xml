@@ -10,10 +10,11 @@
                <group>
                    <field name="licensor_id"/>
                    <field name="available_balance"/>
+                   <field name="advance_payment" attrs="{'invisible': [('advance_payment', '==', '0.0')]}"/>
                </group>
                <group>
                    <field name="balance_to_pay"/>
-                   <field name="balance_amount"/>
+                   <field name="journal_balance"/>
                </group>
            </group>
            </sheet>

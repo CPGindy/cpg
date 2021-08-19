@@ -32,8 +32,8 @@ class AccountMove(models.Model):
                             'date': date.today(),
                             'source_document': posted['name'],
                             'payment_status': 'draft',
-                            'royality_rate': lic_prod.royalty_rate,
-                            'royality_value': royaltable_amount * lic_prod.royalty_rate,
+                            'royalty_rate': lic_prod.royalty_rate,
+                            'royalty_value': royaltable_amount * lic_prod.royalty_rate,
                             'invoice_id': posted.id,
                         }
                         royalty = self.env['ssi_royalty.ssi_royalty'].create(data)

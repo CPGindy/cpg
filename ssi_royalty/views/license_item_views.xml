@@ -56,7 +56,12 @@
                      </page>
                      <page string="Details">
                         <group>
-                           <field name="reference_image" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            <group>
+                               <field name="reference_image" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            </group>
+                            <group>
+                               <field name="description"/>
+                            </group>
                         </group>
                         <field name="note" />
                      </page>
