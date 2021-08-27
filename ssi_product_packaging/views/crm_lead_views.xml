@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <record id="ssi_crm_lead_views_inherit" model="ir.ui.view">
+      <field name="name">ssi.crm.lead.views.inherit</field>
+      <field name="model">crm.lead</field>
+      <field name="inherit_id" ref="crm.crm_lead_view_form" />
+      <field name="arch" type="xml">
+          <xpath expr="//form[1]/sheet[1]/group[1]/group[@name='opportunity_info']/field[@name='company_id']" position="after">
+            <field name="product_packaging_id"/>
+          </xpath>
+      </field>
+   </record>
+</odoo>

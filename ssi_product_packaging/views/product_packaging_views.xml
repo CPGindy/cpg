@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <record id="ssi_product_packaging_views_inherit" model="ir.ui.view">
+      <field name="name">ssi_product.packaging.views.inherit</field>
+      <field name="model">product.packaging</field>
+      <field name="inherit_id" ref="product.product_packaging_form_view" />
+      <field name="arch" type="xml">
+          <xpath expr="//form[1]/sheet[1]/group[1]/group[@name='qty']/div[1]/field[@name='qty']" position="replace"/>
+          <xpath expr="//form[1]/sheet[1]/group[1]/group[@name='qty']/label[1]" position="replace"/>
+          <xpath expr="//field[@name='product_id']" position="before">
+            <field name="partner_id"/>
+            <field name="year"/>
+          </xpath>
+          <xpath expr="//field[@name='company_id']" position="after">
+            <field name="product_category"/>
+            <field name="anticipated_upload_date"/>
+            <field name="expected_ship_date"/>
+          </xpath>
+          <xpath expr="//form[1]/sheet[1]/group[1]/group[@name='group_product']/field[@name='product_id']" position="after">
+            <field name="date_requested"/>
+            <field name="quote_need_for"/>
+          </xpath>
+         <xpath expr="//form[1]/sheet[1]" position="inside">
+             <notebook>
+                 <page string="Details Info" name="detail_info">
+                     <group>
+                         <group string='General Info'>
+                             <field name="qty" string='Carton Pack Qty'/>
+                             <field name="assortment_type"/>
+                             <field name="qty_each_in_assortment"/>
+                             <field name="general_packing_comments"/>
+                         </group>
+                         <group string='Tracking Info'>
+                             <field name="printer"/>
+                             <field name="factory"/>
+                         </group>
+                         <group string='Total Print Info'>
+                             <field name="total_quantity"/>
+                             <field name="per_press_sheet"/>
+                             <field name="per_press_sheet"/>
+                         </group>
+                         <group string='Tray Info'>
+                             <field name="tray_type"/>
+                             <field name="lid_material"/>
+                             <field name="lid_print_x"/>
+                             <field name="lid_coating"/>
+                             <field name="lid_dimensions"/>
+                         </group>
+                         <group string='Ticketing Info'>
+                             <field name="apply_ticket"/>
+                             <field name="customer_provided"/>
+                             <field name="ticket_size"/>
+                         </group>
+                         <group string='Cartoon Information'>
+                             <field name="carton_material"/>
+                             <field name="carton_dimensions"/>
+                             <field name="carton_weight"/>
+                         </group>
+                         <group string='Card, Listpad or BM Info'>
+                             <field name="paper_type"/>
+                             <field name="print"/>
+                             <field name="coating"/>
+                             <field name="special_finish"/>
+                             <field name="ink_on_pen_design"/>
+                             <field name="glitter_design_count"/>
+                             <field name="foil_design_count"/>
+                             <field name="folded_dim"/>
+                             <field name="finished_dimension"/>
+                             <field name="card_notes"/>
+                             <field name="comments"/>
+                         </group>
+                         <group string='Envelope Info'>
+                             <field name="envelope_type"/>
+                             <field name="envelope_print"/>
+                             <field name="envelope_coating"/>
+                             <field name="envelope_folded_dim"/>
+                             <field name="envelope_flap_shape"/>
+                             <field name="envelope_flap_size"/>
+                             <field name="glue_strip"/>
+                             <field name="comments"/>
+                         </group>
+                         <group string='Final Packaging Detail'>
+                             <field name="cards_per_box"/>
+                             <field name="card_banding"/>
+                             <field name="card_packaging"/>
+                             <field name="envelopes_per_box"/>
+                             <field name="envelope_banding"/>
+                             <field name="box_sealing"/>
+                             <field name="velcro_magnet"/>
+                             <field name="baker_material"/>
+                             <field name="pads_per_wrap"/>
+                             <field name="shrink_wrap"/>
+                             <field name="poly_bag"/>
+                             <field name="listpad_stiker"/>
+                             <field name="listpad_sticker_xx"/>
+                         </group>
+                     </group>
+                 </page>
+                  <page string="Sale Orders" name="related_sale_order">
+                        <group>
+                           <field name="sale_order_id" editable="bottom" nolabel="1">
+                              <tree>
+                                 <field name="name" />
+                                 <field name="partner_id" />
+                                 <field name="date_order" />
+                                 <field name="payment_term_id" />
+                                 <field name="user_id" />
+                                 <field name="company_id" />
+                                 <field name="amount_total" />
+                              </tree>
+                           </field>
+                        </group>
+                 </page>
+                 
+                  <page string="Purchase Orders" name="related_purchase_order">
+                        <group>
+                           <field name="purchase_order_id" nolabel="1">
+                              <tree>
+                                 <field name="name" />
+                                 <field name="partner_id" />
+                                 <field name="partner_ref" />
+                                 <field name="date_approve" />
+                                 <field name="date_planned" />
+                                 <field name="user_id" />
+                                 <field name="company_id" />
+                                 <field name="invoice_status" />
+                                 <field name="amount_total" />
+                              </tree>
+                           </field>
+                        </group>
+                 </page>
+                 
+                  <page string="Opportunities" name="related_opportunity">
+                        <group>
+                           <field name="opportunity_line_id" nolabel="1">
+                              <tree>
+                                 <field name="name" />
+                                 <field name="partner_id" />
+                                 <field name="user_id" />
+                                 <field name="team_id" />
+                                 <field name="date_deadline" />
+                                 <field name="company_id" />
+                                 <field name="priority" />
+                              </tree>
+                           </field>
+                        </group>
+                 </page>
+                  <page string="Bills Of Materials" name="related_boms">
+                        <group>
+                           <field name="mrp_bom_id" nolabel="1" editable="bottom">
+                              <tree>
+                                 <field name="product_tmpl_id" />
+                                 <field name="product_id" />
+                                 <field name="product_qty" />
+                                 <field name="code" />
+                                 <field name="type" />
+                                 <field name="company_id" />
+                                 <field name="consumption" />
+                              </tree>
+                           </field>
+                        </group>
+                 </page>
+             </notebook>
+         </xpath>
+      </field>
+   </record>
+</odoo>
