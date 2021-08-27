@@ -21,7 +21,16 @@ class PoolPayment(models.TransientModel):
     @api.depends('available_balance', 'balance_to_pay')
     def _compute_balance_to_be_posted(self):
         for rec in self:
-            if not rec.available_balance or not rec.advance_payment:
+            if rec.advance_payment and not rec.available_balance:
+                if rec.balance_to_pay > rec.advance_payment:
+                    remaining_balance = rec.balance_to_pay - rec.advance_payment
+                    if remaining_balance < rec.advance_payment:
+                        rec.journal_balance = rec.advance_payment
+                    else:
+                        rec.journal_balance = rec.balance_to_pay - rec.advance_payment
+                else:
+                    rec.journal_balance = rec.balance_to_pay
+            elif not rec.available_balance or not rec.advance_payment:
                 rec.journal_balance = rec.balance_to_pay
             elif rec.balance_to_pay < (rec.available_balance + rec.advance_payment):
                 rec.journal_balance = 0.0
@@ -52,27 +61,41 @@ class PoolPayment(models.TransientModel):
                                 'licensor_id': rec.licensor_id.id,
                                 'balance': 0.0
                                }
-                    pool_id = self.env['ssi_royalty.pool'].create(pool_val)
+                    search_pool = self.env['ssi_royalty.pool'].create(pool_val)
                     line_vals = {
-                                'pool_id': pool_id.id,
+                                'pool_id': search_pool.id,
                                 'date': date.today(),
                                 'memo': rec.memo + " On Advance Payment",
                                 'value_type': 'in',
                                 'pool_value': rec.advance_payment,
-                                'value': rec.advance_payment + pool_id.balance
+                                'value': rec.advance_payment + search_pool.balance
                                 }
                     self.env['ssi_royalty.pool.line'].create(line_vals)
-                    pool_id.update({'balance': line_vals['value']})
+                    search_pool.update({'balance': line_vals['value']})
             
             #if there is pool record for the licensors, deduct the line balance from pool balance
             #if balance to pay artist is more than pool balance deduct all the pool balance and 
             #post the remaining balance to vendor bills.
-            if rec.balance_to_pay and rec.available_balance:
+            out_from_advance = False
+            if not rec.available_balance:
+                if rec.balance_to_pay > rec.advance_payment:
+                    out_from_advance = True
+            if rec.balance_to_pay and (rec.available_balance or out_from_advance):
                 balance = 0
-                if rec.balance_to_pay > (rec.available_balance + rec.advance_payment):
-                    balance = rec.available_balance + rec.advance_payment
-                elif rec.balance_to_pay <= (rec.available_balance + rec.advance_payment):
-                    balance = rec.balance_to_pay
+                if out_from_advance:
+                    if rec.balance_to_pay > rec.advance_payment:
+                        remaining_balance = rec.balance_to_pay - rec.advance_payment
+                        if remaining_balance > rec.advance_payment:
+                            balance = rec.advance_payment
+                        else:
+                            balance = remaining_balance
+                    else:
+                        pass
+                else:
+                    if rec.balance_to_pay > (rec.available_balance + rec.advance_payment):
+                        balance = rec.available_balance + rec.advance_payment
+                    elif rec.balance_to_pay <= (rec.available_balance + rec.advance_payment):
+                        balance = rec.balance_to_pay
                 if search_pool:
                     line_vals = {
                         'date' : date.today(),
@@ -112,9 +135,11 @@ class PoolPayment(models.TransientModel):
                     'price_unit': self.journal_balance
                 }
                 move_rec.write({'invoice_line_ids': [(0,0,line_vals)]})
-                self.pool_report_id.write({'paid_by_vendor_bill': self.pool_report_id.paid_by_vendor_bill + self.journal_balance})
+                self.pool_report_id.write({'paid_by_vendor_bill': self.pool_report_id.paid_by_vendor_bill + self.journal_balance, 'move_id': move_rec.id})
                 
             self.pool_report_id.write({'status': 'posted'})
+            for royalty in self.pool_report_id.royality_line_id:
+                royalty.update({'is_report_approved': True})
             notification = {
                     'type': 'ir.actions.client',
                     'tag': 'display_notification',
@@ -123,5 +148,5 @@ class PoolPayment(models.TransientModel):
                         'type': 'success',
                         'next': {'type': 'ir.actions.act_window_close'},
                     },
-                }
+            }
             return notification 

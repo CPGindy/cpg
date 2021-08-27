@@ -41,6 +41,7 @@ class Royalty(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency')
     account_id = fields.Many2one('account.account', store=True, readonly=False, string='Account',
         default=_default_account_id, domain="[('company_id', '=', company_id)]", help="A royalty account is expected")
+    is_report_approved = fields.Boolean(string='Is Report Approved')
     
     
     @api.model
@@ -49,12 +50,16 @@ class Royalty(models.Model):
             vals['name'] = self.env['ir.sequence'].next_by_code('royalty.royalty.sequence') or _('New')
         return super(Royalty, self).create(vals)
  
-
-    def action_generate_report(self):
+    def unlink_from_report(self):
         for rec in self:
+            if rec.royalty_report_id:
+                rec.update({'royalty_report_id': None})
+                
+    def action_generate_report(self):
+        for rec in self.filtered(lambda a: not a.is_report_approved):
             if rec.artist_id:
                 royalty_line = [(6, 0, [rec.id])]
-                search_report = self.env['ssi_royalty.report'].search([('artist_id', '=', rec.artist_id.id)], limit=1)
+                search_report = self.env['ssi_royalty.report'].search([('artist_id', '=', rec.artist_id.id),('status', '=', 'draft')], limit=1)
                 if search_report and search_report.status not in ['posted', 'paid']:
                     search_report.update({'royalty_line_id' : [(4, rec.id)]})
                 else:
@@ -98,7 +103,7 @@ class RoyaltyReport(models.Model):
     licensor_id = fields.Many2one('res.partner', string='Licensor')
     memo = fields.Char(string='Memo')
     total_due = fields.Float(string='Total Due', compute='_compute_total_due')
-    royalty_line_id = fields.One2many('ssi_royalty.ssi_royalty', 'royalty_report_id', string='Royalty Lines')
+    royalty_line_id = fields.One2many('ssi_royalty.ssi_royalty', 'royalty_report_id', string='Royalty Lines', ondelete='restrict')
     status = fields.Selection([('draft', 'Draft'),('posted', 'Posted'),('paid', 'Paid')], string='Status')
     report_date = fields.Date(string='Initial Report Date')
     currency_id = fields.Many2one('res.currency', string='Currency')
@@ -146,13 +151,35 @@ class RoyaltyReport(models.Model):
             if rec.total_due:
                 rec.remaining_balance = rec.total_due
     
-    
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('royalty.report.sequence') or _('New')
         return super(RoyaltyReport, self).create(vals)
     
+    def unlink(self):
+        for rec in self.filtered(lambda a: a.status != 'draft'):
+            if rec.royality_line_id:
+                for royalty in rec.royality_line_id:
+                    royalty.update({'is_report_approved': False})
+
+        return super(RoyaltyReport, self).unlink()    
+    
+    def open_vendor_bill(self):
+        try:
+            form_view_id = self.env.ref("account.view_move_form").id
+        except Exception as e:
+            form_view_id = False
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Vendor Bill',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'account.move',
+            'res_id': self.move_id.id,
+            'views': [(form_view_id, 'form')],
+            'target': 'current',
+        }
     
     def post_journal_staus(self):
         self.write({'status': 'posted'})
@@ -179,7 +206,21 @@ class RoyaltyReport(models.Model):
                 'default_pool_report_id': self.id,
                 'default_vendor_journal_id': self.vendor_journal_id.id,
             }}
-        else:
-            raise UserError(_('No Pool Payment Record Found For This Licensor'))
-    
+        return {
+            'name': _("Make a Payment"),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'pool.payment',
+            'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
+            'target': 'new',
+            'context': {
+                'default_licensor_id': self.licensor_id.id,
+                'default_available_balance': 0.0,
+                'default_balance_to_pay': self.remaining_balance,
+                'default_advance_payment': self.advanced_payment,
+                'default_memo': self.name,
+                'default_pool_report_id': self.id,
+                'default_vendor_journal_id': self.vendor_journal_id.id,
+            }}
 
