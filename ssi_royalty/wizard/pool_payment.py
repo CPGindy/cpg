@@ -138,7 +138,7 @@ class PoolPayment(models.TransientModel):
                 self.pool_report_id.write({'paid_by_vendor_bill': self.pool_report_id.paid_by_vendor_bill + self.journal_balance, 'move_id': move_rec.id})
                 
             self.pool_report_id.write({'status': 'posted'})
-            for royalty in self.pool_report_id.royality_line_id:
+            for royalty in self.pool_report_id.royalty_line_id:
                 royalty.update({'is_report_approved': True})
             notification = {
                     'type': 'ir.actions.client',

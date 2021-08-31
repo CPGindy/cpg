@@ -12,12 +12,11 @@ class RoyaltyPool(models.Model):
     _rec_name = 'name'
     _description = 'Royalty Pool'
     
-
     name = fields.Char(string='Name', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
+    artist_id = fields.Many2one('res.partner', string='Artist')
     licensor_id = fields.Many2one('res.partner', string='Licensor')
     balance = fields.Float(string='Current Balance', readonly=1)
     pool_line = fields.One2many('ssi_royalty.pool.line', 'pool_id', string='Pool Line')  
-
     
     @api.model
     def create(self, vals):
@@ -39,4 +38,3 @@ class RoyaltyPoolLine(models.Model):
     value = fields.Float(string='Value')
     pool_value = fields.Float(string='Pool')
     pool_id = fields.Many2one('ssi_royalty.pool', string='Royalty Pool')
-

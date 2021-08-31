@@ -159,8 +159,8 @@ class RoyaltyReport(models.Model):
     
     def unlink(self):
         for rec in self.filtered(lambda a: a.status != 'draft'):
-            if rec.royality_line_id:
-                for royalty in rec.royality_line_id:
+            if rec.royalty_line_id:
+                for royalty in rec.royalty_line_id:
                     royalty.update({'is_report_approved': False})
 
         return super(RoyaltyReport, self).unlink()    

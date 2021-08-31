@@ -98,8 +98,8 @@
                  </page>
                   <page string="Sale Orders" name="related_sale_order">
                         <group>
-                           <field name="sale_order_id" editable="bottom" nolabel="1">
-                              <tree>
+                           <field name="sale_order_id" nolabel="1">
+<!--                               <tree>
                                  <field name="name" />
                                  <field name="partner_id" />
                                  <field name="date_order" />
@@ -107,7 +107,7 @@
                                  <field name="user_id" />
                                  <field name="company_id" />
                                  <field name="amount_total" />
-                              </tree>
+                              </tree> -->
                            </field>
                         </group>
                  </page>
@@ -115,7 +115,7 @@
                   <page string="Purchase Orders" name="related_purchase_order">
                         <group>
                            <field name="purchase_order_id" nolabel="1">
-                              <tree>
+<!--                               <tree>
                                  <field name="name" />
                                  <field name="partner_id" />
                                  <field name="partner_ref" />
@@ -125,7 +125,7 @@
                                  <field name="company_id" />
                                  <field name="invoice_status" />
                                  <field name="amount_total" />
-                              </tree>
+                              </tree> -->
                            </field>
                         </group>
                  </page>
@@ -133,7 +133,7 @@
                   <page string="Opportunities" name="related_opportunity">
                         <group>
                            <field name="opportunity_line_id" nolabel="1">
-                              <tree>
+<!--                               <tree>
                                  <field name="name" />
                                  <field name="partner_id" />
                                  <field name="user_id" />
@@ -141,14 +141,14 @@
                                  <field name="date_deadline" />
                                  <field name="company_id" />
                                  <field name="priority" />
-                              </tree>
+                              </tree> -->
                            </field>
                         </group>
                  </page>
                   <page string="Bills Of Materials" name="related_boms">
                         <group>
-                           <field name="mrp_bom_id" nolabel="1" editable="bottom">
-                              <tree>
+                           <field name="mrp_bom_id" nolabel="1">
+<!--                               <tree>
                                  <field name="product_tmpl_id" />
                                  <field name="product_id" />
                                  <field name="product_qty" />
@@ -156,7 +156,7 @@
                                  <field name="type" />
                                  <field name="company_id" />
                                  <field name="consumption" />
-                              </tree>
+                              </tree> -->
                            </field>
                         </group>
                  </page>

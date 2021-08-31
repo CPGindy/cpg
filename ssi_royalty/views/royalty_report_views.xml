@@ -95,6 +95,7 @@
          <field name="name">Royalty Report</field>
          <field name="res_model">ssi_royalty.report</field>
          <field name="view_mode">tree,form</field>
+          <field name="context">{'search_default_group_artist_id': 1}</field>
       </record>
        
       <record id="ssi_royalty_report_search" model="ir.ui.view">
@@ -105,9 +106,9 @@
                <field name="artist_id" />
                <field name="licensor_id" />
                <group expand="0" string="Group By">
-                  <filter string="Artist" name="artist_id" context="{'group_by': 'artist_id'}" />
-                  <filter string="Licensor" name="licensor_id" context="{'group_by': 'licensor_id'}" />
-                  <filter string="Status" name="status" context="{'group_by': 'status'}" />
+                  <filter string="Artist" name="group_artist_id" context="{'group_by': 'artist_id'}" />
+                  <filter string="Licensor" name="group_licensor_id" context="{'group_by': 'licensor_id'}" />
+                  <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
                </group>
             </search>
          </field>
