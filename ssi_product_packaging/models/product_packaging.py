@@ -1,13 +1,16 @@
 import datetime
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class ProductPackaging(models.Model):
     _inherit = 'product.packaging'
     
+    #Product Specification
+    ###################################################################################################
+    
     #header vals
-    partner_id = fields.Many2one('res.partner', string='Customer')
+    customer_id = fields.Many2one('res.partner', string='Customer')
     opportunity_line_id = fields.One2many('crm.lead','product_packaging_id', string='Opportunity')
     product_category = fields.Many2one('product.category', string='Product Category')
     is_active = fields.Boolean(string='Is Active')
@@ -20,19 +23,24 @@ class ProductPackaging(models.Model):
     quote_need_for = fields.Date(string='Quote Need For')
     anticipated_upload_date = fields.Date(string='Anticipated Upload Date')
     expected_ship_date = fields.Date(string='Expected Ship Date')
+    packaging_type = fields.Many2many('packaging.type', string='Packaging Type')
+    sale_order_count = fields.Integer(string='Sale Order', compute='_get_sale_order_count')
+    purchase_order_count = fields.Integer(string='Purchase Order', compute='_get_purchase_order_count')
+    opportunity_count = fields.Integer(string='Opportunity', compute='_get_opportunity_count')
+    bom_count = fields.Integer(string='Bill Of Material', compute='_get_bom_count')
     
-    #tracking info
+    #tracking info Section
     printer = fields.Char(string='Printer')
     factory = fields.Char(string='Factory')
     
-    #total print info
+    #total print info Section
     no_quantity = fields.Float(string='# Quantity')
     quantity_per_design = fields.Float(string='Qty Per Design')
     total_quantity = fields.Float(string='Total Quantity')
     per_press_sheet = fields.Float(string='# Per Press Sheet')
     of_press_sheet = fields.Float(string='# Of Press Sheets')
     
-    #Card, Listpad or BM
+    #Card, Listpad or BM Section
     paper_type = fields.Char(string='Paper Type')
     print = fields.Selection([('x','X'),('y','Y')], string='Print')
     coating = fields.Char(string='Coating')
@@ -45,7 +53,7 @@ class ProductPackaging(models.Model):
     card_notes = fields.Char(string='Card Notes')
     comments = fields.Char(string='Comments')
     
-    #Envelope Info
+    #Envelope Info Section
     envelope_type = fields.Selection([('type1','Type 1'),('type2','Type 2')], string='Envelope Type')
     envelope_print = fields.Char(string='Envelope Print')
     envelope_coating = fields.Char(string='Envelope Coating')
@@ -55,7 +63,7 @@ class ProductPackaging(models.Model):
     glue_strip = fields.Char(string='Glue Strip')
     envelope_comments = fields.Char(string='Comments')
     
-    #Tray Info
+    #Tray Info Section
     tray_type = fields.Char(string='Tray Type')
     tray_material = fields.Char(string='Tray Material')
     outer_wrap_material = fields.Char(string='Outer Wrap Material')
@@ -64,14 +72,14 @@ class ProductPackaging(models.Model):
     tray_dimesions = fields.Char(string='Tray Dimesions')
     tray_comments = fields.Char(string='Comments')
     
-    #Lid Type
+    #Lid Type Section
     lid_type = fields.Selection([('type1','Type 1'),('type2','Type 2')], string='Lid Type')
     lid_material = fields.Char(string='Lid Material')
     lid_print_x = fields.Char(string='Lid Print')
     lid_coating = fields.Char(string='Lid Coating')
     lid_dimensions = fields.Char(string='Lid Dimesion')
     
-    #Final Packaging Detail
+    #Final Packaging Detail Section
     cards_per_box = fields.Char(string='Cards Per Box')
     card_banding = fields.Char(string='Card Banding')
     card_packaging = fields.Char(string='Card Packaging')
@@ -86,12 +94,12 @@ class ProductPackaging(models.Model):
     listpad_stiker = fields.Char(string='ListPad Sticker')
     listpad_sticker_xx = fields.Char(string='ListPad Sticker')
     
-    #Ticketing
+    #Ticketing Section
     apply_ticket = fields.Char(string='Apply Ticket')
     customer_provided = fields.Char(string='Customer Provided')
     ticket_size = fields.Char(string='Ticket Size')
     
-    #General Info
+    #General Info Section
 #     carton_pack_qty = fields.Integer(string='Carton Pack Quantity')
     assortment_type = fields.Selection([('type1','Type 1'),('type2','Type 2')], string='Assortment Type')
     qty_each_in_assortment = fields.Integer(string='Quantity Each Assortment')
@@ -102,6 +110,38 @@ class ProductPackaging(models.Model):
     carton_dimensions = fields.Char(string='Carton Dimensions')
     carton_weight = fields.Float(string='Carton Weight')
     
+    #Puzzle Specification
+    ###################################################################################################
+    
+    #Printing Puzzle Section
+    puzzle_print = fields.Selection([('box_lid','Box Lid'),('box_bottom','Box Bottom')], string='Print')
+    puzzle_print_first = fields.Char(string='Puzzle Printing 1st')
+    puzzle_print_first_layer = fields.Char(string='Layer 1')
+    puzzle_print_second = fields.Char(string='Puzzle Printing 2nd')
+    puzzle_print_second_layer = fields.Char(string='Layer 2')
+    poster_printing = fields.Char(string='Poster Printing')
+    price_sticker = fields.Char(string='Price Sticker')
+    
+    #Material Puzzle Section
+    puzzle_material = fields.Selection([('box_lid','Box Lid'),('box_bottom','Box Bottom')], string='Material')
+    puzzle_material_first = fields.Char(string='Puzzle Material 1st')
+    puzzle_material_first_layer = fields.Char(string='Layer 1')
+    puzzle_material_second = fields.Char(string='Puzzle Material 2nd')
+    puzzle_material_second_layer = fields.Char(string='Layer 2')
+    polybag = fields.Char(string='Polybag')
+    poster_material = fields.Char(string='Poster Material')
+    
+    #Binding Puzzle Section
+    box_binding = fields.Char(string='Box Binding')
+    puzzle_binding = fields.Char(string='Puzzle Binding')
+    poster_binding = fields.Char(string='Poster Binding')
+    assembly_binding = fields.Char(string='Assembly Binding')
+    
+    #Extent Section
+    extent = fields.Char(string='Extent')
+    
+    #Size Puzzle Section
+    origination = fields.Char(string='Origination')
     
     @api.model
     def get_years(self):
@@ -110,6 +150,91 @@ class ProductPackaging(models.Model):
         for i in range(now.year, 1820, -1):
             year_list.append((str(i), str(i)))
         return year_list
+    
+    def _get_sale_order_count(self):
+        for record in self:
+            sale_count = self.env['sale.order'].sudo().search_count([('product_packaging_id', '=', record.id)])
+            record.sale_order_count = sale_count
+            
+    def _get_purchase_order_count(self):
+        for record in self:
+            purchase_count = self.env['purchase.order'].sudo().search_count([('product_packaging_id', '=', record.id)])
+            record.purchase_order_count = purchase_count
+            
+    def _get_opportunity_count(self):
+        for record in self:
+            opportunity_count = self.env['crm.lead'].sudo().search_count([('product_packaging_id', '=', record.id)])
+            record.opportunity_count = opportunity_count
+            
+    def _get_bom_count(self):
+        for record in self:
+            bom_count = self.env['mrp.bom'].sudo().search_count([('product_packaging_id', '=', record.id)])
+            record.bom_count = bom_count
+            
+            
+    def action_view_sale(self):
+        sale_lines = self.env['sale.order'].search([('product_packaging_id', '=', self.id)])
+        sale_ids = []
+        for line in sale_lines:
+            sale_ids.append(line.id)    
+        return {  
+             'name': _('Sale Order'),
+            'view_mode': 'tree', 			
+            'view_id': self.env.ref('sale.view_quotation_tree').id, 			
+            'view_type': 'form', 
+            'res_model': 'sale.order', 			
+            'type': 'ir.actions.act_window',
+            'domain': [('id', 'in', sale_ids)],
+            'target': 'current',
+        }
+    
+    def action_view_purchase(self):
+        purchase_lines = self.env['purchase.order'].search([('product_packaging_id', '=', self.id)])
+        purchase_ids = []
+        for line in purchase_lines:
+            purchase_ids.append(line.id)    
+        return {  
+             'name': _('Purchase Order'),
+            'view_mode': 'tree', 			
+            'view_id': self.env.ref('purchase.purchase_order_view_tree').id, 			
+            'view_type': 'form', 
+            'res_model': 'purchase.order', 			
+            'type': 'ir.actions.act_window',
+            'domain': [('id', 'in', purchase_ids)],
+            'target': 'current',
+        }
+    
+    def action_view_opportunity(self):
+        opportunity_lines = self.env['crm.lead'].search([('product_packaging_id', '=', self.id)])
+        opportunity_ids = []
+        for line in opportunity_lines:
+            opportunity_ids.append(line.id)    
+        return {  
+             'name': _('Opportunity'),
+            'view_mode': 'tree', 			
+            'view_id': self.env.ref('crm.crm_case_tree_view_oppor').id, 			
+            'view_type': 'form', 
+            'res_model': 'crm.lead', 			
+            'type': 'ir.actions.act_window',
+            'domain': [('id', 'in', opportunity_ids)],
+            'target': 'current',
+        }
+    
+    def action_view_bom(self):
+        bom_lines = self.env['mrp.bom'].search([('product_packaging_id', '=', self.id)])
+        bom_ids = []
+        for line in bom_lines:
+            bom_ids.append(line.id)    
+        return {  
+             'name': _('Bills Of Material'),
+            'view_mode': 'tree', 			
+            'view_id': self.env.ref('mrp.mrp_bom_tree_view').id, 			
+            'view_type': 'form', 
+            'res_model': 'mrp.bom', 			
+            'type': 'ir.actions.act_window',
+            'domain': [('id', 'in', bom_ids)],
+            'target': 'current',
+        }
     
     
     

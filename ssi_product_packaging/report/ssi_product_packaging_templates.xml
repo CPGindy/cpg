@@ -12,7 +12,7 @@
                                <tr>
                                   <th scope="row" width="25%">Customer</th>
                                   <td colspan="1">
-                                     <span t-field="o.partner_id" />
+                                     <span t-field="o.customer_id" />
                                   </td>
                                </tr>
                                <tr>

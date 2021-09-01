@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="ssi_report_purcahse_order_report" inherit_id="purchase.report_purchaseorder_document">
+          <xpath expr="/t/t[1]/div[1]/div[2]" position="inside">
+                <div t-if="o.product_packaging_id" class="col-3 bm-2">
+                    <strong>Product Packaging:</strong>
+                    <p t-field="o.product_packaging_id" class="m-0"/>
+                </div>
+          </xpath>
+        </template>
+    </data>
+</odoo>
