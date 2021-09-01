@@ -12,10 +12,12 @@ class AccountMove(models.Model):
     
     def _post(self, soft=True):
         posted = super()._post(soft=soft)
-        search_royalty = self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', '=', posted.id)])
-        if search_royalty:
-            for royalty in search_royalty:
-                royalty.unlink()
+#         search_royalty = self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', '=', posted.id)])
+#         if search_royalty:
+#             for royalty in search_royalty:
+#                 royalty.unlink()
+        for royalty in self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', '=', posted.id)]):
+            royalty.unlink()
         for rec in self:
             if rec.invoice_line_ids:
                 # Non kit products
