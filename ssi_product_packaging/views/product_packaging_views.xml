@@ -117,9 +117,9 @@
                      </group>
                   </group>
                </page>
-               <page string="Puzzle" name="puzzle_specification">
+               <page string="Puzzle" name="puzzle_specification" attrs="{'invisible':[('packaging_type','!=', 1)]}">
                   <group>
-                     <group string="Printing" attrs="{'invisible':[('packaging_type','!=', 1)]}">
+                     <group string="Printing">
                         <field name="puzzle_print" />
                         <field name="puzzle_print_first" />
                         <field name="puzzle_print_first_layer" />
@@ -127,7 +127,7 @@
                         <field name="poster_printing" />
                         <field name="price_sticker" />
                      </group>
-                     <group string="Material" attrs="{'invisible':[('packaging_type','!=', 1)]}">
+                     <group string="Material">
                         <field name="puzzle_material" />
                         <field name="puzzle_material_first" />
                         <field name="puzzle_material_first_layer" />
@@ -137,13 +137,13 @@
                         <field name="polybag" />
                         <field name="poster_material" />
                      </group>
-                     <group string="Binding" attrs="{'invisible':[('packaging_type','!=', 1)]}">
+                     <group string="Binding">
                         <field name="box_binding" />
                         <field name="puzzle_binding" />
                         <field name="poster_binding" />
                         <field name="assembly_binding" />
                      </group>
-                     <group string="Size" attrs="{'invisible':[('packaging_type','!=', 1)]}">
+                     <group string="Size">
                         <field name="tray_type" />
                         <field name="lid_material" />
                         <field name="lid_print_x" />
@@ -153,8 +153,8 @@
                      <group string="Extent">
                         <field name="extent" />
                      </group>
-                     <group string="Origination" attrs="{'invisible':[('packaging_type','!=', 1)]}">
-                        <field name="origination" />
+                     <group string="Origination">
+                        <field name="origination"/>
                      </group>
                   </group>
                </page>
