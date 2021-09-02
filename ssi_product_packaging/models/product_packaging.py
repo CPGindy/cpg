@@ -23,7 +23,7 @@ class ProductPackaging(models.Model):
     quote_need_for = fields.Date(string='Quote Need For')
     anticipated_upload_date = fields.Date(string='Anticipated Upload Date')
     expected_ship_date = fields.Date(string='Expected Ship Date')
-    packaging_type = fields.Many2many('packaging.type', string='Packaging Type')
+    packaging_type = fields.Many2one('packaging.type', string='Packaging Type')
     sale_order_count = fields.Integer(string='Sale Order', compute='_get_sale_order_count')
     purchase_order_count = fields.Integer(string='Purchase Order', compute='_get_purchase_order_count')
     opportunity_count = fields.Integer(string='Opportunity', compute='_get_opportunity_count')
@@ -178,9 +178,9 @@ class ProductPackaging(models.Model):
         for line in sale_lines:
             sale_ids.append(line.id)    
         return {  
-             'name': _('Sale Order'),
-            'view_mode': 'tree', 			
-            'view_id': self.env.ref('sale.view_quotation_tree').id, 			
+            'name': _('Sale Order'),
+            'view_mode': 'tree,form', 			
+            'search_view_id': [self.env.ref('sale.view_quotation_tree').id],
             'view_type': 'form', 
             'res_model': 'sale.order', 			
             'type': 'ir.actions.act_window',
@@ -194,10 +194,9 @@ class ProductPackaging(models.Model):
         for line in purchase_lines:
             purchase_ids.append(line.id)    
         return {  
-             'name': _('Purchase Order'),
-            'view_mode': 'tree', 			
-            'view_id': self.env.ref('purchase.purchase_order_view_tree').id, 			
-            'view_type': 'form', 
+            'name': _('Purchase Order'), 			
+            'search_view_id': self.env.ref('purchase.purchase_order_view_tree').id, 
+            'view_mode': 'tree,form',
             'res_model': 'purchase.order', 			
             'type': 'ir.actions.act_window',
             'domain': [('id', 'in', purchase_ids)],
@@ -210,9 +209,9 @@ class ProductPackaging(models.Model):
         for line in opportunity_lines:
             opportunity_ids.append(line.id)    
         return {  
-             'name': _('Opportunity'),
-            'view_mode': 'tree', 			
-            'view_id': self.env.ref('crm.crm_case_tree_view_oppor').id, 			
+            'name': _('Opportunity'),
+            'view_mode': 'tree,form', 			
+            'search_view_id': self.env.ref('crm.crm_case_tree_view_oppor').id, 			
             'view_type': 'form', 
             'res_model': 'crm.lead', 			
             'type': 'ir.actions.act_window',
@@ -226,9 +225,9 @@ class ProductPackaging(models.Model):
         for line in bom_lines:
             bom_ids.append(line.id)    
         return {  
-             'name': _('Bills Of Material'),
-            'view_mode': 'tree', 			
-            'view_id': self.env.ref('mrp.mrp_bom_tree_view').id, 			
+            'name': _('Bills Of Material'),
+            'view_mode': 'tree,form', 			
+            'search_view_id': self.env.ref('mrp.mrp_bom_tree_view').id, 			
             'view_type': 'form', 
             'res_model': 'mrp.bom', 			
             'type': 'ir.actions.act_window',
