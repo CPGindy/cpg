@@ -70,41 +70,41 @@
                                  </tr>
                               </table>
                               <br />
-                              <table class="table table-bordered">
-                                 <tr>
-                                    <th scope="row" colspan="2">Total Print Info</th>
-                                 </tr>
-                                 <tr>
-                                    <th scope="row" width="25%"># Quanitity</th>
-                                    <td class="table-danger" colspan="1">
-                                       <span t-field="o.no_quantity" />
-                                    </td>
-                                 </tr>
-                                 <tr>
-                                    <th scope="row" width="25%">Qty Per Design</th>
-                                    <td class="table-danger" colspan="1">
-                                       <span t-field="o.quantity_per_design" />
-                                    </td>
-                                 </tr>
-                                 <tr>
-                                    <th scope="row" width="25%">Total Quantity</th>
-                                    <td class="table-danger" colspan="1">
-                                       <span t-field="o.total_quantity" />
-                                    </td>
-                                 </tr>
-                                 <tr>
-                                    <th scope="row" width="25%"># Per Press Sheet</th>
-                                    <td class="table-danger" colspan="1">
-                                       <span t-field="o.per_press_sheet" />
-                                    </td>
-                                 </tr>
-                                 <tr>
-                                    <th scope="row" width="25%"># Of Press Sheet</th>
-                                    <td class="table-danger" colspan="1">
-                                       <span t-field="o.of_press_sheet" />
-                                    </td>
-                                 </tr>
-                              </table>
+                           <table class="table table-bordered">
+                              <tr>
+                                 <th scope="row" colspan="2">Total Print Info</th>
+                              </tr>
+                              <tr>
+                                 <th scope="row" width="25%"># Of Packaging Designs</th>
+                                 <td class="table-danger" colspan="1">
+                                    <span t-field="o.of_packaging_design" />
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th scope="row" width="25%"># Of Print Designs</th>
+                                 <td class="table-danger" colspan="1">
+                                    <span t-field="o.of_print_design" />
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th scope="row" width="25%">Run Length by Package</th>
+                                 <td class="table-danger" colspan="1">
+                                    <span t-field="o.run_length_by_package" />
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th scope="row" width="25%">Total Finished Goods Qty</th>
+                                 <td class="table-danger" colspan="1">
+                                    <span t-field="o.total_finished_good_quantity" />
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th scope="row" width="25%">Print Comments</th>
+                                 <td class="table-danger" colspan="1">
+                                    <span t-field="o.print_info_comments" />
+                                 </td>
+                              </tr>
+                           </table>
                               <br />
                               <table class="table table-bordered">
                                  <tr>
@@ -338,6 +338,12 @@
                                        <span t-field="o.lid_dimensions" />
                                     </td>
                                  </tr>
+                              <tr>
+                                 <th scope="row" width="25%">Lid Comments</th>
+                                 <td class="table-danger" colspan="1">
+                                    <span t-field="o.lid_comments" />
+                                 </td>
+                              </tr>
                               </table>
                            </div>
                            <div class="col-auto col-6 mw-100 mb-2">

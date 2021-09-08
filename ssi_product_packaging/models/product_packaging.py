@@ -33,12 +33,12 @@ class ProductPackaging(models.Model):
     agent = fields.Char(string='Agent')
     factory = fields.Char(string='Factory')
     
-    #total print info Section
-    no_quantity = fields.Float(string='# Quantity')
-    quantity_per_design = fields.Float(string='Qty Per Design')
-    total_quantity = fields.Float(string='Total Quantity')
-    per_press_sheet = fields.Float(string='# Per Press Sheet')
-    of_press_sheet = fields.Float(string='# Of Press Sheets')
+    #total print info Section    
+    of_packaging_design = fields.Float(string='# Of Packaging Designs')
+    of_print_design = fields.Float(string='# Of Print Designs')
+    run_length_by_package = fields.Float(string='Run Length by Package')
+    total_finished_good_quantity = fields.Float(string='Total Finished Goods Qty')
+    print_info_comments = fields.Text(string='Print Comments')
     
     #Card, Listpad or BM Section
     paper_type = fields.Char(string='Paper Type')
@@ -75,9 +75,10 @@ class ProductPackaging(models.Model):
     #Lid Type Section
     lid_type = fields.Char(string='Lid Type')
     lid_material = fields.Char(string='Lid Material')
-    lid_print_x = fields.Char(string='Lid Print')
+    lid_print_x = fields.Char(string='Lid Print X/X')
     lid_coating = fields.Char(string='Lid Coating')
     lid_dimensions = fields.Char(string='Lid Dimesion')
+    lid_comments = fields.Text(string='Lid Comments')
     
     #Final Packaging Detail Section
     cards_per_box = fields.Char(string='Cards Per Box')
@@ -93,7 +94,7 @@ class ProductPackaging(models.Model):
     shrink_wrap = fields.Char(string='Shrink Wrap')
     poly_bag = fields.Char(string='Poly Bag')
     listpad_stiker = fields.Selection([('yes','YES'),('no','NO')], string='ListPad Sticker')
-    listpad_sticker_xx = fields.Char(string='ListPad Sticker XX')
+    listpad_sticker_xx = fields.Char(string='ListPad Print Sticker', help="X/X")
     
     #Ticketing Section
     apply_ticket = fields.Char(string='Apply Ticket')
@@ -142,6 +143,12 @@ class ProductPackaging(models.Model):
     extent = fields.Char(string='Extent')
     
     #Size Puzzle Section
+    size_box = fields.Char(string='Box')
+    size_puzzle = fields.Char(string='Puzzle')
+    size_poster = fields.Char(string='Poster')
+    size_price_sticker = fields.Char(string='Price Sticker')
+    
+    #Origination Puzzle Section
     origination = fields.Char(string='Origination')
     
     @api.model

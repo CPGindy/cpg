@@ -57,11 +57,11 @@
                         <field name="factory" />
                      </group>
                      <group string="Total Print Info">
-                        <field name="no_quantity" />
-                        <field name="quantity_per_design" />
-                        <field name="total_quantity" />
-                        <field name="per_press_sheet" />
-                        <field name="of_press_sheet" />
+                        <field name="of_packaging_design" />
+                        <field name="of_print_design" />
+                        <field name="run_length_by_package" />
+                        <field name="total_finished_good_quantity" />
+                        <field name="print_info_comments" />
                      </group>
                      <group string="Tray Info">
                         <field name="tray_type" />
@@ -78,6 +78,7 @@
                         <field name="lid_print_x" />
                         <field name="lid_coating" />
                         <field name="lid_dimensions" />
+                        <field name="lid_comments"/>
                      </group>
                      <group string="Ticketing Info">
                         <field name="apply_ticket" />
@@ -126,7 +127,7 @@
                         <field name="shrink_wrap" />
                         <field name="poly_bag" />
                         <field name="listpad_stiker" />
-                        <field name="listpad_sticker_xx" />
+                        <field name="listpad_sticker_xx" placeholder="ex. X/X"/>
                      </group>
                   </group>
                </page>
@@ -157,11 +158,10 @@
                         <field name="assembly_binding" />
                      </group>
                      <group string="Size">
-                        <field name="tray_type" />
-                        <field name="lid_material" />
-                        <field name="lid_print_x" />
-                        <field name="lid_coating" />
-                        <field name="lid_dimensions" />
+                        <field name="size_box" />
+                        <field name="size_puzzle" />
+                        <field name="size_poster" />
+                        <field name="size_price_sticker" />
                      </group>
                      <group string="Extent">
                         <field name="extent" />
