@@ -57,9 +57,9 @@
                               <br />
                               <table class="table table-bordered">
                                  <tr>
-                                    <th scope="row" width="25%">Printer</th>
+                                    <th scope="row" width="25%">Agent</th>
                                     <td class="table-danger" colspan="1">
-                                       <span t-field="o.printer" />
+                                       <span t-field="o.agent" />
                                     </td>
                                  </tr>
                                  <tr>
@@ -454,7 +454,7 @@
                                     </td>
                                  </tr>
                                  <tr>
-                                    <th scope="row" width="25%">Assortment Type</th>
+                                    <th scope="row" width="25%">Type</th>
                                     <td class="table-danger" colspan="1">
                                        <span t-field="o.assortment_type" />
                                     </td>

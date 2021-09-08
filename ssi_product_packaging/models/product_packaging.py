@@ -30,7 +30,7 @@ class ProductPackaging(models.Model):
     bom_count = fields.Integer(string='Bill Of Material', compute='_get_bom_count')
     
     #tracking info Section
-    printer = fields.Char(string='Printer')
+    agent = fields.Char(string='Agent')
     factory = fields.Char(string='Factory')
     
     #total print info Section
@@ -42,7 +42,7 @@ class ProductPackaging(models.Model):
     
     #Card, Listpad or BM Section
     paper_type = fields.Char(string='Paper Type')
-    print = fields.Selection([('x','X'),('y','Y')], string='Print')
+    print = fields.Char(string='Print')
     coating = fields.Char(string='Coating')
     special_finish = fields.Char(string='Special Finish')
     ink_on_pen_design = fields.Char(string='Ink On Paper Design')
@@ -51,17 +51,17 @@ class ProductPackaging(models.Model):
     folded_dim = fields.Char(string='Folded Dim')
     finished_dimension = fields.Char(string='Finished Dimension')
     card_notes = fields.Char(string='Card Notes')
-    comments = fields.Char(string='Comments')
+    comments = fields.Text(string='Comments')
     
     #Envelope Info Section
-    envelope_type = fields.Selection([('type1','Type 1'),('type2','Type 2')], string='Envelope Type')
+    envelope_type = fields.Selection([('100_gsm','100 GSM Uncoded Book'),('80_gsm','80 GSM Uncoded Book'),('tbd','TBD')], string='Envelope Type')
     envelope_print = fields.Char(string='Envelope Print')
     envelope_coating = fields.Char(string='Envelope Coating')
-    envelope_folded_dim = fields.Char(string='Envelope Floaded Bim')
+    envelope_folded_dim = fields.Char(string='Envelope Floaded Dim')
     envelope_flap_shape = fields.Char(string='Envelope Flap Shape')
     envelope_flap_size = fields.Char(string='Envelope Flap Size')
     glue_strip = fields.Char(string='Glue Strip')
-    envelope_comments = fields.Char(string='Comments')
+    envelope_comments = fields.Text(string='Comments')
     
     #Tray Info Section
     tray_type = fields.Char(string='Tray Type')
@@ -70,10 +70,10 @@ class ProductPackaging(models.Model):
     print_warp_xx = fields.Char(string='Print Wrap XX')
     tray_coating = fields.Char(string='Tray Coating')
     tray_dimesions = fields.Char(string='Tray Dimesions')
-    tray_comments = fields.Char(string='Comments')
+    tray_comments = fields.Text(string='Comments')
     
     #Lid Type Section
-    lid_type = fields.Selection([('type1','Type 1'),('type2','Type 2')], string='Lid Type')
+    lid_type = fields.Char(string='Lid Type')
     lid_material = fields.Char(string='Lid Material')
     lid_print_x = fields.Char(string='Lid Print')
     lid_coating = fields.Char(string='Lid Coating')
@@ -82,7 +82,8 @@ class ProductPackaging(models.Model):
     #Final Packaging Detail Section
     cards_per_box = fields.Char(string='Cards Per Box')
     card_banding = fields.Char(string='Card Banding')
-    card_packaging = fields.Char(string='Card Packaging')
+    number_design_per_box = fields.Char(string='# Designs Per Box')
+    card_packaging = fields.Text(string='Card Packaging')
     envelopes_per_box = fields.Char(string='Envelopes Per Box')
     envelope_banding = fields.Char(string='Envelope Banding')
     box_sealing = fields.Char(string='Box Sealing')
@@ -91,8 +92,8 @@ class ProductPackaging(models.Model):
     pads_per_wrap = fields.Char(string='Pads Per Wrap')
     shrink_wrap = fields.Char(string='Shrink Wrap')
     poly_bag = fields.Char(string='Poly Bag')
-    listpad_stiker = fields.Char(string='ListPad Sticker')
-    listpad_sticker_xx = fields.Char(string='ListPad Sticker')
+    listpad_stiker = fields.Selection([('yes','YES'),('no','NO')], string='ListPad Sticker')
+    listpad_sticker_xx = fields.Char(string='ListPad Sticker XX')
     
     #Ticketing Section
     apply_ticket = fields.Char(string='Apply Ticket')
@@ -101,9 +102,9 @@ class ProductPackaging(models.Model):
     
     #General Info Section
 #     carton_pack_qty = fields.Integer(string='Carton Pack Quantity')
-    assortment_type = fields.Selection([('type1','Type 1'),('type2','Type 2')], string='Assortment Type')
+    assortment_type = fields.Selection([('assorted','Assorted'),('solid','Solid')], string='Type')
     qty_each_in_assortment = fields.Integer(string='Quantity Each Assortment')
-    general_packing_comments = fields.Char(string='General Packing Comments')
+    general_packing_comments = fields.Text(string='General Packing Comments')
     
     #Cartoon Information
     carton_material = fields.Char(string='Carton Material')
@@ -147,7 +148,7 @@ class ProductPackaging(models.Model):
     def get_years(self):
         year_list = []
         now = datetime.datetime.now()
-        for i in range(now.year, 1820, -1):
+        for i in range(now.year+3, now.year, -1):
             year_list.append((str(i), str(i)))
         return year_list
     

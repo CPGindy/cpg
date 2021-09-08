@@ -12,7 +12,7 @@
             <field name="year" />
          </xpath>
          <xpath expr="//field[@name='company_id']" position="after">
-            <field name="product_category" />
+            <field name="product_category" options="{'no_create': True, 'no_create_edit':True}"/>
             <field name="anticipated_upload_date" />
             <field name="expected_ship_date" />
             <field name="packaging_type" />
@@ -23,6 +23,7 @@
          </xpath>
          <xpath expr="//field[@name='product_id']" position="attributes">
             <attribute name="attrs">{"readonly": [["id","!=",False]]}</attribute>
+             <attribute name="options">{'no_quick_create': True, 'no_create_edit' : True}</attribute>
             <attribute name="required" />
          </xpath>
          <xpath expr="//form[1]/sheet[1]/label[1]" position="before">
@@ -52,16 +53,27 @@
                         <field name="general_packing_comments" />
                      </group>
                      <group string="Tracking Info">
-                        <field name="printer" />
+                        <field name="agent" />
                         <field name="factory" />
                      </group>
                      <group string="Total Print Info">
+                        <field name="no_quantity" />
+                        <field name="quantity_per_design" />
                         <field name="total_quantity" />
                         <field name="per_press_sheet" />
-                        <field name="per_press_sheet" />
+                        <field name="of_press_sheet" />
                      </group>
                      <group string="Tray Info">
                         <field name="tray_type" />
+                        <field name="tray_material" />
+                        <field name="outer_wrap_material" />
+                        <field name="print_warp_xx" />
+                        <field name="tray_coating" />
+                        <field name="tray_dimesions" />
+                        <field name="tray_comments" />
+                     </group>
+                     <group string="Lid Info">
+                        <field name="lid_type" />
                         <field name="lid_material" />
                         <field name="lid_print_x" />
                         <field name="lid_coating" />
@@ -72,7 +84,7 @@
                         <field name="customer_provided" />
                         <field name="ticket_size" />
                      </group>
-                     <group string="Cartoon Information">
+                     <group string="Carton Information">
                         <field name="carton_material" />
                         <field name="carton_dimensions" />
                         <field name="carton_weight" />
@@ -98,11 +110,12 @@
                         <field name="envelope_flap_shape" />
                         <field name="envelope_flap_size" />
                         <field name="glue_strip" />
-                        <field name="comments" />
+                        <field name="envelope_comments" />
                      </group>
                      <group string="Final Packaging Detail">
                         <field name="cards_per_box" />
                         <field name="card_banding" />
+                        <field name="number_design_per_box"/>
                         <field name="card_packaging" />
                         <field name="envelopes_per_box" />
                         <field name="envelope_banding" />
