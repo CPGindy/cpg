@@ -148,7 +148,7 @@ class ProductPackaging(models.Model):
     def get_years(self):
         year_list = []
         now = datetime.datetime.now()
-        for i in range(now.year+3, now.year, -1):
+        for i in range(now.year+3, now.year-21, -1):
             year_list.append((str(i), str(i)))
         return year_list
     
