@@ -8,6 +8,7 @@
            <sheet>
            <group>
                <group>
+                   <field name="artist_id"/>
                    <field name="licensor_id"/>
                    <field name="available_balance"/>
                    <field name="advance_payment" attrs="{'invisible': [('advance_payment', '==', '0.0')]}"/>

@@ -57,14 +57,13 @@ class Royalty(models.Model):
                 
     def action_generate_report(self):
         for rec in self.filtered(lambda a: not a.is_report_approved):
-            if rec.artist_id:
+            if rec.licensor_id:
                 royalty_line = [(6, 0, [rec.id])]
-                search_report = self.env['ssi_royalty.report'].search([('artist_id', '=', rec.artist_id.id),('status', '=', 'draft')], limit=1)
+                search_report = self.env['ssi_royalty.report'].search([('licensor_id', '=', rec.licensor_id.id), ('status', '=', 'draft')], limit=1)
                 if search_report and search_report.status not in ['posted', 'paid']:
                     search_report.update({'royalty_line_id' : [(4, rec.id)]})
                 else:
                     header_vals = {
-                        'artist_id': rec.artist_id.id,
                         'status': 'draft',
                         'licensor_id': rec.licensor_id.id,
                         'report_date': date.today(),
@@ -72,7 +71,7 @@ class Royalty(models.Model):
                     }
                     self.env['ssi_royalty.report'].create(header_vals)
             else:
-                raise UserError(_('Please Select Artist Before Generating Report'))
+                raise UserError(_('Please Select Licensor Before Generating Report'))
                 
         notification = {
             'type': 'ir.actions.client',
@@ -186,7 +185,7 @@ class RoyaltyReport(models.Model):
 
                                 
     def make_payment_pool(self):
-        search_pool = self.env['ssi_royalty.pool'].search([('licensor_id', '=', self.licensor_id.id)])
+        search_pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', self.artist_id.id)])
         if search_pool:
             available_balance = search_pool.balance
             return {
@@ -198,6 +197,7 @@ class RoyaltyReport(models.Model):
             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
             'target': 'new',
             'context': {
+                'default_artist_id': self.artist_id.id,
                 'default_licensor_id': self.licensor_id.id,
                 'default_available_balance': available_balance,
                 'default_balance_to_pay': self.remaining_balance,
@@ -215,6 +215,7 @@ class RoyaltyReport(models.Model):
             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
             'target': 'new',
             'context': {
+                'default_artist_id': self.artist_id.id,
                 'default_licensor_id': self.licensor_id.id,
                 'default_available_balance': 0.0,
                 'default_balance_to_pay': self.remaining_balance,

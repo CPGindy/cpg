@@ -6,6 +6,7 @@ from datetime import date
 class PoolPayment(models.TransientModel):
     _name = 'pool.payment'
     
+    artist_id = fields.Many2one('res.partner', string='Artist', readonly=True)
     licensor_id = fields.Many2one('res.partner', string='Licensor', readonly=True)
     available_balance = fields.Float(string='Available Pool Balance', readonly=True)
     balance_to_pay = fields.Float(string="Balance To Pay", readonly=True)
@@ -41,35 +42,36 @@ class PoolPayment(models.TransientModel):
                 
     def make_payment(self):
         for rec in self:
-            search_pool = self.env['ssi_royalty.pool'].search([('licensor_id', '=', self.licensor_id.id)], limit=1)
+            search_pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', self.artist_id.id)], limit=1)
             #if there is advance payment add the line balance to the pool balance,
             #create new pool records if the pool doesnot exist for that licensor
             if rec.advance_payment:
                 if search_pool:
                     line_vals = {
-                                'date': date.today(),
-                                'memo': rec.memo + " On Advance Payment",
-                                'value_type': 'in',
-                                'pool_value': rec.advance_payment,
-                                'value': rec.advance_payment + search_pool.balance,
-                                'pool_id': search_pool.id
-                                }
+                        'date': date.today(),
+                        'memo': rec.memo + " On Advance Payment",
+                        'value_type': 'in',
+                        'pool_value': rec.advance_payment,
+                        'value': rec.advance_payment + search_pool.balance,
+                        'pool_id': search_pool.id
+                    }
                     self.env['ssi_royalty.pool.line'].create(line_vals)
                     search_pool.update({'balance': line_vals['value']})
                 else:
                     pool_val = {
-                                'licensor_id': rec.licensor_id.id,
-                                'balance': 0.0
-                               }
+                        'artist_id': rec.artist_id.id,
+                        'licensor_id': rec.licensor_id.id,
+                        'balance': 0.0
+                    }
                     search_pool = self.env['ssi_royalty.pool'].create(pool_val)
                     line_vals = {
-                                'pool_id': search_pool.id,
-                                'date': date.today(),
-                                'memo': rec.memo + " On Advance Payment",
-                                'value_type': 'in',
-                                'pool_value': rec.advance_payment,
-                                'value': rec.advance_payment + search_pool.balance
-                                }
+                        'pool_id': search_pool.id,
+                        'date': date.today(),
+                        'memo': rec.memo + " On Advance Payment",
+                        'value_type': 'in',
+                        'pool_value': rec.advance_payment,
+                        'value': rec.advance_payment + search_pool.balance
+                    }
                     self.env['ssi_royalty.pool.line'].create(line_vals)
                     search_pool.update({'balance': line_vals['value']})
             
