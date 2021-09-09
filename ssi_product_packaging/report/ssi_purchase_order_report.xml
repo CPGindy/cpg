@@ -425,7 +425,7 @@
                                  <tr>
                                     <th scope="row" width="25%">ListPad Sticker -X/X</th>
                                     <td colspan="1">
-                                       <span t-field="o.product_packaging_id.comments" />
+                                       <span t-field="o.product_packaging_id.listpad_sticker_xx" />
                                     </td>
                                  </tr>
                                  <tr>
