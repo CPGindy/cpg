@@ -13,8 +13,8 @@ class LicenseItem(models.Model):
     
     license_product_id = fields.Many2one('license.product', string='Licensed Product')
     end_date = fields.Date(string='End Date')
-    art_license_number = fields.Char(string='Art License Number', required=True, copy=False, index=True)
-#     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
+#     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, index=True)
+    art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     reference_image = fields.Binary(string='Reference Image')
     is_active = fields.Boolean(string='Is Active')
     territory = fields.Selection([('north_america', 'North America'),('worldwide', 'World Wide')], string='Territory')
@@ -27,6 +27,8 @@ class LicenseItem(models.Model):
     item_pool_id = fields.One2many('license.item.pool', 'license_item_id', string='License Item Pool')
     description = fields.Text(string='Description')
     royalty_count = fields.Integer(string='Royalty', compute='_get_royalty_count')
+    reference_image_interior = fields.Binary(string='Reference Image Interior')
+    reference_image_front = fields.Binary(string="Refernce Image Front")
     
     
     def _get_royalty_count(self):
