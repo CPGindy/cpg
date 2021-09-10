@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+   <record model="ir.actions.act_window" id="product.action_packaging_view">
+      <field name="name">Product Packagings</field>
+      <field name="res_model">product.packaging</field>
+      <field name="domain">[]</field>
+      <field name="view_ids" eval="[(5, 0, 0),                 (0, 0, {'view_mode': 'tree', 'view_id': ref('product.product_packaging_tree_view')}),                 (0, 0, {'view_mode': 'form', 'view_id': ref('product.product_packaging_form_view')})]" />
+   </record>
+    
    <record id="ssi_product_packaging_views_inherit" model="ir.ui.view">
       <field name="name">ssi_product.packaging.views.inherit</field>
       <field name="model">product.packaging</field>
@@ -12,7 +19,7 @@
             <field name="year" />
          </xpath>
          <xpath expr="//field[@name='company_id']" position="after">
-            <field name="product_category" options="{'no_create': True, 'no_create_edit':True}"/>
+            <field name="product_category" options="{'no_create': True, 'no_create_edit':True}" />
             <field name="anticipated_upload_date" />
             <field name="expected_ship_date" />
             <field name="packaging_type" />
@@ -23,7 +30,7 @@
          </xpath>
          <xpath expr="//field[@name='product_id']" position="attributes">
             <attribute name="attrs">{"readonly": [["id","!=",False]]}</attribute>
-             <attribute name="options">{'no_quick_create': True, 'no_create_edit' : True}</attribute>
+            <attribute name="options">{'no_quick_create': True, 'no_create_edit' : True}</attribute>
             <attribute name="required" />
          </xpath>
          <xpath expr="//form[1]/sheet[1]/label[1]" position="before">
@@ -78,7 +85,7 @@
                         <field name="lid_print_x" />
                         <field name="lid_coating" />
                         <field name="lid_dimensions" />
-                        <field name="lid_comments"/>
+                        <field name="lid_comments" />
                      </group>
                      <group string="Ticketing Info">
                         <field name="apply_ticket" />
@@ -116,7 +123,7 @@
                      <group string="Final Packaging Detail">
                         <field name="cards_per_box" />
                         <field name="card_banding" />
-                        <field name="number_design_per_box"/>
+                        <field name="number_design_per_box" />
                         <field name="card_packaging" />
                         <field name="envelopes_per_box" />
                         <field name="envelope_banding" />
@@ -127,7 +134,7 @@
                         <field name="shrink_wrap" />
                         <field name="poly_bag" />
                         <field name="listpad_stiker" />
-                        <field name="listpad_sticker_xx" placeholder="ex. X/X"/>
+                        <field name="listpad_sticker_xx" placeholder="ex. X/X" />
                      </group>
                   </group>
                </page>
@@ -167,7 +174,7 @@
                         <field name="extent" />
                      </group>
                      <group string="Origination">
-                        <field name="origination"/>
+                        <field name="origination" />
                      </group>
                   </group>
                </page>
@@ -175,5 +182,4 @@
          </xpath>
       </field>
    </record>
-
 </odoo>
