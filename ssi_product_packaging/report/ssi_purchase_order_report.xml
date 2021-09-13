@@ -365,7 +365,7 @@
                                  <tr>
                                     <th scope="row" width="25%">Card Packaging</th>
                                     <td colspan="1">
-                                       <span t-field="o.product_packaging_id.card_packaging" />
+                                       <span t-field="o.product_packaging_id.card_packing" />
                                     </td>
                                  </tr>
                                  <tr>
@@ -389,7 +389,7 @@
                                  <tr>
                                     <th scope="row" width="25%">Velcro/Magenet</th>
                                     <td colspan="1">
-                                       <span t-field="o.product_packaging_id.velcro_magnet" />
+                                       <span t-field="o.product_packaging_id.velcro_magnet_ribbon" />
                                     </td>
                                  </tr>
                                  <tr>

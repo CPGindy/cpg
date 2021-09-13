@@ -124,11 +124,12 @@
                         <field name="cards_per_box" />
                         <field name="card_banding" />
                         <field name="number_design_per_box" />
-                        <field name="card_packaging" />
+                        <field name="qty_each_of_design"/>
+                        <field name="card_packing" />
                         <field name="envelopes_per_box" />
                         <field name="envelope_banding" />
                         <field name="box_sealing" />
-                        <field name="velcro_magnet" />
+                        <field name="velcro_magnet_ribbon" />
                         <field name="baker_material" />
                         <field name="pads_per_wrap" />
                         <field name="shrink_wrap" />
