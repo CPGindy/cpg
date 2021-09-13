@@ -14,7 +14,7 @@
     'author': "Bishal Ghimire - Systems Services Inc",
     'website':  "http://www.ssibtr.com",
     'category': 'SSI',
-    'version': '0.1.0',
+    'version': '0.2.0',
 
     'depends': ['base', 'product','account', 'mail'],
 
