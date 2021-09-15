@@ -53,11 +53,11 @@ class LicenseItem(models.Model):
             'target': 'current',
         }
     
-#     @api.model
-#     def create(self, vals):
-#         if vals.get('art_license_number', _('New')) == _('New'):
-#             vals['art_license_number'] = self.env['ir.sequence'].next_by_code('license.item.sequence') or _('New')
-#         return super(LicenseItem, self).create(vals)
+    @api.model
+    def create(self, vals):
+        if vals.get('art_license_number', _('New')) == _('New'):
+            vals['art_license_number'] = self.env['ir.sequence'].next_by_code('license.item.sequence') or _('New')
+        return super(LicenseItem, self).create(vals)
     
     def create_royalty(self):
         view_id = self.env.ref('ssi_royalty.ssi_royalty_view_form')

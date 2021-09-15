@@ -95,7 +95,7 @@
          <field name="name">Royalty Report</field>
          <field name="res_model">ssi_royalty.report</field>
          <field name="view_mode">tree,form</field>
-          <field name="context">{'search_default_group_artist_id': 1}</field>
+          <field name="context">{'search_default_group_licensor_id': 1}</field>
       </record>
        
       <record id="ssi_royalty_report_search" model="ir.ui.view">

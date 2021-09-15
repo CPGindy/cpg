@@ -57,14 +57,13 @@ class Royalty(models.Model):
                 
     def action_generate_report(self):
         for rec in self.filtered(lambda a: not a.is_report_approved):
-            if rec.artist_id:
+            if rec.licensor_id:
                 royalty_line = [(6, 0, [rec.id])]
-                search_report = self.env['ssi_royalty.report'].search([('artist_id', '=', rec.artist_id.id),('status', '=', 'draft')], limit=1)
+                search_report = self.env['ssi_royalty.report'].search([('licensor_id', '=', rec.licensor_id.id), ('status', '=', 'draft')], limit=1)
                 if search_report and search_report.status not in ['posted', 'paid']:
                     search_report.update({'royalty_line_id' : [(4, rec.id)]})
                 else:
                     header_vals = {
-                        'artist_id': rec.artist_id.id,
                         'status': 'draft',
                         'licensor_id': rec.licensor_id.id,
                         'report_date': date.today(),
@@ -72,7 +71,7 @@ class Royalty(models.Model):
                     }
                     self.env['ssi_royalty.report'].create(header_vals)
             else:
-                raise UserError(_('Please Select Artist Before Generating Report'))
+                raise UserError(_('Please Select Licensor Before Generating Report'))
                 
         notification = {
             'type': 'ir.actions.client',
@@ -183,44 +182,83 @@ class RoyaltyReport(models.Model):
     
     def post_journal_staus(self):
         self.write({'status': 'posted'})
-
                                 
     def make_payment_pool(self):
-        search_pool = self.env['ssi_royalty.pool'].search([('licensor_id', '=', self.licensor_id.id)])
-        if search_pool:
-            available_balance = search_pool.balance
-            return {
-            'name': _("Make a Payment"),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'pool.payment',
-            'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
-            'target': 'new',
-            'context': {
-                'default_licensor_id': self.licensor_id.id,
-                'default_available_balance': available_balance,
-                'default_balance_to_pay': self.remaining_balance,
-                'default_advance_payment': self.advanced_payment,
-                'default_memo': self.name,
-                'default_pool_report_id': self.id,
-                'default_vendor_journal_id': self.vendor_journal_id.id,
-            }}
+        payment = self.env['pool.payment'].create({
+            'licensor_id': self.licensor_id.id,
+            'memo': self.name,
+            'pool_report_id': self.id,
+            'vendor_journal_id': self.vendor_journal_id.id,
+        })
+        artists = {}
+        for line in self.royalty_line_id:
+            pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', line.artist_id.id)], limit=1)
+            available_balance = pool.balance if pool else 0
+            advance = line.royalty_value if line.type == 'advance' else 0
+            vals = {
+                'pool_payment_id': payment.id,
+                'artist_id': line.artist_id.id,
+                'balance_to_pay': line.royalty_value,
+                'available_balance': available_balance,
+                'advance_payment': advance,
+            }
+            if line.artist_id.id in artists.keys():
+                payment_line = artists[line.artist_id.id]
+                payment_line.balance_to_pay += vals['balance_to_pay']
+                payment_line.advance_payment += vals['advance_payment']
+            else:
+                payment_line = self.env['pool.payment.line'].create(vals)
+                artists.update({line.artist_id.id: payment_line})
+        payment.write({
+            'balance_to_pay': sum([max([line.balance_to_pay - line.available_balance, 0]) for line in payment.pool_payment_line_ids])
+        })
         return {
             'name': _("Make a Payment"),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'pool.payment',
+            'res_id': payment.id,
             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
             'target': 'new',
-            'context': {
-                'default_licensor_id': self.licensor_id.id,
-                'default_available_balance': 0.0,
-                'default_balance_to_pay': self.remaining_balance,
-                'default_advance_payment': self.advanced_payment,
-                'default_memo': self.name,
-                'default_pool_report_id': self.id,
-                'default_vendor_journal_id': self.vendor_journal_id.id,
-            }}
+        }
+#         search_pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', self.artist_id.id)])
+#         if search_pool:
+#             available_balance = search_pool.balance
+#             return {
+#             'name': _("Make a Payment"),
+#             'type': 'ir.actions.act_window',
+#             'view_type': 'form',
+#             'view_mode': 'form',
+#             'res_model': 'pool.payment',
+#             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
+#             'target': 'new',
+#             'context': {
+#                 'default_artist_id': self.artist_id.id,
+#                 'default_licensor_id': self.licensor_id.id,
+#                 'default_available_balance': available_balance,
+#                 'default_balance_to_pay': self.remaining_balance,
+#                 'default_advance_payment': self.advanced_payment,
+#                 'default_memo': self.name,
+#                 'default_pool_report_id': self.id,
+#                 'default_vendor_journal_id': self.vendor_journal_id.id,
+#             }}
+#         return {
+#             'name': _("Make a Payment"),
+#             'type': 'ir.actions.act_window',
+#             'view_type': 'form',
+#             'view_mode': 'form',
+#             'res_model': 'pool.payment',
+#             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
+#             'target': 'new',
+#             'context': {
+#                 'default_artist_id': self.artist_id.id,
+#                 'default_licensor_id': self.licensor_id.id,
+#                 'default_available_balance': 0.0,
+#                 'default_balance_to_pay': self.remaining_balance,
+#                 'default_advance_payment': self.advanced_payment,
+#                 'default_memo': self.name,
+#                 'default_pool_report_id': self.id,
+#                 'default_vendor_journal_id': self.vendor_journal_id.id,
+#             }}
 
