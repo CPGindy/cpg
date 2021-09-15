@@ -10,3 +10,4 @@ access_license_category,license.category,model_license_category,base.group_user,
 access_license_item_pool,license.item.pool,model_license_item_pool,base.group_user,1,1,1,1
 access_ssi_royalty_pool_line,ssi_royalty.pool.line,model_ssi_royalty_pool_line,base.group_user,1,1,1,1
 access_pool_payment,pool.payment,model_pool_payment,base.group_user,1,1,1,1
+access_pool_payment_line,pool.payment.line,model_pool_payment_line,base.group_user,1,1,1,1
