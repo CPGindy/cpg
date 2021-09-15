@@ -46,9 +46,9 @@
                            <br />
                            <table class="table table-bordered">
                               <tr>
-                                 <th scope="row" width="25%">Printer</th>
+                                 <th scope="row" width="25%">Agent</th>
                                  <td class="table-danger" colspan="1">
-                                    <span t-field="o.printer" />
+                                    <span t-field="o.agent" />
                                  </td>
                               </tr>
                               <tr>
@@ -64,33 +64,33 @@
                                  <th scope="row" colspan="2">Total Print Info</th>
                               </tr>
                               <tr>
-                                 <th scope="row" width="25%"># Quanitity</th>
+                                 <th scope="row" width="25%"># Of Packaging Designs</th>
                                  <td class="table-danger" colspan="1">
-                                    <span t-field="o.no_quantity" />
+                                    <span t-field="o.of_packaging_design" />
                                  </td>
                               </tr>
                               <tr>
-                                 <th scope="row" width="25%">Qty Per Design</th>
+                                 <th scope="row" width="25%"># Of Print Designs</th>
                                  <td class="table-danger" colspan="1">
-                                    <span t-field="o.quantity_per_design" />
+                                    <span t-field="o.of_print_design" />
                                  </td>
                               </tr>
                               <tr>
-                                 <th scope="row" width="25%">Total Quantity</th>
+                                 <th scope="row" width="25%">Run Length by Package</th>
                                  <td class="table-danger" colspan="1">
-                                    <span t-field="o.total_quantity" />
+                                    <span t-field="o.run_length_by_package" />
                                  </td>
                               </tr>
                               <tr>
-                                 <th scope="row" width="25%"># Per Press Sheet</th>
+                                 <th scope="row" width="25%">Total Finished Goods Qty</th>
                                  <td class="table-danger" colspan="1">
-                                    <span t-field="o.per_press_sheet" />
+                                    <span t-field="o.total_finished_good_quantity" />
                                  </td>
                               </tr>
                               <tr>
-                                 <th scope="row" width="25%"># Of Press Sheet</th>
+                                 <th scope="row" width="25%">Print Comments</th>
                                  <td class="table-danger" colspan="1">
-                                    <span t-field="o.of_press_sheet" />
+                                    <span t-field="o.print_info_comments" />
                                  </td>
                               </tr>
                            </table>
@@ -327,6 +327,12 @@
                                     <span t-field="o.lid_dimensions" />
                                  </td>
                               </tr>
+                              <tr>
+                                 <th scope="row" width="25%">Lid Comments</th>
+                                 <td class="table-danger" colspan="1">
+                                    <span t-field="o.lid_comments" />
+                                 </td>
+                              </tr>
                            </table>
                         </div>
                         <div class="col-auto col-6 mw-100 mb-2">
@@ -347,9 +353,9 @@
                                  </td>
                               </tr>
                               <tr>
-                                 <th scope="row" width="25%">Card Packaging</th>
+                                 <th scope="row" width="25%">Card Packing</th>
                                  <td colspan="1">
-                                    <span t-field="o.card_packaging" />
+                                    <span t-field="o.card_packing" />
                                  </td>
                               </tr>
                               <tr>
@@ -373,7 +379,7 @@
                               <tr>
                                  <th scope="row" width="25%">Velcro/Magenet</th>
                                  <td colspan="1">
-                                    <span t-field="o.velcro_magnet" />
+                                    <span t-field="o.velcro_magnet_ribbon" />
                                  </td>
                               </tr>
                               <tr>
@@ -409,7 +415,7 @@
                               <tr>
                                  <th scope="row" width="25%">ListPad Sticker -X/X</th>
                                  <td colspan="1">
-                                    <span t-field="o.comments" />
+                                    <span t-field="o.listpad_sticker_xx" />
                                  </td>
                               </tr>
                               <tr>
@@ -443,7 +449,7 @@
                                  </td>
                               </tr>
                               <tr>
-                                 <th scope="row" width="25%">Assortment Type</th>
+                                 <th scope="row" width="25%">Type</th>
                                  <td class="table-danger" colspan="1">
                                     <span t-field="o.assortment_type" />
                                  </td>
