@@ -89,7 +89,7 @@ class ProductPackaging(models.Model):
     envelopes_per_box = fields.Char(string='Envelopes Per Box')
     envelope_banding = fields.Char(string='Envelope Banding')
     box_sealing = fields.Char(string='Box Sealing')
-    velcro_magnet_ribbon = fields.Char(string='Valcro/Magnet/Ribbon')
+    velcro_magnet_ribbon = fields.Char(string='Velcro/Magnet/Ribbon')
     baker_material = fields.Char(string='Baker Material')
     pads_per_wrap = fields.Char(string='Pads Per Wrap')
     shrink_wrap = fields.Char(string='Shrink Wrap')
