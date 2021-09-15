@@ -65,10 +65,12 @@
                      <page string="Details">
                         <group>
                             <group>
-                           <field name="reference_image" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            <field name="reference_image" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            <field name="description"/>
                             </group>
                             <group>
-                            <field name="description"/>
+                            <field name="reference_image_interior" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            <field name="reference_image_front" options="{&quot;size&quot;:[0,90]}" widget="image" />
                             </group>
                         </group>
                         <field name="note" />
