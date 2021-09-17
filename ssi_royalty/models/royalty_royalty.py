@@ -49,7 +49,7 @@ class Royalty(models.Model):
         if vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('royalty.royalty.sequence') or _('New')
         return super(Royalty, self).create(vals)
- 
+    
     def unlink_from_report(self):
         for rec in self:
             if rec.royalty_report_id:

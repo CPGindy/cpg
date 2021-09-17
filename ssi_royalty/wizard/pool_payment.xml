@@ -20,7 +20,7 @@
                            <tree editable="bottom" create="false">
                                <field name="artist_id" readonly="1"/>
                                <field name="available_balance" readonly="1"/>
-                               <field name="balance_to_pay" sum="Journal Balance" widget="monetary" readonly="1"/>
+                               <field name="balance_to_pay"/>
                            </tree>
                        </field>
                    </group>
