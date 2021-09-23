@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+       
+      <record model="ir.ui.view" id="license_item_view_list">
+         <field name="name">license.item.view.list</field>
+         <field name="model">license.item</field>
+         <field name="arch" type="xml">
+            <tree>
+               <field name="art_license_number" />
+               <field name="end_date" />
+               <field name="territory" />
+               <field name="sell_off_date" />
+               <field name="license_product_id" />
+            </tree>
+         </field>
+      </record>
+       
+      <record id="license_item_view_form" model="ir.ui.view">
+         <field name="name">license.item.view.form</field>
+         <field name="model">license.item</field>
+         <field name="arch" type="xml">
+            <form string="License">
+               <header>
+                   <button name="create_royalty" type="object" class="btn-primary" string="Create Royalty"/>
+               </header>
+               <sheet>
+                  <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" icon="fa-dollar" type="object" name="action_view_royalty">
+                        <field name="royalty_count" string="Royalty" widget="statinfo"/>
+                    </button>
+                   </div>
+                  <div class="oe_title">
+                     <h1>
+                        <field name="art_license_number" readonly="1" />
+                     </h1>
+                  </div>
+                  <group>
+                     <group>
+                        <field name="license_id" />
+                        <field name="end_date" />
+                        <field name="territory" />
+                     </group>
+                     <group>
+                        <field name="sell_off_date" />
+                        <field name="is_active" />
+                        <field name="licensed_for" widget="many2many_tags">
+                           <tree string="license.categ">
+                              <field name="name" />
+                           </tree>
+                        </field>
+                     </group>
+                  </group>
+                  <notebook>
+                     <page string="Products">
+                        <group>
+                           <field name="license_product_line">
+                              <tree editable="bottom">
+                                 <field name="product_id" />
+                                 <field name="royalty_rate" widget="percentage" />
+                              </tree>
+                           </field>
+                        </group>
+                     </page>
+                     <page string="Details">
+                        <group>
+                            <group>
+                            <field name="reference_image" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            <field name="description"/>
+                            </group>
+                            <group>
+                            <field name="reference_image_interior" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            <field name="reference_image_front" options="{&quot;size&quot;:[0,90]}" widget="image" />
+                            </group>
+                        </group>
+                        <field name="note" />
+                     </page>
+                     <page string="Item Pool">
+                        <group>
+                           <field name="item_pool_id" nolabel="1">
+                              <tree editable="bottom">
+                                 <field name="paid_date" />
+                                 <field name="first_sale_date" />
+                                 <field name="value" />
+                              </tree>
+                           </field>
+                        </group>
+                     </page>
+                  </notebook>
+               </sheet>
+               <div class="oe_chatter">
+                  <field name="message_follower_ids" />
+                  <field name="activity_ids" />
+                  <field name="message_ids" />
+               </div>
+            </form>
+         </field>
+      </record>
+       
+       
+      <record id="license_item_view_search" model="ir.ui.view">
+         <field name="name">license.item.view.search</field>
+         <field name="model">license.item</field>
+         <field name="arch" type="xml">
+            <search string="Search License Item">
+               <field name="license_id" />
+               <field name="art_license_number" />
+               <field name="territory" />
+               <group expand="0" string="Group By">
+                  <filter string="License" name="license_id" context="{'group_by': 'license_id'}" />
+               </group>
+            </search>
+         </field>
+      </record>
+       
+      <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_license_item">
+         <field name="name">Licensed Items</field>
+         <field name="res_model">license.item</field>
+         <field name="view_mode">tree,form</field>
+      </record>
+       
+      <menuitem name="Licensed Items" id="ssi_royalty.license_item_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_item" />
+       
+   </data>
+</odoo>

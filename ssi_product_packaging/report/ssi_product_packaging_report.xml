@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>                
+        <report
+            id="ssi_product_packaging_report"
+            model="product.packaging"
+            string="Product Packaging Report (PDF)"
+            report_type="qweb-pdf"
+            name="ssi_product_packaging.ssi_product_packaging_templates"
+            file="ssi_product_packaging.ssi_product_packaging_templates"
+            print_report_name="'Product Packaging - %s' %  (object.name)"
+        />
+        <report
+            id="ssi_product_packaging_report_xls"
+            model="product.packaging"
+            string="Product Packaging Report (EXCEL)"
+            report_type="xlsx"
+            name="ssi_product_packaging.packaging_report_xls"
+            file="ssi_product_packaging.packaging_report_xls"
+        />
+
+    </data>
+</odoo>

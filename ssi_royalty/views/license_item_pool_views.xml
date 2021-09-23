@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+       
+      <record model="ir.ui.view" id="license_item_pool_view_list">
+         <field name="name">license.item.pool.view.list</field>
+         <field name="model">license.item.pool</field>
+         <field name="arch" type="xml">
+            <tree>
+               <field name="license_item_id" />
+               <field name="paid_date" />
+               <field name="first_sale_date" />
+               <field name="value" />
+            </tree>
+         </field>
+      </record>
+       
+      <record id="license_item_pool_view_form" model="ir.ui.view">
+         <field name="name">license.item.pool.view.form</field>
+         <field name="model">license.item.pool</field>
+         <field name="arch" type="xml">
+            <form string="License Item Pool">
+               <header>
+                  <button name="pay_pool" string="Approve and Pay Art" type="object" class="btn-primary" attrs="{'invisible': [('status', '=', 'paid')]}" />
+                  <field name="status" widget="statusbar" />
+               </header>
+               <sheet>
+                  <group>
+                     <group>
+                        <field name="license_item_id" />
+                        <field name="paid_date" />
+                     </group>
+                     <group>
+                        <field name="first_sale_date" readonly="1" />
+                        <field name="value" />
+                     </group>
+                  </group>
+               </sheet>
+               <div class="oe_chatter">
+                  <field name="message_follower_ids" />
+                  <field name="activity_ids" />
+                  <field name="message_ids" />
+               </div>
+            </form>
+         </field>
+      </record>
+       
+      <record id="license_item_view_search" model="ir.ui.view">
+         <field name="name">license.item.view.search</field>
+         <field name="model">license.item.pool</field>
+         <field name="arch" type="xml">
+            <search string="Search License Item Pool">
+               <field name="license_item_id" />
+            </search>
+         </field>
+      </record>
+       
+      <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_license_item_pool">
+         <field name="name">Licensed Items Pool</field>
+         <field name="res_model">license.item.pool</field>
+         <field name="view_mode">tree,form</field>
+      </record>
+       
+      <menuitem name="Licensed Items Pool" id="ssi_royalty.license_item_pool_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_item_pool" />
+       
+   </data>
+</odoo>

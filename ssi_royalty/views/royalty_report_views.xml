@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+
+      <record model="ir.ui.view" id="ssi_royalty_report_view_list">
+         <field name="name">ssi_royalty.report.view.list</field>
+         <field name="model">ssi_royalty.report</field>
+         <field name="arch" type="xml">
+            <tree>
+               <field name="name" />
+               <field name="licensor_id" />
+               <field name="report_date" />
+               <field name="total_due" />
+               <field name="status" />
+            </tree>
+         </field>
+      </record>
+
+      <record id="ssi_royalty_report_view_form" model="ir.ui.view">
+         <field name="name">ssi_royalty.report.view.form</field>
+         <field name="model">ssi_royalty.report</field>
+         <field name="arch" type="xml">
+            <form string="Royalty Report">
+               <header>
+                  <button name="make_payment_pool" string="Make a Payment" type="object" class="oe_highlight o_royalty_sheet_post" attrs="{'invisible': [('status', 'not in', ('draft'))]}" />
+                  <field name="status" widget="statusbar" />
+               </header>
+               <sheet>
+                   <div name="button_box" class="oe_button_box">
+                       <button name="open_vendor_bill" class="oe_stat_button" icon="fa-dollar" type="object" string="Vendor Bill" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                    </div>
+                   <div class="oe_title">
+                     <h1>
+                        <field name="name" readonly="1" />
+                     </h1>
+                  </div>
+                  <group>
+                     <group>
+                        <field name="artist_id" />
+                        <field name="licensor_id" />
+                        <field name="move_id" attrs="{'invisible': [('move_id','=',False)] }" />
+                     </group>
+                     <group>
+                        <field name="report_date" />
+                        <field name="memo" />
+                     </group>
+                  </group>
+                  <notebook>
+                     <page string="Royalty Lines">
+                        <field name="royalty_line_id" nolabel="1">
+                            <tree editable="bottom" delete="false">
+                              <field name="name" />
+                              <field name="license_id" />
+                              <field name="licensed_item" />
+                              <field name="license_product_id" />
+                              <field name="type" attrs="{'readonly': True}"/>
+                              <field name="payment_status" />
+                              <field name="artist_id" />
+                              <field name="royalty_rate" widget="percentage" />
+                              <field name="royalty_value" />
+                              <button name="unlink_from_report" icon="fa-trash" type="object" class="oe_edit_only"/>
+                            </tree>
+                        </field>
+                        <group name="note_group" col="8" class="mt-2 mt-md-0">
+                           <group colspan="6" />
+                           <group class="oe_subtotal_footer oe_right" colspan="2" name="total_due">
+                              <field name="total_due" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                           </group>
+                        </group>
+                     </page>
+                     <page string="Payment Detail">
+                        <group>
+                           <group>
+                               <field name="paid_by_pool" />
+                               <field name="paid_by_vendor_bill" />
+                               <field name="advanced_payment"/>
+                           </group>
+                           <group>
+                               <field name="remaining_balance" />
+                           </group>
+                        </group>
+                     </page>
+                  </notebook>
+               </sheet>
+               <div class="oe_chatter">
+                  <field name="message_follower_ids" />
+                  <field name="activity_ids" />
+                  <field name="message_ids" />
+               </div>
+            </form>
+         </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_royalty_report">
+         <field name="name">Royalty Report</field>
+         <field name="res_model">ssi_royalty.report</field>
+         <field name="view_mode">tree,form</field>
+          <field name="context">{'search_default_group_licensor_id': 1}</field>
+      </record>
+
+      <record id="ssi_royalty_report_search" model="ir.ui.view">
+         <field name="name">ssi_royalty.report.search</field>
+         <field name="model">ssi_royalty.report</field>
+         <field name="arch" type="xml">
+            <search string="Search Royalty Report">
+               <field name="artist_id" />
+               <field name="licensor_id" />
+               <group expand="0" string="Group By">
+                  <filter string="Artist" name="group_artist_id" context="{'group_by': 'artist_id'}" />
+                  <filter string="Licensor" name="group_licensor_id" context="{'group_by': 'licensor_id'}" />
+                  <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
+               </group>
+            </search>
+         </field>
+      </record>
+
+      <menuitem name="Reporting" id="ssi_royalty.royalty_reporting" parent="ssi_royalty.menu_root" />
+      <menuitem name="Royalty Report" id="ssi_royalty.royalty_report" parent="ssi_royalty.royalty_reporting" action="ssi_royalty.action_window_open_royalty_report" />
+   </data>
+</odoo>

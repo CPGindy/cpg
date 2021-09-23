@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="license_category_data" model="license.category">
+            <field name="name">Adhesive Notes</field>
+        </record>
+        
+        <record id="license_category_data_1" model="license.category">
+            <field name="name">Boxed Card</field>
+        </record>
+        
+        <record id="license_category_data_2" model="license.category">
+            <field name="name">Counter Card</field>
+        </record>
+        
+        <record id="license_category_data_3" model="license.category">
+            <field name="name">Desk Notes</field>
+        </record>
+        
+        <record id="license_category_data_4" model="license.category">
+            <field name="name">Journals</field>
+        </record>
+        
+        <record id="license_category_data_5" model="license.category">
+            <field name="name">Memo Pads</field>
+        </record>
+        
+        <record id="license_category_data_6" model="license.category">
+            <field name="name">PZ</field>
+        </record>
+    </data>
+</odoo>
