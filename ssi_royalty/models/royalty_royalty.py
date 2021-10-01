@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import date
@@ -11,8 +9,7 @@ class Royalty(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'name'
     _description = "Royalty"
-    
-    
+
     @api.model
     def _default_vendor_journal_id(self):
         default_company_id = self.default_get(['company_id'])['company_id']
@@ -21,7 +18,7 @@ class Royalty(models.Model):
     @api.model
     def _default_account_id(self):
         return self.env['ir.property']._get('property_account_expense_categ_id', 'product.category')
-    
+
     name = fields.Char(string='Contract', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     type = fields.Selection([('advance', 'Advance'),('sale_on_item', 'Sale on Item'),('flat_fee', 'Flat Fee')], string='Type')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
@@ -33,28 +30,29 @@ class Royalty(models.Model):
     licensor_id = fields.Many2one('res.partner', string='Licensor', related='license_id.licensor_id')
     date = fields.Date(string='Date')
     source_document = fields.Char(string='Source Document')
-    payment_status = fields.Selection([('draft', 'Draft'),('posted', 'Posted'),('paid', 'Paid')], string='Payment Status',track_visibility="onchange")
+    payment_status = fields.Selection([('rejected', 'Rejected'),('draft', 'New'),('reported', 'Reported')],
+                                      string='Payment Status', track_visibility="onchange", readonly=True)
     royalty_rate = fields.Float(string='Royalty Rate')
     royalty_value = fields.Float(string='Royalty Value')
     royalty_report_id = fields.Many2one('ssi_royalty.report', string='Royalty Report')
+    report_status = fields.Selection(related='royalty_report_id.status')
     invoice_id = fields.Many2one('account.move', string='Invoice')
     currency_id = fields.Many2one('res.currency', string='Currency')
     account_id = fields.Many2one('account.account', store=True, readonly=False, string='Account',
         default=_default_account_id, domain="[('company_id', '=', company_id)]", help="A royalty account is expected")
     is_report_approved = fields.Boolean(string='Is Report Approved')
-    
-    
+
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('royalty.royalty.sequence') or _('New')
         return super(Royalty, self).create(vals)
-    
+
     def unlink_from_report(self):
         for rec in self:
             if rec.royalty_report_id:
                 rec.update({'royalty_report_id': None})
-                
+
     def action_generate_report(self):
         for rec in self.filtered(lambda a: not a.is_report_approved):
             if rec.licensor_id:
@@ -72,7 +70,8 @@ class Royalty(models.Model):
                     self.env['ssi_royalty.report'].create(header_vals)
             else:
                 raise UserError(_('Please Select Licensor Before Generating Report'))
-                
+            rec.payment_status = 'reported'
+
         notification = {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -83,15 +82,45 @@ class Royalty(models.Model):
             },
         }
         return notification
-    
-    
-    
+
+    def action_reject(self):
+        for rec in self.filtered(lambda r: not r.royalty_report_id or r.royalty_report_id.status == 'draft'):
+            rec.payment_status = 'rejected'
+            rec.royalty_report_id = False
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Royalty has been rejected.'),
+                'type': 'success',
+                'next': {
+                    'type': 'ir.actions.act_window_close',
+                },
+            },
+        }
+
+    def action_draft(self):
+        for rec in self.filtered(lambda r: r.payment_status == 'rejected'):
+            rec.payment_status = 'draft'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Royalty has been reset to draft.'),
+                'type': 'success',
+                'next': {
+                    'type': 'ir.actions.act_window_close',
+                },
+            },
+        }
+
+
 class RoyaltyReport(models.Model):
     _name = 'ssi_royalty.report'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'name'
     _description = "Royalty Report"
-    
+
     @api.model
     def _default_vendor_journal_id(self):
         default_company_id = self.default_get(['company_id'])['company_id']
@@ -115,8 +144,6 @@ class RoyaltyReport(models.Model):
     remaining_balance = fields.Float(string='Remaining Balance', compute='_compute_remaining_balance')
     paid_by_vendor_bill = fields.Float(string='Paid By Vendor Bill')
 
-
-    
     @api.depends('royalty_line_id')
     def _compute_total_due(self):
         for rec in self:
@@ -127,7 +154,7 @@ class RoyaltyReport(models.Model):
                 rec.total_due = total
             else:
                 rec.total_due = 0
-                
+
     @api.depends('royalty_line_id')
     def _compute_advanced_paid(self):
         for rec in self:
@@ -138,32 +165,32 @@ class RoyaltyReport(models.Model):
                 rec.advanced_payment = total
             else:
                 rec.advanced_payment = 0
-                
+
     @api.depends('paid_by_pool','total_due')
     def _compute_remaining_balance(self):
         for rec in self:
             rec.remaining_balance = rec.total_due - rec.paid_by_pool - rec.paid_by_vendor_bill
-                
+
     @api.onchange('total_due')
     def _onchange_total(self):
         for rec in self:
             if rec.total_due:
                 rec.remaining_balance = rec.total_due
-    
+
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('royalty.report.sequence') or _('New')
         return super(RoyaltyReport, self).create(vals)
-    
+
     def unlink(self):
         for rec in self.filtered(lambda a: a.status != 'draft'):
             if rec.royalty_line_id:
                 for royalty in rec.royalty_line_id:
                     royalty.update({'is_report_approved': False})
 
-        return super(RoyaltyReport, self).unlink()    
-    
+        return super(RoyaltyReport, self).unlink()
+
     def open_vendor_bill(self):
         try:
             form_view_id = self.env.ref("account.view_move_form").id
@@ -179,10 +206,10 @@ class RoyaltyReport(models.Model):
             'views': [(form_view_id, 'form')],
             'target': 'current',
         }
-    
+
     def post_journal_staus(self):
         self.write({'status': 'posted'})
-                                
+
     def make_payment_pool(self):
         payment = self.env['pool.payment'].create({
             'licensor_id': self.licensor_id.id,
@@ -222,43 +249,42 @@ class RoyaltyReport(models.Model):
             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
             'target': 'new',
         }
-#         search_pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', self.artist_id.id)])
-#         if search_pool:
-#             available_balance = search_pool.balance
-#             return {
-#             'name': _("Make a Payment"),
-#             'type': 'ir.actions.act_window',
-#             'view_type': 'form',
-#             'view_mode': 'form',
-#             'res_model': 'pool.payment',
-#             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
-#             'target': 'new',
-#             'context': {
-#                 'default_artist_id': self.artist_id.id,
-#                 'default_licensor_id': self.licensor_id.id,
-#                 'default_available_balance': available_balance,
-#                 'default_balance_to_pay': self.remaining_balance,
-#                 'default_advance_payment': self.advanced_payment,
-#                 'default_memo': self.name,
-#                 'default_pool_report_id': self.id,
-#                 'default_vendor_journal_id': self.vendor_journal_id.id,
-#             }}
-#         return {
-#             'name': _("Make a Payment"),
-#             'type': 'ir.actions.act_window',
-#             'view_type': 'form',
-#             'view_mode': 'form',
-#             'res_model': 'pool.payment',
-#             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
-#             'target': 'new',
-#             'context': {
-#                 'default_artist_id': self.artist_id.id,
-#                 'default_licensor_id': self.licensor_id.id,
-#                 'default_available_balance': 0.0,
-#                 'default_balance_to_pay': self.remaining_balance,
-#                 'default_advance_payment': self.advanced_payment,
-#                 'default_memo': self.name,
-#                 'default_pool_report_id': self.id,
-#                 'default_vendor_journal_id': self.vendor_journal_id.id,
-#             }}
-
+        # search_pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', self.artist_id.id)])
+        # if search_pool:
+        #     available_balance = search_pool.balance
+        #     return {
+        #     'name': _("Make a Payment"),
+        #     'type': 'ir.actions.act_window',
+        #     'view_type': 'form',
+        #     'view_mode': 'form',
+        #     'res_model': 'pool.payment',
+        #     'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
+        #     'target': 'new',
+        #     'context': {
+        #         'default_artist_id': self.artist_id.id,
+        #         'default_licensor_id': self.licensor_id.id,
+        #         'default_available_balance': available_balance,
+        #         'default_balance_to_pay': self.remaining_balance,
+        #         'default_advance_payment': self.advanced_payment,
+        #         'default_memo': self.name,
+        #         'default_pool_report_id': self.id,
+        #         'default_vendor_journal_id': self.vendor_journal_id.id,
+        #     }}
+        # return {
+        #     'name': _("Make a Payment"),
+        #     'type': 'ir.actions.act_window',
+        #     'view_type': 'form',
+        #     'view_mode': 'form',
+        #     'res_model': 'pool.payment',
+        #     'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
+        #     'target': 'new',
+        #     'context': {
+        #         'default_artist_id': self.artist_id.id,
+        #         'default_licensor_id': self.licensor_id.id,
+        #         'default_available_balance': 0.0,
+        #         'default_balance_to_pay': self.remaining_balance,
+        #         'default_advance_payment': self.advanced_payment,
+        #         'default_memo': self.name,
+        #         'default_pool_report_id': self.id,
+        #         'default_vendor_journal_id': self.vendor_journal_id.id,
+        #     }}

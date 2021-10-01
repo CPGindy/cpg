@@ -1,124 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-   <data>
-       
-      <record model="ir.ui.view" id="ssi_royalty_view_list">
-         <field name="name">ssi_royalty.view.list</field>
-         <field name="model">ssi_royalty.ssi_royalty</field>
-         <field name="arch" type="xml">
-            <tree>
-               <field name="licensed_item" />
-               <field name="license_product_id" />
-               <field name="license_id" />
-               <field name="artist_id" />
-               <field name="type" />
-               <field name="item_value" />
-               <field name="licensor_id" />
-               <field name="date" />
-               <field name="source_document" />
-               <field name="payment_status" />
-               <field name="royalty_rate" widget="percentage" />
-               <field name="royalty_value" />
-               <field name="royalty_report_id" />
-            </tree>
-         </field>
-      </record>
-       
-      <record id="ssi_royalty_view_form" model="ir.ui.view">
-         <field name="name">ssi_royalty.view.form</field>
-         <field name="model">ssi_royalty.ssi_royalty</field>
-         <field name="arch" type="xml">
-            <form string="Royalty">
-               <header>
-                  <button name="action_generate_report" string="Generate Report" type="object" class="btn-primary" attrs="{'invisible': [('royalty_report_id','=',True)]}"/>
-                  <field name="payment_status" widget="statusbar" options="{'clickable': '1'}" />
-               </header>
-               <sheet>
-                  <div class="oe_title">
-                     <h1>
-                        <field name="name" readonly="1" />
-                     </h1>
-                  </div>
-                  <group>
-                     <group>
-                        <field name="licensed_item" />
-                        <field name="license_product_id" />
-                        <field name="license_id" />
-                        <field name="artist_id" />
-                        <field name="licensor_id" />
-                        <field name="type" />
-                     </group>
-                     <group>
-                        <field name="date" />
-                        <field name="source_document" />
-                        <field name="item_value" />
-                        <field name="royalty_rate" widget="percentage" />
-                        <field name="royalty_value" />
-                        <field name="royalty_report_id" />
-                     </group>
-                  </group>
-               </sheet>
-               <div class="oe_chatter">
-                  <field name="message_follower_ids" />
-                  <field name="activity_ids" />
-                  <field name="message_ids" />
-               </div>
-            </form>
-         </field>
-      </record>
-       
-      <!-- actions opening views on models -->
-      <record model="ir.actions.act_window" id="ssi_royalty.action_window">
-         <field name="name">Royalty</field>
-         <field name="res_model">ssi_royalty.ssi_royalty</field>
-         <field name="view_mode">tree,form</field>
-      </record>
-       
-      <!-- server action to the one above -->
-      <record model="ir.actions.server" id="ssi_royalty.action_server">
-         <field name="name">ssi_royalty server</field>
-         <field name="model_id" ref="model_ssi_royalty_ssi_royalty" />
-         <field name="state">code</field>
-         <field name="code">action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }</field>
-      </record>
-       
-      <record id="ssi_royalty_search" model="ir.ui.view">
-         <field name="name">ssi_royalty.search</field>
-         <field name="model">ssi_royalty.ssi_royalty</field>
-         <field name="arch" type="xml">
-            <search string="Search Royalty">
-               <field name="licensed_item" />
-               <field name="license_product_id" />
-               <field name="license_id" />
-               <field name="artist_id" />
-               <field name="licensor_id" />
-               <group expand="0" string="Group By">
-                  <filter string="Licensor" name="licensor_id" context="{'group_by': 'licensor_id'}" />
-                  <filter string="Artist" name="artist_id" context="{'group_by': 'artist_id'}" />
-               </group>
-            </search>
-         </field>
-      </record>
-       
-      <record id="action_generate_royalty_report" model="ir.actions.server">
-         <field name="name">Generate Royalty Report</field>
-         <field name="model_id" ref="ssi_royalty.model_ssi_royalty_ssi_royalty" />
-         <field name="binding_model_id" ref="ssi_royalty.model_ssi_royalty_ssi_royalty" />
-         <field name="binding_view_types">form,list</field>
-         <field name="state">code</field>
-         <field name="code">action = records.action_generate_report()</field>
-      </record>
-       
-      <!-- Top menu item -->
-      <menuitem name="Royalty" id="ssi_royalty.menu_root" web_icon="ssi_royalty,static/description/icon.png" />
-       
-      <!-- menu categories -->
-      <menuitem name="Royalty" id="ssi_royalty.royalty" parent="ssi_royalty.menu_root" sequence="2" />
-      <menuitem name="Royalty" id="ssi_royalty.menu_1_list" parent="ssi_royalty.royalty" action="ssi_royalty.action_window" />
-       
-   </data>
+    <data>
+
+        <record model="ir.ui.view" id="ssi_royalty_view_list">
+            <field name="name">ssi_royalty.view.list</field>
+            <field name="model">ssi_royalty.ssi_royalty</field>
+            <field name="arch" type="xml">
+                <tree default_order="id desc">
+                    <field name="licensed_item" />
+                    <field name="license_product_id" />
+                    <field name="license_id" />
+                    <field name="artist_id" />
+                    <field name="type" />
+                    <field name="item_value" />
+                    <field name="licensor_id" />
+                    <field name="date" />
+                    <field name="source_document" />
+                    <field name="payment_status" />
+                    <field name="royalty_rate" widget="percentage" />
+                    <field name="royalty_value" />
+                    <field name="royalty_report_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="ssi_royalty_view_form" model="ir.ui.view">
+            <field name="name">ssi_royalty.view.form</field>
+            <field name="model">ssi_royalty.ssi_royalty</field>
+            <field name="arch" type="xml">
+                <form string="Royalty">
+                    <header>
+                        <field name="report_status" invisible="1"/>
+                        <field name="royalty_report_id" invisible="1"/>
+                        <field name="payment_status" invisible="1"/>
+                        <button name="action_reject" string="Reject" type="object" class="btn-secondary"
+                                attrs="{'invisible': ['|', '&amp;', ('royalty_report_id', '=', True), ('report_status', 'not in', ['posted', 'paid']), ('payment_status', '=', 'rejected')]}"/>
+                        <button name="action_draft" string="Reset to Draft" type="object" class="btn-secondary"
+                                attrs="{'invisible': [('payment_status', '!=', 'rejected')]}"/>
+                        <button name="action_generate_report" string="Generate Report" type="object" class="btn-primary" attrs="{'invisible': [('payment_status', '!=', 'draft')]}"/>
+                        <field name="payment_status" widget="statusbar" options="{'clickable': '1'}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="licensed_item"/>
+                                <field name="license_product_id"/>
+                                <field name="license_id"/>
+                                <field name="artist_id"/>
+                                <field name="licensor_id"/>
+                                <field name="type"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="source_document"/>
+                                <field name="item_value"/>
+                                <field name="royalty_rate" widget="percentage"/>
+                                <field name="royalty_value"/>
+                                <field name="royalty_report_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" />
+                        <field name="activity_ids" />
+                        <field name="message_ids" />
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="ssi_royalty.action_window">
+            <field name="name">Royalty</field>
+            <field name="res_model">ssi_royalty.ssi_royalty</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- server action to the one above -->
+        <record model="ir.actions.server" id="ssi_royalty.action_server">
+            <field name="name">ssi_royalty server</field>
+            <field name="model_id" ref="model_ssi_royalty_ssi_royalty" />
+            <field name="state">code</field>
+            <field name="code">
+                action = {
+                    "type": "ir.actions.act_window",
+                    "view_mode": "tree,form",
+                    "res_model": model._name,
+                }
+            </field>
+        </record>
+
+        <record id="ssi_royalty_search" model="ir.ui.view">
+            <field name="name">ssi_royalty.search</field>
+            <field name="model">ssi_royalty.ssi_royalty</field>
+            <field name="arch" type="xml">
+                <search string="Search Royalty">
+                    <field name="licensed_item" />
+                    <field name="license_product_id" />
+                    <field name="license_id" />
+                    <field name="artist_id" />
+                    <field name="licensor_id" />
+                    <group expand="0" string="Group By">
+                        <filter string="Licensor" name="licensor_id" context="{'group_by': 'licensor_id'}" />
+                        <filter string="Artist" name="artist_id" context="{'group_by': 'artist_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_generate_royalty_report" model="ir.actions.server">
+            <field name="name">Generate Royalty Report</field>
+            <field name="model_id" ref="ssi_royalty.model_ssi_royalty_ssi_royalty" />
+            <field name="binding_model_id" ref="ssi_royalty.model_ssi_royalty_ssi_royalty" />
+            <field name="binding_view_types">form,list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.action_generate_report()</field>
+        </record>
+
+        <!-- Top menu item -->
+        <menuitem name="Royalty" id="ssi_royalty.menu_root" web_icon="ssi_royalty,static/description/icon.png" />
+
+        <!-- menu categories -->
+        <menuitem name="Royalty" id="ssi_royalty.royalty" parent="ssi_royalty.menu_root" sequence="2" />
+        <menuitem name="Royalty" id="ssi_royalty.menu_1_list" parent="ssi_royalty.royalty" action="ssi_royalty.action_window" />
+
+    </data>
 </odoo>
