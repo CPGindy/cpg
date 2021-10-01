@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
    <data>
-       
+
       <record model="ir.ui.view" id="license_item_view_list">
          <field name="name">license.item.view.list</field>
          <field name="model">license.item</field>
@@ -15,7 +15,7 @@
             </tree>
          </field>
       </record>
-       
+
       <record id="license_item_view_form" model="ir.ui.view">
          <field name="name">license.item.view.form</field>
          <field name="model">license.item</field>
@@ -96,8 +96,8 @@
             </form>
          </field>
       </record>
-       
-       
+
+
       <record id="license_item_view_search" model="ir.ui.view">
          <field name="name">license.item.view.search</field>
          <field name="model">license.item</field>
@@ -112,14 +112,14 @@
             </search>
          </field>
       </record>
-       
+
       <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_license_item">
          <field name="name">Licensed Items</field>
          <field name="res_model">license.item</field>
          <field name="view_mode">tree,form</field>
       </record>
-       
+
       <menuitem name="Licensed Items" id="ssi_royalty.license_item_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_item" />
-       
+
    </data>
 </odoo>

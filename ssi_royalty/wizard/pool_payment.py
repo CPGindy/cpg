@@ -11,6 +11,24 @@ class PoolPaymentLine(models.TransientModel):
     balance_to_pay = fields.Float(string="Balance To Pay", readonly=True)
     advance_payment = fields.Float(string='Advance Payment', readonly=True)
     pool_payment_id = fields.Many2one('pool.payment', string="Payment Record")
+    sale_balance = fields.Float(string="Sale Balance", compute="_compute_sale_balance")
+    pool_covered = fields.Float(string="Covered by Pool", compute="_compute_pool_covered")
+    remaining_balance = fields.Float(string="Remaining Balance", compute="_compute_remaining_balance")
+
+    @api.depends('balance_to_pay', 'advance_payment')
+    def _compute_sale_balance(self):
+        for rec in self:
+            rec.sale_balance = rec.balance_to_pay - rec.advance_payment
+
+    @api.depends('sale_balance', 'available_balance')
+    def _compute_pool_covered(self):
+        for rec in self:
+            rec.pool_covered = rec.sale_balance if rec.available_balance >= rec.sale_balance else rec.available_balance
+
+    @api.depends('pool_covered', 'balance_to_pay')
+    def _compute_remaining_balance(self):
+        for rec in self:
+            rec.remaining_balance = rec.balance_to_pay - rec.pool_covered
 
 
 class PoolPayment(models.TransientModel):
