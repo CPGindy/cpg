@@ -36,6 +36,8 @@
         'data/license_category_data.xml',
 
         'wizard/pool_payment.xml',
+
+        'reports/royalty_report.xml',
     ],
     'demo': [
     ],

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Quarterly Royalty Report -->
+    <!-- <report
+        id="quarterly_royalty_report_pdf"
+        model="royalty.report.pdf"
+        string="Quarterly Royalty Report"
+        report_type="qweb-pdf"
+        name="ssi_royalty.quarterly_royalty_report"
+        file="ssi_royalty.quarterly_royalty_report"
+        print_report_name="'Quarterly_Royalty_Report'"
+    /> -->
+
+    <record id="royalty_report_pdf" model="ir.actions.report">
+        <field name="name">PDF Report</field>
+        <field name="model">ssi_royalty.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ssi_royalty.royalty_report</field>
+        <field name="report_file">ssi_royalty.royalty_report</field>
+        <field name="print_report_name">'Royalty Report - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_ssi_royalty_report"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="royalty_report" name="PDF Royalty Report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.env.company"/>
+                <t t-call="ssi_royalty.royalty_report_print"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="royalty_report_print">
+        <t t-call="web.external_layout">
+            <div class="row zero_min_height">
+                <div class="col-12">
+                    <div style="border-bottom: 1px solid black;"/>
+                </div>
+            </div>
+            <div class="page">
+                <div class="oe_structure"/>
+
+                <h2 class="mt16">
+                    <span t-field="doc.name"/>
+                </h2>
+
+                <div class="row mt32 mb32" id="details">
+
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 10%;">Art</th>
+                            <th scope="col" style="width: 20%;">Product</th>
+                            <th scope="col" style="width: 10%;">Licensor Art ID</th>
+                            <th scope="col" style="width: 10%;">Sales</th>
+                            <th scope="col" style="width: 10%;">Royalty %</th>
+                            <th scope="col" style="width: 10%;">Royalty $</th>
+                            <th scope="col" style="width: 10%;">Less Adv</th>
+                            <th scope="col" style="width: 10%;">Adv Paid Dt</th>
+                            <th scope="col" style="width: 10%;">Net</th>
+                        </tr>
+                    </thead>
+                    <tbody class="">
+                        <t t-foreach="doc.royalty_line_id" t-as="line">
+                            <tr>
+                                <td>
+                                    <span t-field="line.licensed_item"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.license_product_id"/>
+                                </td>
+                                <td>
+                                    <!-- Licensor Art ID (not sure what this is yet) -->
+                                </td>
+                                <td>
+                                    <span>$</span><span t-esc="'{:.2f}'.format(line.item_value)"/>
+                                </td>
+                                <td>
+                                    <span t-esc="line.royalty_rate * 100"/><span>%</span>
+                                </td>
+                                <td>
+                                    <span>$</span><span t-esc="'{:.2f}'.format(line.royalty_value)"/>
+                                </td>
+                                <td>
+                                    <!-- Pool Value (not sure how this is to be calculated yet) -->
+                                </td>
+                                <td>
+                                    <!-- Adv Paid Dt (not sure what this is yet) -->
+                                </td>
+                                <td>
+                                    <!-- Subtotal (not sure how this is to be calculated yet) -->
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <div class="oe_structure"/>
+            </div>
+        </t>
+    </template>
+</odoo>
