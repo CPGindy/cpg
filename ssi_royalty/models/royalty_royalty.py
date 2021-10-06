@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from datetime import date
+from datetime import date, datetime
 from odoo.tools import float_is_zero
 
 
@@ -31,7 +31,7 @@ class Royalty(models.Model):
     date = fields.Date(string='Date')
     source_document = fields.Char(string='Source Document')
     payment_status = fields.Selection([('rejected', 'Rejected'),('draft', 'New'),('reported', 'Reported')],
-                                      string='Payment Status', track_visibility="onchange", readonly=True)
+                                      string='Payment Status', track_visibility="onchange", readonly=True, default='draft')
     royalty_rate = fields.Float(string='Royalty Rate')
     royalty_value = fields.Float(string='Royalty Value')
     royalty_report_id = fields.Many2one('ssi_royalty.report', string='Royalty Report')
@@ -143,6 +143,16 @@ class RoyaltyReport(models.Model):
     advanced_payment = fields.Float(string='Advanced Payment', compute='_compute_advanced_paid')
     remaining_balance = fields.Float(string='Remaining Balance', compute='_compute_remaining_balance')
     paid_by_vendor_bill = fields.Float(string='Paid By Vendor Bill')
+    date_year = fields.Integer(string='Year of the Date (used in reporting)', compute="_compute_dates", store=True)
+    date_month = fields.Integer(string="Month of the Date (used in reporting)", compute="_compute_dates", store=True)
+
+    @api.depends('report_date')
+    def _compute_dates(self):
+        for rec in self:
+            rec.date_year = rec.report_date.year
+            rec.date_month = rec.report_date.month
+            # self.date_year = int(datetime.strptime(self.report_date, '%Y-%m-%d %H:%M:%S').year)
+            # self.date_month = int(datetime.strptime(self.report_date, '%Y-%m-%d %H:%M:%S').month)
 
     @api.depends('royalty_line_id')
     def _compute_total_due(self):
