@@ -38,6 +38,7 @@
                     <div style="border-bottom: 1px solid black;"/>
                 </div>
             </div>
+            <t t-set="licensors" t-value="set([line.licensor_id for line in doc.royalty_line_id])"/>
             <div class="page">
                 <div class="oe_structure"/>
 
@@ -45,58 +46,63 @@
                     <span t-field="doc.name"/>
                 </h2>
 
-                <div class="row mt32 mb32" id="details">
+                <t t-foreach="licensors" t-as="licensor">
+                    <t t-set="lines" t-value="[line for line in doc.royalty_line_id if line.licensor_id.id == licensor.id]"/>
+                    <t t-set="unique_products" t-value="set([line.license_product_id.id for line in lines])"/>
+                    <div class="container row" id="details"  style="margin-bottom: 20px; margin-top: 100px;">
+                        <h4 t-esc="licensor.name"/>
+                    </div>
 
-                </div>
-
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" style="width: 10%;">Art</th>
-                            <th scope="col" style="width: 20%;">Product</th>
-                            <th scope="col" style="width: 10%;">Licensor Art ID</th>
-                            <th scope="col" style="width: 10%;">Sales</th>
-                            <th scope="col" style="width: 10%;">Royalty %</th>
-                            <th scope="col" style="width: 10%;">Royalty $</th>
-                            <th scope="col" style="width: 10%;">Less Adv</th>
-                            <th scope="col" style="width: 10%;">Adv Paid Dt</th>
-                            <th scope="col" style="width: 10%;">Net</th>
-                        </tr>
-                    </thead>
-                    <tbody class="">
-                        <t t-foreach="doc.royalty_line_id" t-as="line">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>
-                                    <span t-field="line.licensed_item"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.license_product_id"/>
-                                </td>
-                                <td>
-                                    <!-- Licensor Art ID (not sure what this is yet) -->
-                                </td>
-                                <td>
-                                    <span>$</span><span t-esc="'{:.2f}'.format(line.item_value)"/>
-                                </td>
-                                <td>
-                                    <span t-esc="line.royalty_rate * 100"/><span>%</span>
-                                </td>
-                                <td>
-                                    <span>$</span><span t-esc="'{:.2f}'.format(line.royalty_value)"/>
-                                </td>
-                                <td>
-                                    <!-- Pool Value (not sure how this is to be calculated yet) -->
-                                </td>
-                                <td>
-                                    <!-- Adv Paid Dt (not sure what this is yet) -->
-                                </td>
-                                <td>
-                                    <!-- Subtotal (not sure how this is to be calculated yet) -->
-                                </td>
+                                <th scope="col" style="width: 10%;">Art</th>
+                                <th scope="col" style="width: 20%;">Product</th>
+                                <th scope="col" style="width: 10%;">Licensor Art ID</th>
+                                <th scope="col" style="width: 10%;">Sales</th>
+                                <th scope="col" style="width: 10%;">Royalty %</th>
+                                <th scope="col" style="width: 10%;">Royalty $</th>
+                                <th scope="col" style="width: 10%;">Less Adv</th>
+                                <th scope="col" style="width: 10%;">Adv Paid Dt</th>
+                                <th scope="col" style="width: 10%;">Net</th>
                             </tr>
-                        </t>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="">
+                            <t t-foreach="unique_products" t-as="product">
+                                <t t-set="line" t-value="[l for l in lines if l.license_product_id.id == product][0]"/>
+                                <tr>
+                                    <td>
+                                        <span t-field="line.licensed_item"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.license_product_id"/>
+                                    </td>
+                                    <td>
+                                        <!-- Licensor Art ID (not sure what this is yet) -->
+                                    </td>
+                                    <td>
+                                        <span>$</span><span t-esc="'{:.2f}'.format(sum([l.item_value for l in lines if l.license_product_id.id == product]))"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="round(line.royalty_rate * 100, 2)"/><span>%</span>
+                                    </td>
+                                    <td>
+                                        <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines if l.license_product_id.id == product]))"/>
+                                    </td>
+                                    <td>
+                                        <!-- Pool Value (not sure how this is to be calculated yet) -->
+                                    </td>
+                                    <td>
+                                        <!-- Adv Paid Dt (not sure what this is yet) -->
+                                    </td>
+                                    <td>
+                                        <!-- Subtotal (not sure how this is to be calculated yet) -->
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
 
                 <div class="oe_structure"/>
             </div>
