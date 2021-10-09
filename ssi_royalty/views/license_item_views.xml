@@ -49,6 +49,7 @@
                               <field name="name" />
                            </tree>
                         </field>
+                        <field name="licensor_ref"/>
                      </group>
                   </group>
                   <notebook>
