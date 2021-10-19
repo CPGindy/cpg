@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ssi_packing_ssi_packing,ssi_packing.ssi_packing,model_ssi_packing_ssi_packing,base.group_user,1,1,1,1
+access_packing_detail,packing.detail,model_packing_detail,base.group_user,1,1,1,1
+access_packing_detail_line,packing.detail.line,model_packing_detail_line,base.group_user,1,1,1,1
