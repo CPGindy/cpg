@@ -14,10 +14,12 @@
     'category': 'SSI',
     'version': '0.1.0',
 
-    'depends': ['base', 'sale'],
+    'depends': ['base', 'sale', 'delivery'],
 
     'data': [
         'security/ir.model.access.csv',
+        'views/packing_detail_views.xml',
+        'data/ir_sequence_data.xml',
         # 'views/views.xml',
     ],
     

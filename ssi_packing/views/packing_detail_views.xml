@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+
+      <record model="ir.ui.view" id="view_packing_detail_list">
+         <field name="name">packing.detail.list</field>
+         <field name="model">packing.detail</field>
+         <field name="arch" type="xml">
+            <tree>
+               <field name="picking_id" />
+               <field name="carrier_id" />
+               <field name="tracking_ref" />
+               <field name="sale_id" />
+               <field name="partner_id" />
+               <field name="delivery_address" optional="hide"/>
+               <!-- <field name="freight_terms"/> -->
+               <field name="store_number" />
+               <field name="po_number" />
+               <field name="sequence_number" optional="hide"/>
+               <field name="invoice_number" optional="hide"/>
+               <field name="dont_ship_before" optional="hide"/>
+               <field name="individual_product_cases" optional="hide"/>
+               <field name="number_of_carton_ship" optional="hide"/>
+               <field name="total_qty_ordered" />
+               <field name="total_qty_shipped" />
+               <field name="vendor_number" optional="hide"/>
+            </tree>
+         </field>
+      </record>
+        <record id="view_packing_detail_form" model="ir.ui.view">
+            <field name="name">packing.detail.view.form</field>
+            <field name="model">packing.detail</field>
+            <field name="arch" type="xml">
+                <form string="Packing Detail">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}" options="{&quot;always_reload&quot;: True}"/>
+                                <field name="delivery_address"/>
+                                <field name="sale_id"/>
+                                <field name="picking_id"/>
+                                <field name="carrier_id"/>
+                                <field name="tracking_ref"/>
+                                <field name="store_number"/>
+                                <field name="po_number"/>
+                            </group>
+                            <group>
+                                <field name="sequence_number"/>
+                                <field name="invoice_number"/>
+                                <field name="dont_ship_before"/>
+                                <field name="individual_product_cases"/>
+                                <field name="number_of_carton_ship"/>
+                                <field name="total_qty_ordered"/>
+                                <field name="total_qty_shipped"/>
+                                <field name="vendor_number"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Packing Detail Lines">
+                                <field name="detail_line">
+                                    <tree editable="bottom">
+                                        <field name="product_id" />
+                                        <field name="sku_lookup_id" />
+                                        <field name="case_pack" />
+                                        <field name="carton_number" />
+                                        <field name="order_qty"/>
+                                        <field name="product_description" />
+                                        <field name="ship_qty" />
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" />
+                        <field name="activity_ids" />
+                        <field name="message_ids" />
+                    </div>
+                </form>
+            </field>
+        </record>
+
+      <record model="ir.ui.view" id="view_packing_detail_line_list">
+         <field name="name">packing.detail.line.list</field>
+         <field name="model">packing.detail.line</field>
+         <field name="arch" type="xml">
+            <tree editable="bottom">
+               <field name="product_id" />
+               <field name="sku_lookup_id" />
+               <field name="case_pack" />
+               <field name="carton_number" />
+               <field name="order_qty" />
+               <field name="ship_qty"/>
+               <field name="product_description" />
+               <field name="packing_id" />
+            </tree>
+         </field>
+      </record>
+       
+      <!-- actions opening views on models -->
+      <record model="ir.actions.act_window" id="ssi_packing.action_window_open_packing_detail">
+         <field name="name">Packing Detail</field>
+         <field name="res_model">packing.detail</field>
+         <field name="view_mode">tree,form</field>
+      </record>
+
+        <record model="ir.actions.act_window" id="ssi_packing.action_window_open_packing_detail_line">
+         <field name="name">Packing Detail Line</field>
+         <field name="res_model">packing.detail.line</field>
+         <field name="view_mode">tree</field>
+        </record>
+
+      <record id="packing_detail_line_view_search" model="ir.ui.view">
+         <field name="name">packing.detail.line.search</field>
+         <field name="model">packing.detail.line</field>
+         <field name="arch" type="xml">
+            <search string="Search Packing Detail Line">
+               <field name="product_id" />
+               <field name="sku_lookup_id" />
+               <field name="carton_number" />
+               <field name="packing_id" />
+               <group expand="0" string="Group By">
+                  <filter string="Product" name="product_id" context="{'group_by': 'product_id'}" />
+                  <filter string="Customer SKU's" name="sku_lookup_id" context="{'group_by': 'sku_lookup_id'}" />
+                  <filter string="Packing" name="packing_id" context="{'group_by': 'packing_id'}" />
+               </group>
+            </search>
+         </field>
+      </record>
+       
+      <record id="packing_detail_view_search" model="ir.ui.view">
+         <field name="name">packing.detail.search</field>
+         <field name="model">packing.detail</field>
+         <field name="arch" type="xml">
+            <search string="Search Packing Detail">
+               <field name="picking_id" />
+               <field name="carrier_id" />
+               <field name="sale_id" />
+               <field name="partner_id" />
+               <field name="po_number" />
+               <field name="sequence_number" />
+               <field name="invoice_number" />
+               <group expand="0" string="Group By">
+                  <filter string="Delivery" name="picking_id" context="{'group_by': 'picking_id'}" />
+                  <filter string="Carrier" name="carrier_id" context="{'group_by': 'carrier_id'}" />
+                  <filter string="Sales" name="sale_id" context="{'group_by': 'sale_id'}" />
+                  <filter string="Customer" name="partner_id" context="{'group_by': 'partner_id'}" />
+               </group>
+            </search>
+         </field>
+      </record>
+       
+      <!-- actions -->
+      <menuitem name="Packing" id="ssi_packing.packing_menu" parent="sale.sale_menu_root" sequence="6"/>
+      <menuitem name="Packing Detail" id="ssi_packing.packing_detail_list" parent="ssi_packing.packing_menu" action="ssi_packing.action_window_open_packing_detail" />
+      <menuitem name="Packing Detail Line" id="ssi_packing.packing_detail_line_list" parent="ssi_packing.packing_menu" action="ssi_packing.action_window_open_packing_detail_line" />
+       
+   </data>
+</odoo>

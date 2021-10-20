@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sequence_packing_detail" model="ir.sequence">
+            <field name="name">Packing sequence</field>
+            <field name="code">packing.detail.sequence</field>
+            <field name="prefix">PACKDTL</field>
+            <field name="padding">4</field>
+            <field eval="False" name="company_id"/>
+        </record>
+    </data>
+</odoo>
+    

@@ -1,10 +1,13 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class PackingDetail(models.Model):
-    _name = 'packing.detail'
-    _description = "Packing Detail" 
+    _name = 'packing.detail' 
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _description = "Packing Detail"
+    _rec_name = 'name'
 
+    name = fields.Char(string='Packing', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     is_active = fields.Boolean(string="Is Active")
     picking_id = fields.Many2one('stock.picking', string="Delivery")
     carrier_id = fields.Many2one('delivery.carrier', related='picking_id.carrier_id', string="Carrier")
@@ -27,6 +30,11 @@ class PackingDetail(models.Model):
     vendor_number = fields.Char(related='sale_id.vendor_number', string="Vendor Number")
     detail_line = fields.One2many('packing.detail.line', 'packing_id', string="Packing Detail Line")
 
+    @api.model
+    def create(self, vals):
+        if vals.get('name', _('New')) == _('New'):
+            vals['name'] = self.env['ir.sequence'].next_by_code('packing.detail.sequence') or _('New')
+        return super(PackingDetail, self).create(vals)
 
 
 class PackingDetailLine(models.Model):
@@ -40,5 +48,5 @@ class PackingDetailLine(models.Model):
     order_qty = fields.Integer(string="Order Qty")
     ship_qty = fields.Integer(string="Ship Qty")
     product_description = fields.Text(related='product_id.description', string="Product Description")
-    packing_id = fields.Many2one('packing.detail', string="Packing Detail")
+    packing_id = fields.Many2one('packing.detail',required="True", ondelete='cascade', string="Packing Detail")
 
