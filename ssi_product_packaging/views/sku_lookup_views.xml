@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+       
+      <record model="ir.ui.view" id="customer_sku_lookup">
+         <field name="name">customer.sku.lookup.list</field>
+         <field name="model">sku.lookup</field>
+         <field name="arch" type="xml">
+            <tree editable="bottom">
+               <field name="product_id" />
+               <field name="customer_sku" />
+               <field name="partner_id" />
+            </tree>
+         </field>
+      </record>
+       
+      <!-- actions opening views on models -->
+      <record model="ir.actions.act_window" id="ssi_product_packaging.action_window_open_customer_sku">
+         <field name="name">Customer SKU's</field>
+         <field name="res_model">sku.lookup</field>
+         <field name="view_mode">tree</field>
+      </record>
+       
+      <record id="customer_sku_lookup_view_search" model="ir.ui.view">
+         <field name="name">customer.sku.lookup.search</field>
+         <field name="model">sku.lookup</field>
+         <field name="arch" type="xml">
+            <search string="Search Customer SKU's">
+               <field name="product_id" />
+               <field name="customer_sku" />
+               <field name="partner_id" />
+               <group expand="0" string="Group By">
+                  <filter string="Product" name="product_id" context="{'group_by': 'product_id'}" />
+                  <filter string="Customer SKU's" name="customer_sku" context="{'group_by': 'customer_sku'}" />
+                  <filter string="Customer" name="partner_id" context="{'group_by': 'partner_id'}" />
+               </group>
+            </search>
+         </field>
+      </record>
+       
+      <!-- actions -->
+      <menuitem name="Customer SKU's" id="ssi_product_packaging.sku_lookup_list" parent="stock.menu_stock_inventory_control" groups="stock.group_stock_user" action="ssi_product_packaging.action_window_open_customer_sku" />
+       
+   </data>
+</odoo>
