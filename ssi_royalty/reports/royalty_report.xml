@@ -67,7 +67,7 @@
                                 <th scope="col" style="width: 10%;">Royalty $</th>
                                 <!-- <th scope="col" style="width: 10%;">Less Adv</th>
                                 <th scope="col" style="width: 10%;">Adv Paid Dt</th> -->
-                                <th scope="col" style="width: 10%;">Net</th>
+                                <th scope="col" style="width: 10%;" class="text-right">Net</th>
                             </tr>
                         </thead>
                         <tbody class="">
@@ -105,14 +105,20 @@
                                 </tr>
                             </t>
                             <tr>
-                                <td colspan="3" style="border-right: none; border-left: none; border-bottom: none;"/>
-                                <td name="td_amount_total_label" colspan="2"><strong>Subtotal</strong></td>
-                                <td name="td_amount_total" colspan="2" class="text-right">
+                                <td name="td_amount_subtotals" colspan="3" style="border-top-color: black;"><strong>Subtotals</strong></td>
+                                <td name="td_amount_subtotal_sales" colspan="1" style="border-top-color: black;" class="text-right">
+                                    <span>$</span><span t-esc="'{:.2f}'.format(sum([l.item_value for l in lines]))"/>
+                                </td>
+                                <td colspan="1" style="border-top-color: black; border-right: none; border-left: none; border-bottom: none;"/>
+                                <td name="td_amount_subtotal_royalty" colspan="1" style="border-top-color: black;" class="text-right">
+                                    <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
+                                </td>
+                                <td name="td_amount_subtotal" colspan="1" class="text-right" style="border-top-color: black;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="3" style="border: none;"/>
+                                <td colspan="3" style="border-right: none; border-left: none; border-bottom: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Less Pool Value</strong></td>
                                 <td name="td_amount_total" colspan="2" class="text-right text-danger">
                                     <span>- $</span><span t-esc="'{:.2f}'.format(doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance)"/>
@@ -124,6 +130,14 @@
                                 <td name="td_amount_total_label" colspan="2"><strong>Total</strong></td>
                                 <td name="td_amount_total" colspan="2" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(total if total > 0 else 0)"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <t t-set="remaining" t-value="doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance - sum([l.royalty_value for l in lines])"/>
+                                <td colspan="3" style="border: none;"/>
+                                <td name="td_amount_total_label" colspan="2"><strong>Pool Balance</strong></td>
+                                <td name="td_amount_total" colspan="2" class="text-right">
+                                    <span>$</span><span t-esc="'{:.2f}'.format(remaining if remaining > 0 else 0)"/>
                                 </td>
                             </tr>
                         </tbody>

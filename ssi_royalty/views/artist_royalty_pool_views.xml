@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-       
+
         <record model="ir.ui.view" id="ssi_royalty_pool_view_list">
             <field name="name">ssi_royalty.pool.view.list</field>
             <field name="model">ssi_royalty.pool</field>
@@ -13,7 +13,7 @@
                 </tree>
             </field>
         </record>
-       
+
         <record id="ssi_royalty_pool_view_form" model="ir.ui.view">
             <field name="name">ssi_royalty.pool.view.form</field>
             <field name="model">ssi_royalty.pool</field>
@@ -39,6 +39,9 @@
                                             <field name="value_type"/>
                                             <field name="value"/>
                                             <field name="pool_value"/>
+                                            <field name="art_id"/>
+                                            <field name="first_sale_date"/>
+                                            <field name="is_active"/>
                                         </tree>
                                     </field>
                                 </group>
@@ -53,7 +56,7 @@
                 </form>
             </field>
         </record>
-       
+
         <record id="ssi_royalty_pool_search" model="ir.ui.view">
             <field name="name">ssi.royalty.pool.search</field>
             <field name="model">ssi_royalty.pool</field>
@@ -68,14 +71,14 @@
                 </search>
             </field>
         </record>
-       
+
         <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_royalty_pool">
             <field name="name">Artist Pool</field>
             <field name="res_model">ssi_royalty.pool</field>
             <field name="view_mode">tree,form</field>
         </record>
-       
+
         <menuitem name="Artist Pool" id="ssi_royalty.royalty_pool_menu" parent="ssi_royalty.royalty" action="ssi_royalty.action_window_open_royalty_pool" />
-       
+
     </data>
 </odoo>

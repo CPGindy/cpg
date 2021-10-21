@@ -42,11 +42,27 @@ class Royalty(models.Model):
         default=_default_account_id, domain="[('company_id', '=', company_id)]", help="A royalty account is expected")
     is_report_approved = fields.Boolean(string='Is Report Approved')
 
+    @api.onchange('type')
+    def _onchange_type(self):
+        for rec in self:
+            if rec.type == 'sale_on_item':
+                for royalty_line in rec.filtered(lambda l: l.type == "sale_on_item"):
+                    pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
+                    pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', royalty_line.licensed_item.id)])
+                    for pool_line in pool_lines:
+                        pool_line.write({'first_sale_date': datetime.now()})
+
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('royalty.royalty.sequence') or _('New')
-        return super(Royalty, self).create(vals)
+        res = super(Royalty, self).create(vals)
+        for royalty_line in res.filtered(lambda l: l.type == "sale_on_item"):
+            pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
+            pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', royalty_line.licensed_item.id)])
+            for pool_line in pool_lines:
+                pool_line.write({'first_sale_date': datetime.now()})
+        return res
 
     def unlink_from_report(self):
         for rec in self:
@@ -67,7 +83,12 @@ class Royalty(models.Model):
                         'report_date': date.today(),
                         'royalty_line_id' : royalty_line
                     }
-                    self.env['ssi_royalty.report'].create(header_vals)
+                    search_report = self.env['ssi_royalty.report'].create(header_vals)
+                for royalty_line in search_report.royalty_line_id.filtered(lambda l: l.type == "sale_on_item"):
+                    pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
+                    pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', royalty_line.licensed_item.id)])
+                    for pool_line in pool_lines:
+                        pool_line.write({'first_sale_date': datetime.now()})
             else:
                 raise UserError(_('Please Select Licensor Before Generating Report'))
             rec.payment_status = 'reported'
@@ -191,7 +212,8 @@ class RoyaltyReport(models.Model):
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('royalty.report.sequence') or _('New')
-        return super(RoyaltyReport, self).create(vals)
+        res = super(RoyaltyReport, self).create(vals)
+        return res
 
     def unlink(self):
         for rec in self.filtered(lambda a: a.status != 'draft'):

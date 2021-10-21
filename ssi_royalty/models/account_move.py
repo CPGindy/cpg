@@ -8,8 +8,8 @@ from datetime import date
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
-    
-    
+
+
     def _post(self, soft=True):
         posted = super()._post(soft=soft)
 #         search_royalty = self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', '=', posted.id)])
@@ -26,11 +26,17 @@ class AccountMove(models.Model):
                         pro.product_id.bom_ids and pro.product_id.bom_ids[0].type == "phantom"
                     ) and pro.move_id.move_type != 'in_invoice'
                 ):
+                    # royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
+                    #     lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
+                    # ))
                     royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
-                        lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
+                        lambda license: license.license_item_id.is_active
                     ))
+                    # for lic_prod in invoice_line.product_id.license_product.filtered(
+                    #     lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
+                    # ):
                     for lic_prod in invoice_line.product_id.license_product.filtered(
-                        lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
+                        lambda license: license.license_item_id.is_active
                     ):
                         data = {
                             'licensed_item' : lic_prod.license_item_id.id,
@@ -50,7 +56,7 @@ class AccountMove(models.Model):
                         royalty = self.env['ssi_royalty.ssi_royalty'].create(data)
                         for pool in lic_prod.license_item_id.item_pool_id.filtered(lambda p: not p.first_sale_date and p.status == 'paid'):
                             pool.update({'first_sale_date': date.today()})
-                            
+
                             search_pool_rec = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty.artist_id.id)])
                             if search_pool_rec:
                                 line_vals = {
@@ -68,7 +74,7 @@ class AccountMove(models.Model):
                                    'artist_id': royalty.artist_id.id,
                                    'licensor_id': royalty.licensor_id.id or False,
                                    'balance': 0.0
-                               } 
+                               }
                                pool_id = self.env['ssi_royalty.pool'].create(pool_val)
                                line_vals = {
                                     'pool_id': pool_id.id,
@@ -86,19 +92,19 @@ class AccountMove(models.Model):
                     lambda pro: pro.product_id.bom_ids and pro.product_id.bom_ids[0].type == "phantom" and pro.move_id.move_type != 'in_invoice'
                 ):
                     components = invoice_line.product_id.bom_ids[0].bom_line_ids
-                    
+
                     # calculate amount of components on which a royalty applies
                     royaltable_components = []
                     for component in components:
                         product = component.product_id
                         if any([license.license_item_id.end_date and license.license_item_id.end_date >= date.today() for license in product.license_product]):
                             royaltable_components.append(component)
-                    
+
                     royaltable_amount = float(invoice_line.price_subtotal) / len(royaltable_components)
                     for r_component in royaltable_components:
                         artwork_count = len(r_component.product_id.license_product.filtered(
                             lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()))
-                        
+
                         for lic_prod in r_component.product_id.license_product.filtered(
                             lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
                         ):
@@ -138,7 +144,7 @@ class AccountMove(models.Model):
                                        'artist_id': royalty.artist_id.id,
                                        'licensor_id': royalty.licensor_id.id or False,
                                        'balance': 0.0
-                                   } 
+                                   }
                                    pool_id = self.env['ssi_royalty.pool'].create(pool_val)
                                    line_vals = {
                                         'pool_id': pool_id.id,
@@ -152,9 +158,9 @@ class AccountMove(models.Model):
                                    self.env['ssi_royalty.pool.line'].create(line_vals)
                                    pool_id.update({'balance': line_vals['value']})
         return posted
-    
-    
+
+
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
-    
+
     royalty_id = fields.Many2one('ssi_royalty.ssi_royalty', string='Royalty')
