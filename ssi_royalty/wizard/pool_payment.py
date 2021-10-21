@@ -1,6 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from datetime import date
+from datetime import date, datetime
 
 
 class PoolPaymentLine(models.TransientModel):
@@ -14,6 +14,7 @@ class PoolPaymentLine(models.TransientModel):
     sale_balance = fields.Float(string="Sale Balance", compute="_compute_sale_balance")
     pool_covered = fields.Float(string="Covered by Pool", compute="_compute_pool_covered")
     remaining_balance = fields.Float(string="Remaining Balance", compute="_compute_remaining_balance")
+    license_item_id = fields.Many2one('license.item', string="Art", readonly=True)
 
     @api.depends('balance_to_pay', 'advance_payment')
     def _compute_sale_balance(self):
@@ -77,6 +78,7 @@ class PoolPayment(models.TransientModel):
         # create the vendor bill
         journal = self.vendor_journal_id
         account_date = date.today()
+        payment_terms = self.licensor_id.property_supplier_payment_term_id
         move_values = {
             'journal_id': journal.id,
             'company_id': self.company_id.id,
@@ -85,6 +87,7 @@ class PoolPayment(models.TransientModel):
             'invoice_date': account_date,
             'ref': self.pool_report_id.name,
             'name': '/',
+            'invoice_payment_term_id': payment_terms.id,
         }
         move_rec = self.env['account.move'].create(move_values)
         self.move_id = move_rec.id
@@ -107,16 +110,24 @@ class PoolPayment(models.TransientModel):
 
             # add advance to pool
             if advance > 0:
-                line_vals = {
-                    'date': date.today(),
-                    'memo': self.memo + " On Advance Payment",
-                    'value_type': 'in',
-                    'pool_value': advance,
-                    'value': pool.balance + advance,
-                    'pool_id': pool.id,
-                }
-                self.env['ssi_royalty.pool.line'].create(line_vals)
-                pool.update({'balance': line_vals['value']})
+                for advance_line in lines.filtered(lambda l: l.advance_payment > 0):
+                    line_vals = {
+                        'date': date.today(),
+                        'memo': self.memo + " On Advance Payment",
+                        'value_type': 'in',
+                        'pool_value': advance_line.advance_payment,
+                        'value': pool.balance + advance_line.advance_payment,
+                        'pool_id': pool.id,
+                        'art_id': advance_line.license_item_id,
+                    }
+                    self.env['ssi_royalty.pool.line'].create(line_vals)
+                    # pool.update({'balance': line_vals['value']})
+
+            for sale_line in lines.filtered(lambda l: not l.advance_payment > 0):
+                if sale_line.license_item_id and sale_line.artist_id and sale_line.create_date:
+                    pool_lines = self.env['ssi_royalty.pool.line'].search([('artist_id', '=', sale_line.artist_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', sale_line.license_item_id.id), ('create_date', '<=', sale_line.create_date)])
+                    for pool_line in pool_lines:
+                        pool_line.write({'first_sale_date': datetime.now()})
 
             # subtract total without advance from the pool
             pool_diff = balance - pool.balance
@@ -135,7 +146,7 @@ class PoolPayment(models.TransientModel):
                 'pool_id': pool.id,
             }
             self.env['ssi_royalty.pool.line'].create(line_vals)
-            pool.update({'balance': line_vals['value']})
+            # pool.update({'balance': line_vals['value']})
             paid_by_pool += (balance - remaining_balance)
 
             # create the vendor bill line

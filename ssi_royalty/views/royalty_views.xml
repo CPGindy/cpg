@@ -48,7 +48,7 @@
                         </div>
                         <group>
                             <group>
-                                <field name="licensed_item"/>
+                                <field name="licensed_item" attrs="{'required': [('type', '=', 'advance')]}"/>
                                 <field name="license_product_id"/>
                                 <field name="license_id"/>
                                 <field name="artist_id"/>
