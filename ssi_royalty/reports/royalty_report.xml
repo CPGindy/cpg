@@ -50,21 +50,30 @@
                 </h6>
 
                 <t t-foreach="artists" t-as="artist">
+                    <!-- Set variables -->
                     <t t-set="lines" t-value="[line for line in doc.royalty_line_id if line.artist_id.id == artist.id]"/>
                     <t t-set="unique_products" t-value="set([line.license_product_id.id for line in lines])"/>
-                    <div class="container row" id="details"  style="margin-bottom: 20px; margin-top: 80px;">
+                    <!-- Amount paid by pool -->
+                    <t t-set="paid_by_pool" t-value="sum([line.pool_value for line in doc.sudo().env['ssi_royalty.pool.line'].search([('pool_id', '=', doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).id), ('value_type', '=', 'out'), ('reference', '=', doc.id)])])"/>
+                    <!-- Newly allowed advances -->
+                    <t t-set="first_report_date" t-value="doc.royalty_line_id[0].date"/>
+                    <t t-set="last_report_date" t-value="doc.royalty_line_id[-1].date"/>
+                    <t t-set="pool_ins" t-value="doc.sudo().env['ssi_royalty.pool.line'].search([('pool_id', '=', doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).id), ('value_type', '=', 'in'), ('first_sale_date', '&lt;=', last_report_date), ('first_sale_date', '&gt;=', first_report_date)])"/>
+
+                    <div class="container row" id="details" style="margin-bottom: 20px; margin-top: 80px;">
                         <h4 t-esc="artist.name"/>
                     </div>
 
                     <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col" style="width: 10%;">Art</th>
+                                <th scope="col" style="width: 10%;">Type</th>
+                                <th scope="col" style="width: 15%;">Art</th>
                                 <th scope="col" style="width: 20%;">Product</th>
-                                <th scope="col" style="width: 10%;">Licensor Art ID</th>
-                                <th scope="col" style="width: 10%;">Sales</th>
-                                <th scope="col" style="width: 10%;">Royalty %</th>
-                                <th scope="col" style="width: 10%;">Royalty $</th>
+                                <th scope="col" style="width: 10%;">Art Ref</th>
+                                <th scope="col" style="width: 10%;" class="text-right">Sales</th>
+                                <th scope="col" style="width: 15%;" class="text-right">Royalty %</th>
+                                <!-- <th scope="col" style="width: 10%;">Royalty $</th> -->
                                 <!-- <th scope="col" style="width: 10%;">Less Adv</th>
                                 <th scope="col" style="width: 10%;">Adv Paid Dt</th> -->
                                 <th scope="col" style="width: 10%;" class="text-right">Net</th>
@@ -74,6 +83,9 @@
                             <t t-foreach="unique_products" t-as="product">
                                 <t t-set="line" t-value="[l for l in lines if l.license_product_id.id == product][0]"/>
                                 <tr>
+                                    <td>
+                                        <span t-esc="'Sale' if line.type == 'sale_on_item' else 'Advance'"/>
+                                    </td>
                                     <td>
                                         <span t-field="line.licensed_item"/>
                                     </td>
@@ -89,9 +101,9 @@
                                     <td style="text-align: right;">
                                         <span t-esc="round(line.royalty_rate * 100, 2)"/><span>%</span>
                                     </td>
-                                    <td style="text-align: right;">
+                                    <!-- <td style="text-align: right;">
                                         <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines if l.license_product_id.id == product]))"/>
-                                    </td>
+                                    </td> -->
                                     <!-- <td>
                                         Pool Value (not sure how this is to be calculated yet)
                                     </td>
@@ -105,27 +117,29 @@
                                 </tr>
                             </t>
                             <tr>
-                                <td name="td_amount_subtotals" colspan="3" style="border-top-color: black;"><strong>Subtotals</strong></td>
+                                <td name="td_amount_subtotals" colspan="4" style="border-top-color: black;"><strong>Subtotals</strong></td>
                                 <td name="td_amount_subtotal_sales" colspan="1" style="border-top-color: black;" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.item_value for l in lines]))"/>
                                 </td>
                                 <td colspan="1" style="border-top-color: black; border-right: none; border-left: none; border-bottom: none;"/>
-                                <td name="td_amount_subtotal_royalty" colspan="1" style="border-top-color: black;" class="text-right">
+                                <!-- <td name="td_amount_subtotal_royalty" colspan="1" style="border-top-color: black;" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
-                                </td>
+                                </td> -->
                                 <td name="td_amount_subtotal" colspan="1" class="text-right" style="border-top-color: black;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="3" style="border-right: none; border-left: none; border-bottom: none;"/>
-                                <td name="td_amount_total_label" colspan="2"><strong>Less Pool Value</strong></td>
+                                <td name="td_amount_total_label" colspan="2"><strong>Paid by Pool</strong></td>
                                 <td name="td_amount_total" colspan="2" class="text-right text-danger">
-                                    <span>- $</span><span t-esc="'{:.2f}'.format(doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance)"/>
+                                    <span>- $</span><span t-esc="'{:.2f}'.format(paid_by_pool)"/>
+                                    <!-- <span>- $</span><span t-esc="'{:.2f}'.format(doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance + paid_by_pool)"/> -->
                                 </td>
                             </tr>
                             <tr>
-                                <t t-set="total" t-value="sum([l.royalty_value for l in lines]) - doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance"/>
+                                <t t-set="total" t-value="sum([l.royalty_value for l in lines]) - paid_by_pool"/>
+                                <!-- <t t-set="total" t-value="sum([l.royalty_value for l in lines]) - doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance + paid_by_pool"/> -->
                                 <td colspan="3" style="border: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Total</strong></td>
                                 <td name="td_amount_total" colspan="2" class="text-right">
@@ -133,11 +147,52 @@
                                 </td>
                             </tr>
                             <tr>
-                                <t t-set="remaining" t-value="doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance - sum([l.royalty_value for l in lines])"/>
+                                <t t-set="remaining" t-value="doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance"/>
                                 <td colspan="3" style="border: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Pool Balance</strong></td>
                                 <td name="td_amount_total" colspan="2" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(remaining if remaining > 0 else 0)"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="container row" id="new_advances" style="margin-bottom: 20px; margin-top: 20px;" t-if="pool_ins">
+                        <h5>Newly Allowed Advances</h5>
+                    </div>
+
+                    <table class="table" t-if="pool_ins">
+                        <thead>
+                            <tr>
+                                <th scope="col">First Sale Date</th>
+                                <th scope="col">Art</th>
+                                <th scope="col">Royalty Report</th>
+                                <th scope="col">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody class="">
+                            <t t-foreach="pool_ins" t-as="pool_in">
+                                <tr>
+                                    <td>
+                                        <span t-field="pool_in.first_sale_date"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="pool_in.art_id"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="pool_in.reference.name"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span>$</span><span t-esc="'{:.2f}'.format(pool_in.pool_value)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <t t-set="total" t-value="sum([line.pool_value for line in pool_ins])"/>
+                                <td colspan="1" style="border-top-color: black; border-bottom: none; border-right: none; border-left: none;"/>
+                                <td name="td_amount_total_label" colspan="2" style="border-top-color: black;"><strong>Total</strong></td>
+                                <td name="td_amount_total" colspan="1" class="text-right" style="border-top-color: black;">
+                                    <span>$</span><span t-esc="'{:.2f}'.format(total if total > 0 else 0)"/>
                                 </td>
                             </tr>
                         </tbody>
