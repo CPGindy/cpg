@@ -22,7 +22,7 @@
         <field name="binding_type">report</field>
     </record>
 
-    <template id="royalty_report" name="PDF Royalty Report">
+    <template id="royalty_report_main" name="PDF Royalty Report">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-set="company" t-value="doc.env.company"/>
