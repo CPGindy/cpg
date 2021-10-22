@@ -114,18 +114,20 @@ class PoolPayment(models.TransientModel):
                     line_vals = {
                         'date': date.today(),
                         'memo': self.memo + " On Advance Payment",
+                        'reference': self.pool_report_id.id,
                         'value_type': 'in',
                         'pool_value': advance_line.advance_payment,
                         'value': pool.balance + advance_line.advance_payment,
                         'pool_id': pool.id,
-                        'art_id': advance_line.license_item_id,
+                        'art_id': advance_line.license_item_id.id,
                     }
                     self.env['ssi_royalty.pool.line'].create(line_vals)
                     # pool.update({'balance': line_vals['value']})
 
             for sale_line in lines.filtered(lambda l: not l.advance_payment > 0):
                 if sale_line.license_item_id and sale_line.artist_id and sale_line.create_date:
-                    pool_lines = self.env['ssi_royalty.pool.line'].search([('artist_id', '=', sale_line.artist_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', sale_line.license_item_id.id), ('create_date', '<=', sale_line.create_date)])
+                    pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', sale_line.artist_id.id)])
+                    pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', sale_line.license_item_id.id), ('create_date', '<=', sale_line.create_date)])
                     for pool_line in pool_lines:
                         pool_line.write({'first_sale_date': datetime.now()})
 
@@ -140,6 +142,7 @@ class PoolPayment(models.TransientModel):
             line_vals = {
                 'date' : date.today(),
                 'memo': self.memo,
+                'reference': self.pool_report_id.id,
                 'value_type': 'out',
                 'pool_value': balance - remaining_balance,
                 'value': remaining_pool,
