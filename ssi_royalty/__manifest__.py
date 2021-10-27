@@ -43,4 +43,7 @@
     ],
     'installable': True,
     'application': True,
+    'cloc_exclude': [
+        "./**/*"
+    ]
 }
