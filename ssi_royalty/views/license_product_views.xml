@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+       
+      <record model="ir.ui.view" id="license_product_view_list">
+         <field name="name">license.product.view.list</field>
+         <field name="model">license.product</field>
+         <field name="arch" type="xml">
+            <tree>
+               <field name="license_item_id" />
+               <field name="product_id" />
+               <field name="royalty_rate" widget="percentage" />
+            </tree>
+         </field>
+      </record>
+       
+      <record id="license_product_view_form" model="ir.ui.view">
+         <field name="name">license.product.view.form</field>
+         <field name="model">license.product</field>
+         <field name="arch" type="xml">
+            <form string="License Product">
+               <sheet>
+                  <group>
+                     <group>
+                        <field name="product_id" />
+                        <field name="license_item_id" />
+                     </group>
+                     <group>
+                        <field name="royalty_rate" widget="percentage" />
+                     </group>
+                  </group>
+               </sheet>
+               <div class="oe_chatter">
+                  <field name="message_follower_ids" />
+                  <field name="activity_ids" />
+                  <field name="message_ids" />
+               </div>
+            </form>
+         </field>
+      </record>
+       
+      <record id="license_product_view_search" model="ir.ui.view">
+         <field name="name">license.product.view.search</field>
+         <field name="model">license.product</field>
+         <field name="arch" type="xml">
+            <search string="Search License Product">
+               <field name="product_id" />
+               <field name="license_item_id" />
+               <group expand="0" string="Group By">
+                  <filter string="License Item" name="license_item_id" context="{'group_by': 'license_item_id'}" />
+                  <filter string="Product" name="product_id" context="{'group_by': 'product_id'}" />
+               </group>
+            </search>
+         </field>
+      </record>
+       
+      <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_license_product">
+         <field name="name">Licensed Product</field>
+         <field name="res_model">license.product</field>
+         <field name="view_mode">tree,form</field>
+      </record>
+       
+      <menuitem name="Licensed Product" id="ssi_royalty.license_product_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_product" />
+   </data>
+</odoo>

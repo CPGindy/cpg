@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <record id="ssi_sale_order_views_inherit" model="ir.ui.view">
+      <field name="name">ssi.sale.order.views.inherit</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form" />
+      <field name="arch" type="xml">
+          <xpath expr="//field[@name='payment_term_id']" position="after">
+            <field name="product_packaging_id"/>
+          </xpath>
+          <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='order_lines']/field[@name='order_line']/tree[1]/field[@name='name']" position="after">
+            <field name="product_packaging_id"/>
+          </xpath>
+      </field>
+   </record>
+</odoo>

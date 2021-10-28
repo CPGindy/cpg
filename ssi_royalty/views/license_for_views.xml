@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+       
+      <record model="ir.ui.view" id="license_category_view_list">
+         <field name="name">license.category.view.list</field>
+         <field name="model">license.category</field>
+         <field name="arch" type="xml">
+            <tree editable="bottom">
+               <field name="name" />
+            </tree>
+         </field>
+      </record>
+       
+      <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_license_for">
+         <field name="name">License For</field>
+         <field name="res_model">license.category</field>
+         <field name="view_mode">tree</field>
+      </record>
+       
+      <menuitem name="License For" id="ssi_royalty.license_for_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_for" />
+       
+   </data>
+</odoo>

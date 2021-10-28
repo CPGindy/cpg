@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <record id="ssi_mrp_bom_views_inherit" model="ir.ui.view">
+      <field name="name">ssi.mrp.bom.views.inherit</field>
+      <field name="model">mrp.bom</field>
+      <field name="inherit_id" ref="mrp.mrp_bom_form_view" />
+      <field name="arch" type="xml">
+          <xpath expr="//form[1]/sheet[1]/group[1]/group[2]/field[@name='company_id']" position="after">
+            <field name="product_packaging_id"/>
+          </xpath>
+      </field>
+   </record>
+</odoo>
