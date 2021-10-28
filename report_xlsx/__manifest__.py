@@ -14,4 +14,5 @@
     "data": ["views/webclient_templates.xml"],
     "demo": ["demo/report.xml"],
     "installable": True,
+    'cloc_exclude': ["./**/*"],
 }

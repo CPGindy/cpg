@@ -260,6 +260,7 @@ class RoyaltyReport(models.Model):
                 'balance_to_pay': line.royalty_value,
                 'available_balance': available_balance,
                 'advance_payment': advance,
+                'license_item_id': line.licensed_item.id,
             }
             if line.artist_id.id in artists.keys():
                 payment_line = artists[line.artist_id.id]
@@ -267,7 +268,7 @@ class RoyaltyReport(models.Model):
                 payment_line.advance_payment += vals['advance_payment']
             else:
                 payment_line = self.env['pool.payment.line'].create(vals)
-                artists.update({line.artist_id.id: payment_line})
+                artists.update({line.licensed_item.id: payment_line})
         payment.write({
             'balance_to_pay': sum([max([line.balance_to_pay - line.available_balance, 0]) for line in payment.pool_payment_line_ids])
         })
