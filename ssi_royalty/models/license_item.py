@@ -16,7 +16,7 @@ class LicenseItem(models.Model):
 #     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, index=True)
     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     reference_image = fields.Binary(string='Reference Image')
-    is_active = fields.Boolean(string='Is Active')
+    license_status = fields.Selection([('active', 'Active'),('inactive', 'Inactive'),('pending', 'Pending'),('revise', 'Revise')],default='active', string='Status')
     territory = fields.Selection([('north_america', 'North America'),('worldwide', 'World Wide')], string='Territory')
     sell_off_date = fields.Date(string='Sale Off Date')
     note = fields.Html(string='Notes')

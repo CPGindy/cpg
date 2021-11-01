@@ -10,6 +10,7 @@
                <field name="art_license_number" />
                <field name="end_date" />
                <field name="territory" />
+               <field name="license_status" />
                <field name="sell_off_date" />
                <field name="license_product_id" />
             </tree>
@@ -43,7 +44,7 @@
                      </group>
                      <group>
                         <field name="sell_off_date" />
-                        <field name="is_active" />
+                        <field name="license_status" />
                         <field name="licensed_for" widget="many2many_tags">
                            <tree string="license.categ">
                               <field name="name" />
@@ -106,9 +107,11 @@
             <search string="Search License Item">
                <field name="license_id" />
                <field name="art_license_number" />
+               <field name="license_status" />
                <field name="territory" />
                <group expand="0" string="Group By">
                   <filter string="License" name="license_id" context="{'group_by': 'license_id'}" />
+                  <filter string="Status" name="license_status" context="{'group_by': 'license_status'}" />
                </group>
             </search>
          </field>
