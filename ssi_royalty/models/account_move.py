@@ -30,15 +30,15 @@ class AccountMove(models.Model):
                         # royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
                         #     lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
                         # ))
-                        if len(invoice_line.product_id.license_product.filtered(lambda license: license.license_item_id.is_active)) > 0:
+                        if len(invoice_line.product_id.license_product.filtered(lambda license: license.license_item_id.license_status in ['active', 'revise'])) > 0:
                             royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
-                                lambda license: license.license_item_id.is_active
+                                lambda license: license.license_item_id.license_status in ['active', 'revise']
                             ))
                             # for lic_prod in invoice_line.product_id.license_product.filtered(
                             #     lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
                             # ):
                             for lic_prod in invoice_line.product_id.license_product.filtered(
-                                lambda license: license.license_item_id.is_active
+                                lambda license: license.license_item_id.license_status in ['active', 'revise']
                             ):
                                 data = {
                                     'licensed_item' : lic_prod.license_item_id.id,
@@ -99,16 +99,16 @@ class AccountMove(models.Model):
                         royaltable_components = []
                         for component in components:
                             product = component.product_id
-                            if any([license.license_item_id.is_active for license in product.license_product]):
+                            if any([license.license_item_id.license_status in ['active', 'revise'] for license in product.license_product]):
                                 royaltable_components.append(component)
 
                         royaltable_amount = float(invoice_line.price_subtotal) / len(royaltable_components)
                         for r_component in royaltable_components:
                             artwork_count = len(r_component.product_id.license_product.filtered(
-                                lambda license: license.license_item_id.is_active))
+                                lambda license: license.license_item_id.license_status in ['active', 'revise']))
 
                             for lic_prod in r_component.product_id.license_product.filtered(
-                                lambda license: license.license_item_id.is_active
+                                lambda license: license.license_item_id.license_status in ['active', 'revise']
                             ):
                                 data = {
                                     'licensed_item' : lic_prod.license_item_id.id,
