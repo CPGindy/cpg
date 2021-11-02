@@ -13,8 +13,8 @@ class LicenseItem(models.Model):
 
     license_product_id = fields.Many2one('license.product', string='Licensed Product')
     end_date = fields.Date(string='End Date')
-#     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, index=True)
-    art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
+    art_license_number = fields.Char(string='Art License Number', required=True, copy=False, index=True, default=lambda self: _('New'))
+#     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     reference_image = fields.Binary(string='Reference Image')
     is_active = fields.Boolean(string='Is Active')
     territory = fields.Selection([('north_america', 'North America'),('worldwide', 'World Wide')], string='Territory')
