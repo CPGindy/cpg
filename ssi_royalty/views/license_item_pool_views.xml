@@ -61,7 +61,7 @@
          <field name="view_mode">tree,form</field>
       </record>
        
-      <menuitem name="Licensed Items Pool" id="ssi_royalty.license_item_pool_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_item_pool" />
+<!--       <menuitem name="Licensed Items Pool" id="ssi_royalty.license_item_pool_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_item_pool" /> -->
        
    </data>
 </odoo>

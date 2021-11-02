@@ -50,7 +50,8 @@ class RoyaltyPoolLine(models.Model):
     pool_value = fields.Float(string='Pool')
     pool_id = fields.Many2one('ssi_royalty.pool', string='Royalty Pool')
     art_id = fields.Many2one('license.item', string="Artwork")
-    first_sale_date = fields.Date(string="First Sale Date", readonly=True)
+    first_sale_date = fields.Date(string="First Sale Date")
+#     first_sale_date = fields.Date(string="First Sale Date", readonly=True)
     is_active = fields.Boolean(string="Is Active", default=False, compute="_compute_active", readonly=True)
 
     @api.depends('first_sale_date')
