@@ -41,6 +41,7 @@
                         <field name="license_id" />
                         <field name="end_date" />
                         <field name="territory" />
+                        <field name="license_type" />
                      </group>
                      <group>
                         <field name="sell_off_date" />

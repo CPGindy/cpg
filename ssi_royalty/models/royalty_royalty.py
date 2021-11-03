@@ -27,7 +27,7 @@ class Royalty(models.Model):
     license_id = fields.Many2one('license.license', string='License')
     artist_id = fields.Many2one('res.partner', string='Artist')
     item_value = fields.Float(string='Item Value')
-    licensor_id = fields.Many2one('res.partner', string='Licensor', related='license_id.licensor_id')
+    licensor_id = fields.Many2one('res.partner', string='Licensor', related='license_id.licensor_id', store=True)
     date = fields.Date(string='Date')
     source_document = fields.Char(string='Source Document')
     payment_status = fields.Selection([('rejected', 'Rejected'),('draft', 'New'),('reported', 'Reported')],
