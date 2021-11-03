@@ -30,7 +30,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Artiist Pool Lines">
+                            <page string="Artist Pool Lines">
                                 <group>
                                     <field name="pool_line" nolabel="1">
                                         <tree editable="bottom">
