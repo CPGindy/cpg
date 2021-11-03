@@ -30,6 +30,7 @@ class LicenseItem(models.Model):
     reference_image_interior = fields.Binary(string='Reference Image Interior')
     reference_image_front = fields.Binary(string="Refernce Image Front")
     licensor_ref = fields.Char(string="Licensor Art ID")
+    license_type = fields.Selection([('standard', 'Standard'),('flat', 'Flat Fee')], string='License Type')
 
 
     def _get_royalty_count(self):
