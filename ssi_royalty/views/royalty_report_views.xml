@@ -74,9 +74,9 @@
                                         <field name="paid_by_vendor_bill" />
                                         <field name="advanced_payment"/>
                                     </group>
-                                    <group>
+<!--                                     <group>
                                         <field name="remaining_balance" />
-                                    </group>
+                                    </group> -->
                                 </group>
                             </page>
                         </notebook>

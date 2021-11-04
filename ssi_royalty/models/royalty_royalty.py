@@ -162,7 +162,7 @@ class RoyaltyReport(models.Model):
     move_id = fields.Many2one('account.move', string='Vendor Bill', readonly=1, track_visibility="onchange")
     paid_by_pool = fields.Float(string='Balance Paid By Pool')
     advanced_payment = fields.Float(string='Advanced Payment', compute='_compute_advanced_paid')
-    remaining_balance = fields.Float(string='Remaining Balance', compute='_compute_remaining_balance')
+#     remaining_balance = fields.Float(string='Remaining Balance', compute='_compute_remaining_balance')
     paid_by_vendor_bill = fields.Float(string='Paid By Vendor Bill')
     date_year = fields.Integer(string='Year of the Date (used in reporting)', compute="_compute_dates", store=True)
     date_month = fields.Integer(string="Month of the Date (used in reporting)", compute="_compute_dates", store=True)
@@ -197,16 +197,16 @@ class RoyaltyReport(models.Model):
             else:
                 rec.advanced_payment = 0
 
-    @api.depends('paid_by_pool','total_due')
-    def _compute_remaining_balance(self):
-        for rec in self:
-            rec.remaining_balance = rec.total_due - rec.paid_by_pool - rec.paid_by_vendor_bill
+#     @api.depends('paid_by_pool','total_due')
+#     def _compute_remaining_balance(self):
+#         for rec in self:
+#             rec.remaining_balance = rec.total_due - rec.paid_by_pool - rec.paid_by_vendor_bill
 
-    @api.onchange('total_due')
-    def _onchange_total(self):
-        for rec in self:
-            if rec.total_due:
-                rec.remaining_balance = rec.total_due
+#     @api.onchange('total_due')
+#     def _onchange_total(self):
+#         for rec in self:
+#             if rec.total_due:
+#                 rec.remaining_balance = rec.total_due
 
     @api.model
     def create(self, vals):
