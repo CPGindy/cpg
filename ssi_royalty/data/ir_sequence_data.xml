@@ -33,7 +33,7 @@
         <record id="sequence_royalty_pool_seq" model="ir.sequence">
             <field name="name">Artist Pool</field>
             <field name="code">royalty.pool.sequence</field>
-            <field name="prefix">POOL-</field>
+            <field name="prefix">POOL</field>
             <field name="padding">4</field>
             <field eval="False" name="company_id"/>
         </record>
