@@ -16,10 +16,11 @@ class AccountMove(models.Model):
         # if search_royalty:
         #     for royalty in search_royalty:
         #         royalty.unlink()
-        if self.move_type == 'out_invoice':
-            for royalty in self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', '=', posted.id)]):
-                royalty.unlink()
-            for rec in self:
+        # if self.move_type == 'out_invoice':
+        for royalty in self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', 'in', posted.filtered(lambda r: r.move_type == 'out_invoice').ids)]):
+            royalty.unlink()
+        for rec in posted:
+            if rec.move_type == 'out_invoice':
                 if rec.invoice_line_ids:
                     # Non kit products
                     for invoice_line in rec.invoice_line_ids.filtered(
@@ -49,11 +50,11 @@ class AccountMove(models.Model):
                                     'item_value': royaltable_amount,
                                     'licensor_id': lic_prod.license_item_id.license_id.licensor_id.id,
                                     'date': date.today(),
-                                    'source_document': posted['name'],
+                                    'source_document': rec['name'],
                                     'payment_status': 'draft',
                                     'royalty_rate': lic_prod.royalty_rate,
                                     'royalty_value': royaltable_amount * lic_prod.royalty_rate,
-                                    'invoice_id': posted.id,
+                                    'invoice_id': rec.id,
                                 }
                                 royalty = self.env['ssi_royalty.ssi_royalty'].create(data)
                                 for pool in lic_prod.license_item_id.item_pool_id.filtered(lambda p: not p.first_sale_date and p.status == 'paid'):
@@ -119,11 +120,11 @@ class AccountMove(models.Model):
                                     'item_value': royaltable_amount / artwork_count,
                                     'licensor_id': lic_prod.license_item_id.license_id.licensor_id.id,
                                     'date': date.today(),
-                                    'source_document': posted['name'],
+                                    'source_document': rec['name'],
                                     'payment_status': 'draft',
                                     'royalty_rate': lic_prod.royalty_rate,
                                     'royalty_value': (royaltable_amount/artwork_count) * lic_prod.royalty_rate,
-                                    'invoice_id': posted.id,
+                                    'invoice_id': rec.id,
                                 }
                                 royalty = self.env['ssi_royalty.ssi_royalty'].create(data)
                                 for pool in lic_prod.license_item_id.item_pool_id.filtered(lambda p: not p.first_sale_date and p.status == 'paid'):
