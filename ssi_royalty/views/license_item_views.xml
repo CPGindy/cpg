@@ -80,13 +80,17 @@
                      </page>
                      <page string="Item Pool">
                         <group>
-                           <field name="item_pool_id" nolabel="1">
-                              <tree editable="bottom">
-                                 <field name="paid_date" />
-                                 <field name="first_sale_date" />
-                                 <field name="value" />
-                              </tree>
-                           </field>
+                            <field name="item_pool_id" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="pool_id"/>
+                                    <field name="date"/>
+                                    <field name="reference"/>
+                                    <field name="value_type"/>
+                                    <field name="value"/>
+                                    <field name="first_sale_date"/>
+                                    <field name="is_active"/>
+                                </tree>
+                            </field>
                         </group>
                      </page>
                   </notebook>
