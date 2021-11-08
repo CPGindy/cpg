@@ -61,3 +61,12 @@ class RoyaltyPoolLine(models.Model):
                 rec.is_active = True
             else:
                 rec.is_active = False
+
+    # def create(self):
+    #     res = super(RoyaltyPoolLine, self).create()
+    #     self.env['license.item.pool'].create({
+    #         'license_item_id': res.art_id,
+    #         'first_sale_date': res.first_sale_date,
+    #         'value': res.value,
+    #     })
+    #     return res
