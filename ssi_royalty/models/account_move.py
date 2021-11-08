@@ -58,7 +58,7 @@ class AccountMove(models.Model):
                                         'invoice_id': rec.id,
                                     }
                                     royalty = self.env['ssi_royalty.ssi_royalty'].create(data)
-                                    for pool in lic_prod.license_item_id.item_pool_id.filtered(lambda p: not p.first_sale_date and p.status == 'paid'):
+                                    for pool in lic_prod.license_item_id.item_pool_id.filtered(lambda p: not p.first_sale_date):
                                         pool.update({'first_sale_date': date.today()})
 
                                         search_pool_rec = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty.artist_id.id)])
@@ -129,7 +129,7 @@ class AccountMove(models.Model):
                                         'invoice_id': rec.id,
                                     }
                                     royalty = self.env['ssi_royalty.ssi_royalty'].create(data)
-                                    for pool in lic_prod.license_item_id.item_pool_id.filtered(lambda p: not p.first_sale_date and p.status == 'paid'):
+                                    for pool in lic_prod.license_item_id.item_pool_id.filtered(lambda p: not p.first_sale_date):
                                         pool.update({'first_sale_date': date.today()})
 
                                         search_pool_rec = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty.artist_id.id)])
