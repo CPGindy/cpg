@@ -65,7 +65,7 @@ class AccountMove(models.Model):
                                         if search_pool_rec:
                                             line_vals = {
                                                 'date': date.today(),
-                                                'memo': pool.license_item_id.art_license_number,
+                                                'memo': pool.art_id.art_license_number,
                                                 'value_type': 'in',
                                                 'pool_value': pool.value,
                                                 'value': pool.value + search_pool_rec.balance,
@@ -83,7 +83,7 @@ class AccountMove(models.Model):
                                             line_vals = {
                                                 'pool_id': pool_id.id,
                                                 'date': date.today(),
-                                                'memo': pool.license_item_id.art_license_number,
+                                                'memo': pool.art_id.art_license_number,
                                                 'value_type': 'in',
                                                 'pool_value': pool.value,
                                                 'value': pool.value + pool_id.balance
@@ -136,7 +136,7 @@ class AccountMove(models.Model):
                                         if search_pool_rec:
                                             line_vals = {
                                                 'date': date.today(),
-                                                'memo': pool.license_item_id.art_license_number,
+                                                'memo': pool.art_id.art_license_number,
                                                 'value_type': 'in',
                                                 'pool_value': pool.value,
                                                 'value': pool.value + search_pool_rec.balance,
@@ -154,7 +154,7 @@ class AccountMove(models.Model):
                                            line_vals = {
                                                 'pool_id': pool_id.id,
                                                 'date': date.today(),
-                                                'memo': pool.license_item_id.art_license_number,
+                                                'memo': pool.art_id.art_license_number,
                                                 'value_type': 'in',
                                                 'pool_value': pool.value,
                                                 'value': pool.value + pool_id.balance
