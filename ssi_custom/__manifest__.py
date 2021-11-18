@@ -18,10 +18,11 @@
 
     'data': [
         'report/ssi_stock_picking_report.xml',
+        'views/stock_picking_views.xml'
     ],
     'demo': [
     ],
-    'cloc_exclude': [
-        "./**/*"
-    ]
+    # 'cloc_exclude': [
+    #     "./**/*"
+    # ]
 }
