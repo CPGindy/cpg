@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data> 
+        <report
+            id="ssi_var_shipment_report_xls"
+            model="stock.picking"
+            string="VAR Export (EXCEL)"
+            report_type="xlsx"
+            name="ssi_custom.var_shipment_report_xls"
+            file="ssi_custom.var_shipment_report_xls"
+        />
+    </data>
+</odoo>
