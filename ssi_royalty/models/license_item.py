@@ -26,7 +26,7 @@ class LicenseItem(models.Model):
     product_id = fields.Many2one('product.product', string='Product')
     # item_pool_id = fields.One2many('license.item.pool', 'license_item_id', string='License Item Pool')
     item_pool_id = fields.One2many('ssi_royalty.pool.line', 'art_id', string='License Item Pool')
-    description = fields.Text(string='Description')
+    description = fields.Char(string='Description')
     royalty_count = fields.Integer(string='Royalty', compute='_get_royalty_count')
     reference_image_interior = fields.Binary(string='Reference Image Interior')
     reference_image_front = fields.Binary(string="Refernce Image Front")

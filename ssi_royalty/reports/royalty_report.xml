@@ -68,7 +68,7 @@
                         <thead>
                             <tr>
                                 <th scope="col" style="width: 10%;">Type</th>
-                                <th scope="col" style="width: 15%;">Art</th>
+                                <th scope="col" style="width: 15%;">Description</th>
                                 <th scope="col" style="width: 20%;">Product</th>
                                 <th scope="col" style="width: 10%;">Art Ref</th>
                                 <th scope="col" style="width: 10%;" class="text-right">Sales</th>
@@ -87,7 +87,7 @@
                                         <span t-esc="'Sale' if line.type == 'sale_on_item' else 'Advance'"/>
                                     </td>
                                     <td>
-                                        <span t-field="line.licensed_item"/>
+                                        <span t-field="line.licensed_item.description"/>
                                     </td>
                                     <td>
                                         <span t-field="line.license_product_id"/>
