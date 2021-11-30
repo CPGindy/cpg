@@ -91,7 +91,7 @@ class VarShipmentXlsx(models.AbstractModel):
                 sheet.write(counter, 9, line.picking_id.partner_id.street, format2)
                 sheet.write(counter, 10, line.picking_id.partner_id.street2, format2)   
                 sheet.write(counter, 11, line.picking_id.partner_id.city, format2)
-                sheet.write(counter, 12, line.picking_id.partner_id.state_id.name, format3)
+                sheet.write(counter, 12, line.picking_id.partner_id.state_id.code, format3)
                 sheet.write(counter, 13, line.picking_id.partner_id.zip, format3)
                 sheet.write(counter, 14, line.picking_id.partner_id.country_id.name, format2)
                 sheet.write(counter, 15, line.picking_id.sale_id.date_order, format3)
