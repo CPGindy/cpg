@@ -45,8 +45,8 @@
          </field>
       </record>
        
-      <record id="license_item_view_search" model="ir.ui.view">
-         <field name="name">license.item.view.search</field>
+      <record id="license_item_view_pool_search" model="ir.ui.view">
+         <field name="name">license.item.view.pool.search</field>
          <field name="model">license.item.pool</field>
          <field name="arch" type="xml">
             <search string="Search License Item Pool">
