@@ -165,6 +165,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">First Sale Date</th>
+                                <th scope="col">Description</th>
                                 <th scope="col">Art</th>
                                 <th scope="col">Royalty Report</th>
                                 <th scope="col">Value</th>
@@ -175,6 +176,9 @@
                                 <tr>
                                     <td>
                                         <span t-field="pool_in.first_sale_date"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="pool_in.art_id.description"/>
                                     </td>
                                     <td>
                                         <span t-field="pool_in.art_id"/>

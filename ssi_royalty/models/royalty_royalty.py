@@ -23,6 +23,7 @@ class Royalty(models.Model):
     type = fields.Selection([('advance', 'Advance'),('sale_on_item', 'Sale on Item'),('flat_fee', 'Flat Fee')], string='Type')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     licensed_item = fields.Many2one('license.item', string='Licensed Item')
+    description = fields.Char(string='Description', related='licensed_item.description')
     license_product_id = fields.Many2one('license.product', string='Licensed Product')
     license_id = fields.Many2one('license.license', string='License')
     artist_id = fields.Many2one('res.partner', string='Artist')
