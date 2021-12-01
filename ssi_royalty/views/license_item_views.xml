@@ -33,7 +33,7 @@
                    </div>
                   <div class="oe_title">
                      <h1>
-                        <field name="art_license_number" readonly="1" />
+                        <field name="art_license_number"/>
                      </h1>
                   </div>
                   <group>

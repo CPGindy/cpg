@@ -6,7 +6,7 @@ class LicenseLicense(models.Model):
     _name = 'license.license'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'contract_id'
-    _description = "License"
+    _description = "Contracts"
     
     
     type = fields.Selection([('type1', 'Type 1'),('type2', 'Type 2'),('type3', 'Type 3')], string='Type')
