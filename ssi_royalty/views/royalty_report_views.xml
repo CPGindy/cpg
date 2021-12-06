@@ -51,6 +51,7 @@
                                         <field name="name" />
                                         <field name="license_id" />
                                         <field name="licensed_item" />
+                                        <field name="description"/>
                                         <field name="license_product_id" />
                                         <field name="type" attrs="{'readonly': True}"/>
                                         <field name="payment_status" />

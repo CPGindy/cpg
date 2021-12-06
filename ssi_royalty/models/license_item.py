@@ -13,7 +13,7 @@ class LicenseItem(models.Model):
 
     license_product_id = fields.Many2one('license.product', string='Licensed Product')
     end_date = fields.Date(string='End Date')
-    art_license_number = fields.Char(string='Art License Number', required=True, copy=False, index=True, default=lambda self: _('New'))
+    art_license_number = fields.Char(string='Art License Number', required=True)
 #     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     reference_image = fields.Binary(string='Reference Image')
     license_status = fields.Selection([('active', 'Active'),('inactive', 'Inactive'),('pending', 'Pending'),('revise', 'Revise')],default='active', string='Status')
@@ -26,7 +26,7 @@ class LicenseItem(models.Model):
     product_id = fields.Many2one('product.product', string='Product')
     # item_pool_id = fields.One2many('license.item.pool', 'license_item_id', string='License Item Pool')
     item_pool_id = fields.One2many('ssi_royalty.pool.line', 'art_id', string='License Item Pool')
-    description = fields.Text(string='Description')
+    description = fields.Char(string='Description')
     royalty_count = fields.Integer(string='Royalty', compute='_get_royalty_count')
     reference_image_interior = fields.Binary(string='Reference Image Interior')
     reference_image_front = fields.Binary(string="Refernce Image Front")
@@ -55,12 +55,6 @@ class LicenseItem(models.Model):
             'domain': [('id', 'in', royalty_ids)],
             'target': 'current',
         }
-
-    @api.model
-    def create(self, vals):
-        if vals.get('art_license_number', _('New')) == _('New'):
-            vals['art_license_number'] = self.env['ir.sequence'].next_by_code('license.item.sequence') or _('New')
-        return super(LicenseItem, self).create(vals)
 
     def create_royalty(self):
         view_id = self.env.ref('ssi_royalty.ssi_royalty_view_form')
