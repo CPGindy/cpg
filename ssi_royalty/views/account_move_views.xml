@@ -1,0 +1,14 @@
+<odoo>
+   <record id="account_move_form_inherit" model="ir.ui.view">
+      <field name="name">account.move.form.inherit</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_move_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//button[@name='open_reconcile_view']" position="after">
+            <button class="oe_stat_button" icon="fa-dollar" type="object" name="action_view_royalty" attrs="{'invisible': [('royalty_count', '=', 0)]}">
+                <field name="royalty_count" string="Royalty" widget="statinfo"/>
+            </button>
+        </xpath>
+      </field>
+   </record>
+</odoo>

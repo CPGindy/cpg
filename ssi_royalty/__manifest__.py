@@ -16,7 +16,7 @@
     'category': 'SSI',
     'version': '0.1.0',
 
-    'depends': ['base', 'product','account', 'mail'],
+    'depends': ['base', 'product','account', 'mail', 'account'],
 
     'data': [
         'security/ir.model.access.csv',
@@ -30,6 +30,7 @@
         'views/product_views.xml',
         'views/royalty_report_views.xml',
         'views/license_item_pool_views.xml',
+        'views/account_move_views.xml',
 
         'data/ir_sequence_data.xml',
         'data/ir_config_parameter.xml',
