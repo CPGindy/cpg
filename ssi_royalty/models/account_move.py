@@ -22,6 +22,21 @@ class AccountMove(models.Model):
         for rec in posted:
             if rec.move_type == 'out_invoice':
                 if rec.invoice_line_ids:
+                    #Create Zero royalties for the products whose license item doesnot exist
+                    for invoice_line in rec.invoice_line_ids.filtered(lambda pro: not pro.product_id.license_product):
+                        data = {
+                                'invoice_product_id': invoice_line.product_id.id,
+                                'type': 'not_licensed',
+                                'item_value': float(invoice_line.price_subtotal),
+                                'date': date.today(),
+                                'source_document': rec['name'],
+                                'payment_status': 'draft',
+                                'royalty_rate': 0.0,
+                                'royalty_value': 0.0,
+                                'invoice_id': rec.id,
+                                }
+                        self.env['ssi_royalty.ssi_royalty'].create(data)
+
                     # Non kit products
                     for invoice_line in rec.invoice_line_ids.filtered(
                         lambda pro: pro.product_id.license_product and not (
@@ -35,6 +50,7 @@ class AccountMove(models.Model):
                             royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
                                 lambda license: license.license_item_id.license_status in ['active', 'revise']
                             ))
+
                             # for lic_prod in invoice_line.product_id.license_product.filtered(
                             #     lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
                             # ):
@@ -98,6 +114,33 @@ class AccountMove(models.Model):
                                         }
                                         self.env['ssi_royalty.pool.line'].create(line_vals)
                                         pool_id.update({'balance': line_vals['value']})
+
+
+                        #Create Zero royalties for the products whose license item are in inactive stages, updated from decision tree on 12/16/2021
+
+                        if len(invoice_line.product_id.license_product.filtered(lambda license: license.license_item_id.license_status == 'inactive')) > 0:
+                            royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
+                                                            lambda license: license.license_item_id.license_status == 'inactive'))
+                            for lic_prod in invoice_line.product_id.license_product.filtered(lambda license: license.license_item_id.license_status == 'inactive'):
+                                data = {
+                                        'licensed_item' : lic_prod.license_item_id.id,
+                                        'license_product_id': lic_prod.id,
+                                        'license_id' : lic_prod.license_item_id.license_id.id,
+                                        'artist_id': lic_prod.license_item_id.license_id.artist_id.id,
+                                        'type': 'not_licensed',
+                                        'item_value': royaltable_amount,
+                                        'licensor_id': lic_prod.license_item_id.license_id.licensor_id.id,
+                                        'date': date.today(),
+                                        'source_document': rec['name'],
+                                        'payment_status': 'draft',
+                                        'royalty_rate': royalty_rate,
+                                        'royalty_value': 0.0,
+                                        'invoice_id': rec.id,
+                                    }
+                                self.env['ssi_royalty.ssi_royalty'].create(data)
+
+
+
                     # Kit products
                     for invoice_line in rec.invoice_line_ids.filtered(
                         lambda pro: pro.product_id.bom_ids and pro.product_id.bom_ids[0].type == "phantom" and pro.move_id.move_type != 'in_invoice'
@@ -106,12 +149,39 @@ class AccountMove(models.Model):
 
                         # calculate amount of components on which a royalty applies
                         royaltable_components = []
+                        inactive_components = []
                         for component in components:
                             product = component.product_id
                             if any([license.license_item_id.license_status in ['active', 'revise'] for license in product.license_product]):
                                 royaltable_components.append(component)
+                            elif any([license.license_item_id.license_status == 'inactive' for license in product.license_product]):
+                                inactive_components.append(component)
 
                         royaltable_amount = float(invoice_line.price_subtotal) / len(royaltable_components)
+
+                        #Create Zero royalties for the kit products whose license item are in inactive stages, updated from decision tree on 12/16/2021
+                        if inactive_components:
+                            inactive_royaltable_amount = float(invoice_line.price_subtotal) / len(inactive_components)
+                            for i_component in inactive_royaltable_amount:
+                                artwork_count = len(i_component)
+                                for lic_prod in i_component:
+                                    data = {
+                                            'licensed_item' : lic_prod.license_item_id.id,
+                                            'license_product_id': lic_prod.id,
+                                            'license_id' : lic_prod.license_item_id.license_id.id,
+                                            'artist_id': lic_prod.license_item_id.license_id.artist_id.id,
+                                            'type': 'not_licensed',
+                                            'item_value': inactive_royaltable_amount / artwork_count,
+                                            'licensor_id': lic_prod.license_item_id.license_id.licensor_id.id,
+                                            'date': date.today(),
+                                            'source_document': rec['name'],
+                                            'payment_status': 'draft',
+                                            'royalty_rate': 0.0,
+                                            'royalty_value': 0.0,
+                                            'invoice_id': rec.id,
+                                        }
+                                    self.env['ssi_royalty.ssi_royalty'].create(data)
+
                         for r_component in royaltable_components:
                             artwork_count = len(r_component.product_id.license_product.filtered(
                                 lambda license: license.license_item_id.license_status in ['active', 'revise']))
