@@ -29,7 +29,7 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button name="make_payment" string="Make Payment" type="object" class="oe_highlight"/>
+                    <button name="make_payment" string="Make Bill" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                 </footer>
             </form>
