@@ -51,6 +51,7 @@
                                 <field name="licensed_item" attrs="{'required': [('type', '=', 'advance')]}"/>
                                 <field name="license_product_id"/>
                                 <field name="license_id"/>
+                                <field name="invoice_product_id" attrs="{'invisible': [('invoice_product_id', '=', False)]}"/>
                                 <field name="artist_id"/>
                                 <field name="licensor_id"/>
                                 <field name="type"/>
