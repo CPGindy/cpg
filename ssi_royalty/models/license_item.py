@@ -16,7 +16,7 @@ class LicenseItem(models.Model):
     art_license_number = fields.Char(string='Art License Number', required=True)
 #     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     reference_image = fields.Binary(string='Reference Image')
-    license_status = fields.Selection([('active', 'Active'),('inactive', 'Inactive'),('pending', 'Pending'),('revise', 'Revise')],default='active', string='Status')
+    license_status = fields.Selection([('active', 'Active'),('inactive', 'Inactive'),('pending', 'Pending'),('revise', 'Revise'),('discontinued', 'Discontinued')],default='active', string='Status')
     territory = fields.Selection([('north_america', 'North America'),('worldwide', 'World Wide')], string='Territory')
     sell_off_date = fields.Date(string='Sale Off Date')
     note = fields.Html(string='Notes')
@@ -71,8 +71,8 @@ class LicenseItem(models.Model):
                 'default_licensor_id': self.license_id.licensor_id.id,
                 'default_date': date.today(),
                 'default_source_document': self.art_license_number,
-                'default_license_product_id': self.license_product_line[0].id,
-                'default_royalty_rate': self.license_product_line[0].royalty_rate,
+                'default_license_product_id': self.license_product_line[0].id if self.license_product_line else None,
+                'default_royalty_rate': self.license_product_line[0].royalty_rate if self.license_product_line else None,
                         },
             'res_model': 'ssi_royalty.ssi_royalty',
             'type': 'ir.actions.act_window',
