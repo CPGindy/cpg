@@ -21,7 +21,7 @@ class LicenseItem(models.Model):
     sell_off_date = fields.Date(string='Sale Off Date')
     note = fields.Html(string='Notes')
     licensed_for = fields.Many2many('license.category', string='Licensed For')
-    license_id = fields.Many2one('license.license', string='License')
+    license_id = fields.Many2one('license.license', string='Contract')
     license_product_line = fields.One2many('license.product', 'license_item_id', string='Licensed Product Line')
     product_id = fields.Many2one('product.product', string='Product')
     # item_pool_id = fields.One2many('license.item.pool', 'license_item_id', string='License Item Pool')
