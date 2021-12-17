@@ -9,6 +9,43 @@ from datetime import date
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    royalty_count = fields.Integer(string="Royalty Count", compute='_get_royalty_count')
+
+
+    def _get_royalty_count(self):
+        for record in self:
+            royalty_count = self.env['ssi_royalty.ssi_royalty'].sudo().search_count([('invoice_id', '=', record.id)])
+            record.royalty_count = royalty_count
+
+
+    def action_view_royalty(self):
+        royalty_lines = self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', '=', self.id)])
+        royalty_ids = []
+        for line in royalty_lines:
+            royalty_ids.append(line.id)
+        if len(royalty_ids) == 1:
+            return {
+                'name': _('Royalty'),
+                'view_mode': 'form',
+                'view_id': self.env.ref('ssi_royalty.ssi_royalty_view_form').id,
+                'view_type': 'form',
+                'res_model': 'ssi_royalty.ssi_royalty',
+                'type': 'ir.actions.act_window',
+                'res_id': royalty_lines.id,
+                'target': 'current',
+            }
+        else:
+            return {
+                'name': _('Royalties'),
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'view_id': False,
+                'res_model': 'ssi_royalty.ssi_royalty',
+                'type': 'ir.actions.act_window',
+                'domain': [('id', 'in', royalty_ids)],
+                'target': 'current',
+            }        
+
 
     def _post(self, soft=True):
         posted = super()._post(soft=soft)
