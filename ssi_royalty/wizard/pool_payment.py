@@ -91,7 +91,7 @@ class PoolPayment(models.TransientModel):
         }
         move_rec = self.env['account.move'].create(move_values)
         self.move_id = move_rec.id
-        pro_id = self.env['ir.config_parameter'].get_param('royalty_product_item')
+        pro_id = self.env['ir.config_parameter'].sudo().get_param('royalty_product_item')
         product = self.env['product.product'].search([('id', '=', pro_id)])
 
         paid_by_pool = 0
