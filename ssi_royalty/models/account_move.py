@@ -94,6 +94,7 @@ class AccountMove(models.Model):
                                 data = {
                                     'licensed_item' : lic_prod.license_item_id.id,
                                     'license_product_id': lic_prod.id,
+                                    'invoice_product_id': lic_prod.product_id.id,
                                     'license_id' : lic_prod.license_item_id.license_id.id,
                                     'artist_id': lic_prod.license_item_id.license_id.artist_id.id,
                                     'type': type,
@@ -193,6 +194,7 @@ class AccountMove(models.Model):
                                     data = {
                                         'licensed_item' : lic_prod.license_item_id.id,
                                         'license_product_id': lic_prod.id,
+                                        'invoice_product_id': lic_prod.product_id.id,
                                         'license_id' : lic_prod.license_item_id.license_id.id,
                                         'artist_id': lic_prod.license_item_id.license_id.artist_id.id,
                                         'type': 'not_licensed',
@@ -227,6 +229,7 @@ class AccountMove(models.Model):
                                 data = {
                                     'licensed_item' : lic_prod.license_item_id.id,
                                     'license_product_id': lic_prod.id,
+                                    'invoice_product_id': lic_prod.product_id.id,
                                     'license_id' : lic_prod.license_item_id.license_id.id,
                                     'artist_id': lic_prod.license_item_id.license_id.artist_id.id,
                                     'type': type,
