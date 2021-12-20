@@ -35,7 +35,6 @@
                         </div>
                         <group>
                             <group>
-                                <field name="artist_id" />
                                 <field name="licensor_id" />
                                 <field name="move_id" attrs="{'invisible': [('move_id','=',False)] }" />
                             </group>
@@ -103,10 +102,8 @@
             <field name="model">ssi_royalty.report</field>
             <field name="arch" type="xml">
                 <search string="Search Royalty Report">
-                    <field name="artist_id" />
                     <field name="licensor_id" />
                     <group expand="0" string="Group By">
-                        <filter string="Artist" name="group_artist_id" context="{'group_by': 'artist_id'}" />
                         <filter string="Licensor" name="group_licensor_id" context="{'group_by': 'licensor_id'}" />
                         <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
                     </group>

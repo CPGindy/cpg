@@ -78,7 +78,7 @@ class LicenseItem(models.Model):
             'type': 'ir.actions.act_window',
             'target': 'new',
         }
-
+        
 
 class LicenseItemPool(models.Model):
     _name = 'license.item.pool'

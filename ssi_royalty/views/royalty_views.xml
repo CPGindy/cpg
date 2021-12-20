@@ -74,11 +74,21 @@
             </field>
         </record>
 
+        <record id="ssi_royalty_view_pivot" model="ir.ui.view">
+            <field name="name">ssi_royalty.view_pivot</field>
+            <field name="model">ssi_royalty.ssi_royalty</field>
+            <field name="arch" type="xml">
+                <pivot string="Royalty">
+                    <field name="name" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="ssi_royalty.action_window">
             <field name="name">Royalty</field>
             <field name="res_model">ssi_royalty.ssi_royalty</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,pivot</field>
         </record>
 
         <!-- server action to the one above -->
@@ -89,7 +99,7 @@
             <field name="code">
                 action = {
                     "type": "ir.actions.act_window",
-                    "view_mode": "tree,form",
+                    "view_mode": "tree,form,pivot",
                     "res_model": model._name,
                 }
             </field>
