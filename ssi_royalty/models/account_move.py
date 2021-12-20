@@ -12,11 +12,6 @@ class AccountMove(models.Model):
 
     def _post(self, soft=True):
         posted = super()._post(soft=soft)
-        # search_royalty = self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', '=', posted.id)])
-        # if search_royalty:
-        #     for royalty in search_royalty:
-        #         royalty.unlink()
-        # if self.move_type == 'out_invoice':
         for royalty in self.env['ssi_royalty.ssi_royalty'].search([('invoice_id', 'in', posted.filtered(lambda r: r.move_type == 'out_invoice').ids)]):
             royalty.unlink()
         for rec in posted:
@@ -28,16 +23,11 @@ class AccountMove(models.Model):
                             pro.product_id.bom_ids and pro.product_id.bom_ids[0].type == "phantom"
                         ) and pro.move_id.move_type != 'in_invoice'
                     ):
-                        # royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
-                        #     lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
-                        # ))
                         if len(invoice_line.product_id.license_product.filtered(lambda license: license.license_item_id.license_status in ['active', 'revise'])) > 0:
                             royaltable_amount = float(invoice_line.price_subtotal) / len(invoice_line.product_id.license_product.filtered(
                                 lambda license: license.license_item_id.license_status in ['active', 'revise']
                             ))
-                            # for lic_prod in invoice_line.product_id.license_product.filtered(
-                            #     lambda license: license.license_item_id.end_date and license.license_item_id.end_date >= date.today()
-                            # ):
+                            
                             for lic_prod in invoice_line.product_id.license_product.filtered(
                                 lambda license: license.license_item_id.license_status in ['active', 'revise']
                             ):

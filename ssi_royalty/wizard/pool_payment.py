@@ -122,7 +122,6 @@ class PoolPayment(models.TransientModel):
                         'art_id': advance_line.license_item_id.id,
                     }
                     self.env['ssi_royalty.pool.line'].create(line_vals)
-                    # pool.update({'balance': line_vals['value']})
 
             for sale_line in lines.filtered(lambda l: not l.advance_payment > 0):
                 if sale_line.license_item_id and sale_line.artist_id and sale_line.create_date:
@@ -149,7 +148,6 @@ class PoolPayment(models.TransientModel):
                 'pool_id': pool.id,
             }
             self.env['ssi_royalty.pool.line'].create(line_vals)
-            # pool.update({'balance': line_vals['value']})
             paid_by_pool += (balance - remaining_balance)
 
             # create the vendor bill line
