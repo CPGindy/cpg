@@ -157,7 +157,7 @@ class PoolPayment(models.TransientModel):
             line_vals = {
                 'product_id': product.id,
                 'name': f"{self.pool_report_id.name} - {artist.name}",
-                'account_id': self.pool_report_id.royalty_line_id[0].account_id.id,
+                'account_id': 289,
                 'quantity': 1,
                 'price_unit': total,
             }

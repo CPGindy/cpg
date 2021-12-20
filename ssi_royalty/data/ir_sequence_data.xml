@@ -12,8 +12,8 @@
         <record id="sequence_royalty_seq" model="ir.sequence">
             <field name="name">Royalty sequence</field>
             <field name="code">royalty.royalty.sequence</field>
-            <field name="prefix">ROL</field>
-            <field name="padding">4</field>
+            <field name="prefix"></field>
+            <field name="padding">5</field>
             <field eval="False" name="company_id"/>
         </record>
         <record id="sequence_royalty_report_seq" model="ir.sequence">
