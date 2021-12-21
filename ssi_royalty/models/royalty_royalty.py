@@ -2,6 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import date, datetime
 from odoo.tools import float_is_zero
+import time
 
 
 class Royalty(models.Model):
@@ -20,11 +21,12 @@ class Royalty(models.Model):
         return self.env['ir.property']._get('property_account_expense_categ_id', 'product.category')
 
     name = fields.Char(string='Contract', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
-    type = fields.Selection([('advance', 'Advance'),('sale_on_item', 'Sale on Item'),('flat_fee', 'Flat Fee')], string='Type')
+    type = fields.Selection([('advance', 'Advance'),('sale_on_item', 'Sale on Item'),('flat_fee', 'Flat Fee'),('not_licensed', 'Not Licensed')], string='Type')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     licensed_item = fields.Many2one('license.item', string='Licensed Item')
     description = fields.Char(string='Description', related='licensed_item.description')
     license_product_id = fields.Many2one('license.product', string='Licensed Product')
+    invoice_product_id = fields.Many2one('product.product', string='Invoice Product')
     license_id = fields.Many2one('license.license', string='License')
     artist_id = fields.Many2one('res.partner', string='Artist')
     item_value = fields.Float(string='Item Value')
@@ -56,7 +58,8 @@ class Royalty(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
-            vals['name'] = self.env['ir.sequence'].next_by_code('royalty.royalty.sequence') or _('New')
+            format_name = 'ROL/'+time.strftime("%m", time.localtime()) + time.strftime("%y", time.localtime())+'/'+self.env['ir.sequence'].next_by_code('royalty.royalty.sequence')
+            vals['name'] = format_name or _('New')
         res = super(Royalty, self).create(vals)
         for royalty_line in res.filtered(lambda l: l.type == "sale_on_item"):
             pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
@@ -149,7 +152,6 @@ class RoyaltyReport(models.Model):
         return self.env['account.journal'].search([('type', 'in', ['purchase']), ('company_id', '=', default_company_id)], limit=1)
 
     name = fields.Char(string='Contract', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
-    artist_id = fields.Many2one('res.partner', string='Artist')
     licensor_id = fields.Many2one('res.partner', string='Licensor')
     memo = fields.Char(string='Memo')
     total_due = fields.Float(string='Total Due', compute='_compute_total_due')

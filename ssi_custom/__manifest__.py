@@ -14,11 +14,12 @@
     'website':  "http://www.ssibtr.com",
     'category': 'SSI',
     'version': '0.1.0',
-    'depends': ['base', 'stock'],
+    'depends': ['base', 'stock', 'delivery'],
 
     'data': [
         'report/ssi_stock_picking_report.xml',
-        'views/stock_picking_views.xml'
+        'views/stock_picking_views.xml',
+        'views/delivery_carrier_views.xml',
     ],
     'demo': [
     ],
