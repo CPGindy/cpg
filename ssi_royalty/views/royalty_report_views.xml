@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <tree default_order="id desc">
                     <field name="name"/>
+                    <field name="licensor_id" />
                     <field name="report_date"/>
                     <field name="total_due"/>
                     <field name="status"/>
@@ -21,7 +22,7 @@
             <field name="arch" type="xml">
                 <form string="Royalty Report">
                     <header>
-                        <button name="make_payment_pool" string="Make a Payment" type="object" class="oe_highlight o_royalty_sheet_post" attrs="{'invisible': [('status', 'not in', ('draft'))]}" />
+                        <button name="make_payment_pool" string="Make Bill" type="object" class="oe_highlight o_royalty_sheet_post" attrs="{'invisible': [('status', 'not in', ('draft'))]}" />
                         <field name="status" widget="statusbar" statusbar_visible="draft,posted"/>
                     </header>
                     <sheet>
@@ -35,7 +36,6 @@
                         </div>
                         <group>
                             <group>
-                                <field name="artist_id" />
                                 <field name="licensor_id" />
                                 <field name="move_id" attrs="{'invisible': [('move_id','=',False)] }" />
                             </group>
@@ -103,10 +103,8 @@
             <field name="model">ssi_royalty.report</field>
             <field name="arch" type="xml">
                 <search string="Search Royalty Report">
-                    <field name="artist_id" />
                     <field name="licensor_id" />
                     <group expand="0" string="Group By">
-                        <filter string="Artist" name="group_artist_id" context="{'group_by': 'artist_id'}" />
                         <filter string="Licensor" name="group_licensor_id" context="{'group_by': 'licensor_id'}" />
                         <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
                     </group>
