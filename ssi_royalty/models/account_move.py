@@ -212,6 +212,7 @@ class AccountMove(models.Model):
                         royaltable_components = []
                         inactive_components = []
                         non_licensed_components = []
+                        
                         for component in components:
                             product = component.product_id
                             if any([license.license_item_id.license_status in ['active', 'revise', 'pending'] for license in product.license_product]):
@@ -221,13 +222,16 @@ class AccountMove(models.Model):
                             if not product.license_product:
                                 non_licensed_components.append(component)
 
+                        component_count = len(royaltable_components) + len(inactive_components) + len(non_licensed_components)
+
                         #Create Zero royalties for the kit products who dont have license or whose license item are in inactive stages, updated from decision tree on 12/16/2021
                         if non_licensed_components:
+                            royaltable_amount = float(invoice_line.price_subtotal) / test
                             for n_component in non_licensed_components:
                                 data = {
                                     'invoice_product_id': n_component.product_id.id,
                                     'type': 'not_licensed',
-                                    'item_value': 0.0,
+                                    'item_value': royaltable_amount,
                                     'date': date.today(),
                                     'source_document': rec['name'],
                                     'payment_status': 'draft',
@@ -238,7 +242,7 @@ class AccountMove(models.Model):
                                 self.env['ssi_royalty.ssi_royalty'].create(data)
 
                         if inactive_components:
-                            inactive_royaltable_amount = float(invoice_line.price_subtotal) / len(inactive_components)
+                            inactive_royaltable_amount = float(invoice_line.price_subtotal) / test
                             for i_component in inactive_components:
                                 artwork_count = len(i_component)
                                 for lic_prod in i_component.product_id.license_product.filtered(
@@ -264,7 +268,7 @@ class AccountMove(models.Model):
 
 
                         if royaltable_components:
-                            royaltable_amount = float(invoice_line.price_subtotal) / len(royaltable_components)
+                            royaltable_amount = float(invoice_line.price_subtotal) / test
                             for r_component in royaltable_components:
                                 artwork_count = len(r_component.product_id.license_product.filtered(
                                     lambda license: license.license_item_id.license_status in ['active', 'revise', 'pending']))
