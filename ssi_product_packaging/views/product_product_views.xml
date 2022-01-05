@@ -8,8 +8,8 @@
         <xpath expr="//form[1]/sheet[1]/notebook[1]" position="inside">
             <page name="customer_sku_lookup_page" string="Customer SKU's" groups="stock.group_stock_user">
                 <field name="sku_lookup_line" nolabel="1">
-                    <tree editable="bottom" create="0">
-                        <field name="product_id" readonly="1"/>
+                    <tree editable="bottom">
+<!--                         <field name="product_id" readonly="1"/> -->
                         <field name="customer_sku" />
                         <field name="partner_id" />
                     </tree>
