@@ -8,6 +8,7 @@
          <field name="arch" type="xml">
             <tree>
                <field name="license_item_id" />
+               <field name="internal_ref"/>
                <field name="product_id" />
                <field name="royalty_rate" widget="percentage" />
             </tree>
@@ -26,6 +27,7 @@
                         <field name="license_item_id" />
                      </group>
                      <group>
+                        <field name="internal_ref"/>
                         <field name="royalty_rate" widget="percentage" />
                      </group>
                   </group>
@@ -44,8 +46,9 @@
          <field name="model">license.product</field>
          <field name="arch" type="xml">
             <search string="Search License Product">
-               <field name="product_id" />
+               <field name="internal_ref"/>
                <field name="license_item_id" />
+                <field name="product_id" />
                <group expand="0" string="Group By">
                   <filter string="License Item" name="license_item_id" context="{'group_by': 'license_item_id'}" />
                   <filter string="Product" name="product_id" context="{'group_by': 'product_id'}" />
