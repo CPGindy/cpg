@@ -12,3 +12,4 @@ class LicenseProduct(models.Model):
     product_id = fields.Many2one('product.product', string='Product', required=True)
     license_item_id = fields.Many2one('license.item', string='Art')
     artist_id = fields.Many2one('res.partner', related="license_item_id.license_id.artist_id")
+    internal_ref = fields.Char(related='product_id.default_code', string='Internal Ref')
