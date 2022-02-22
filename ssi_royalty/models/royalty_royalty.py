@@ -45,6 +45,7 @@ class Royalty(models.Model):
         default=_default_account_id, domain="[('company_id', '=', company_id)]", help="A royalty account is expected")
     is_report_approved = fields.Boolean(string='Is Report Approved')
 
+
     @api.onchange('type')
     def _onchange_type(self):
         for rec in self:

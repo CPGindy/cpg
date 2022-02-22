@@ -112,11 +112,10 @@
          <field name="model">license.item</field>
          <field name="arch" type="xml">
             <search string="Search License Item">
-               <field name="license_id" />
                <field name="art_license_number" />
-               <field name="license_status" />
-               <field name="territory" />
                <field name="description"/>
+               <field name="license_id" />
+               <field name="territory" /> 
                <group expand="0" string="Group By">
                   <filter string="License" name="license_id" context="{'group_by': 'license_id'}" />
                   <filter string="Status" name="license_status" context="{'group_by': 'license_status'}" />

@@ -13,7 +13,7 @@ class LicenseItem(models.Model):
 
     license_product_id = fields.Many2one('license.product', string='Licensed Product')
     end_date = fields.Date(string='End Date')
-    art_license_number = fields.Char(string='Art License Number', required=True)
+    art_license_number = fields.Char(copy=False, string='Art License Number', required=True)
 #     art_license_number = fields.Char(string='Art License Number', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     reference_image = fields.Binary(string='Reference Image')
     license_status = fields.Selection([('active', 'Active'),('inactive', 'Inactive'),('pending', 'Pending'),('revise', 'Revise'),('discontinued', 'Discontinued')],default='active', string='Status')
@@ -32,6 +32,13 @@ class LicenseItem(models.Model):
     reference_image_front = fields.Binary(string="Refernce Image Front")
     licensor_ref = fields.Char(string="Licensor Art ID")
     license_type = fields.Selection([('standard', 'Standard'),('flat', 'Flat Fee')], string='License Type')
+
+
+    _sql_constraints = [
+        ('art_license_number_uniq',
+         'UNIQUE(art_license_number)',
+          'Art License Number can only be assigned to one license item !')
+    ]
 
 
     def _get_royalty_count(self):

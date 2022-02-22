@@ -162,10 +162,10 @@
          <field name="model">license.license</field>
          <field name="arch" type="xml">
             <search string="Search Contracts">
-               <field name="contract_id" />
-               <field name="license_product_id" />
                <field name="artist_id" />
                <field name="licensor_id" />
+               <field name="license_item" string="Art License Number" filter_domain="[('license_item.art_license_number', 'ilike', self)]"/>
+               <field name="contract_id" />
                <group expand="0" string="Group By">
                   <filter string="Licensor" name="licensor_id" context="{'group_by': 'licensor_id'}" />
                   <filter string="Artist" name="artist_id" context="{'group_by': 'artist_id'}" />
