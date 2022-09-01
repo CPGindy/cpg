@@ -32,7 +32,7 @@
     </template>
 
     <template id="royalty_report_print">
-        <t t-call="web.external_layout">
+        <t t-call="web.internal_layout">
             <div class="row zero_min_height">
                 <div class="col-12">
                     <div style="border-bottom: 1px solid black;"/>
@@ -41,10 +41,12 @@
             <t t-set="artists" t-value="set([line.artist_id for line in doc.royalty_line_id])"/>
             <div class="page">
                 <div class="oe_structure"/>
-
-                <h2 class="mt16">
-                    <span t-field="doc.licensor_id.name"/>
-                </h2>
+                <div class="mt16">
+                    <div class="row text-left">
+                        <div class="col-auto col-9"><h2><span t-field="doc.licensor_id.name"/></h2></div>
+                        <div class="col-auto col-3">Payment Total : $<span t-esc="'%.2f'% doc.total_due"/></div>
+                    </div>
+                </div>
                 <h6>
                     <span t-field="doc.name"/>
                 </h6>
@@ -156,6 +158,7 @@
                             </tr>
                         </tbody>
                     </table>
+                   
 
                     <div class="container row" id="new_advances" style="margin-bottom: 20px; margin-top: 20px;" t-if="pool_ins">
                         <h5>Newly Allowed Advances</h5>
@@ -201,6 +204,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    <p style="page-break-before:always;"> </p>
                 </t>
 
                 <div class="oe_structure"/>
