@@ -32,7 +32,7 @@
     </template>
 
     <template id="royalty_report_print">
-        <t t-call="web.internal_layout">
+        <t t-call="web.external_layout">
             <div class="row zero_min_height">
                 <div class="col-12">
                     <div style="border-bottom: 1px solid black;"/>
