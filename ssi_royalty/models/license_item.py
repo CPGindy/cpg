@@ -40,6 +40,13 @@ class LicenseItem(models.Model):
           'Art License Number can only be assigned to one license item !')
     ]
 
+    def unlink_license_item(self):
+        self.ensure_one()
+        self.update({'license_id': False})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
 
     def _get_royalty_count(self):
         for record in self:

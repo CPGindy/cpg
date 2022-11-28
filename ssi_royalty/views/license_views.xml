@@ -44,12 +44,13 @@
                      <page string="License Items">
                         <group>
                            <field name="license_item" nolabel="1" context="{'default_license_id': active_id, 'search_default_license_id': active_id}">
-                              <tree>
+                              <tree delete="false">
                                  <field name="art_license_number" />
                                  <field name="territory" />
                                  <field name="end_date" />
                                  <field name="sell_off_date" />
                                  <field name="license_id" optional="hide"/>
+                                 <button name="unlink_license_item" confirm="Are you sure you want to unlink this line from above contract?" type="object" class="fa fa-trash-o"/>
                               </tree>
                               <form string="License">
                                     <header>
