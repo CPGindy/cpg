@@ -48,24 +48,18 @@
                      <group>
                         <field name="sell_off_date" />
                         <field name="license_status" />
-                        <field name="licensed_for" widget="many2many_tags">
-                           <tree string="license.categ">
-                              <field name="name" />
-                           </tree>
-                        </field>
+                        <field name="licensed_for" widget="many2many_tags"/>
                         <field name="licensor_ref"/>
                      </group>
                   </group>
                   <notebook>
                      <page string="Products">
-                        <group>
-                           <field name="license_product_line">
-                              <tree editable="bottom">
-                                 <field name="product_id" />
-                                 <field name="royalty_rate" widget="percentage" />
-                              </tree>
+                           <field name="license_product_line" nolabel="1">
+                                 <tree editable="bottom">
+                                    <field name="product_id" />
+                                    <field name="royalty_rate" widget="percentage" />
+                                 </tree>
                            </field>
-                        </group>
                      </page>
                      <page string="Details">
                         <group>
@@ -81,8 +75,8 @@
                         <field name="note" />
                      </page>
                      <page string="Item Pool">
-                        <group>
                             <field name="item_pool_id" nolabel="1">
+                              <!-- <group> -->
                                 <tree editable="bottom">
                                     <field name="pool_id"/>
                                     <field name="date"/>
@@ -92,8 +86,9 @@
                                     <field name="first_sale_date"/>
                                     <field name="is_active"/>
                                 </tree>
+                              <!-- </group> -->
+
                             </field>
-                        </group>
                      </page>
                   </notebook>
                </sheet>
