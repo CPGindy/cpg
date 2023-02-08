@@ -31,7 +31,6 @@
                         </group>
                         <notebook>
                             <page string="Artist Pool Lines">
-                                <group>
                                     <field name="pool_line" nolabel="1">
                                         <tree editable="bottom">
                                             <field name="date"/>
@@ -44,7 +43,6 @@
                                             <field name="is_active"/>
                                         </tree>
                                     </field>
-                                </group>
                             </page>
                         </notebook>
                     </sheet>

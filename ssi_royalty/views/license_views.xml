@@ -42,7 +42,6 @@
                   </group>
                   <notebook>
                      <page string="License Items">
-                        <group>
                            <field name="license_item" nolabel="1" context="{'default_license_id': active_id, 'search_default_license_id': active_id}">
                               <tree delete="false">
                                  <field name="art_license_number" />
@@ -128,7 +127,6 @@
                                     </sheet>
                                     </form>
                            </field>
-                        </group>
                      </page>
                   </notebook>
                </sheet>
