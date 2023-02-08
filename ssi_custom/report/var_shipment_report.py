@@ -77,7 +77,7 @@ class VarShipmentXlsx(models.AbstractModel):
         # sheet.write(0,53, 'Vics Ref No', format1)
         counter = 0
         for index, picking in enumerate(lines):
-            for line in picking.move_lines:
+            for line in picking.move_ids:
                 counter = counter+1
                 sheet.write(counter, 0, "CrownPoint", format2)
                 sheet.write(counter, 1, "CrownPoint", format2)
