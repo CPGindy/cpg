@@ -15,7 +15,7 @@
       </record>
        
       <!-- actions opening views on models -->
-      <record model="ir.actions.act_window" id="ssi_product_packaging.action_window_open_customer_sku">
+      <record model="ir.actions.act_window" id="action_window_open_customer_sku">
          <field name="name">Customer SKU's</field>
          <field name="res_model">sku.lookup</field>
          <field name="view_mode">tree</field>
@@ -39,7 +39,7 @@
       </record>
        
       <!-- actions -->
-      <menuitem name="Customer SKU's" id="ssi_product_packaging.sku_lookup_list" parent="stock.menu_stock_inventory_control" groups="stock.group_stock_user" action="ssi_product_packaging.action_window_open_customer_sku" />
+      <menuitem name="Customer SKU's" id="sku_lookup_list" parent="stock.menu_stock_inventory_control" groups="stock.group_stock_user" action="action_window_open_customer_sku" />
        
    </data>
 </odoo>
