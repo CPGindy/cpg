@@ -23,7 +23,7 @@
         'views/delivery_carrier_views.xml',
         'views/product_product_views.xml',
         'views/sku_lookup_views.xml',
-        'report/ssi_invoice_report.xml'
+        # 'report/ssi_invoice_report.xml'
     ],
     'demo': [
     ],
