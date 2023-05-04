@@ -170,6 +170,7 @@ class RoyaltyReport(models.Model):
     paid_by_vendor_bill = fields.Float(string='Paid By Vendor Bill')
     date_year = fields.Integer(string='Year of the Date (used in reporting)', compute="_compute_dates", store=True)
     date_month = fields.Integer(string="Month of the Date (used in reporting)", compute="_compute_dates", store=True)
+    rejected = fields.Boolean(string='Rejected', default=False, tracking=True)
 
     @api.depends('report_date')
     def _compute_dates(self):
@@ -212,6 +213,16 @@ class RoyaltyReport(models.Model):
 #             if rec.total_due:
 #                 rec.remaining_balance = rec.total_due
 
+    def reject_royalty(self):
+        for rec in self:
+            if rec.status != 'draft':
+                raise UserError(_("You can only reject draft report"))
+            rec.update({'rejected': True})
+    
+    def restore_royalty(self):
+        for rec in self:
+            rec.update({'rejected': False})
+
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
@@ -247,6 +258,8 @@ class RoyaltyReport(models.Model):
         self.write({'status': 'posted'})
 
     def make_payment_pool(self):
+        if self.rejected:
+            raise UserError(_("You can't make bill for rejected report"))
         payment = self.env['pool.payment'].create({
             'licensor_id': self.licensor_id.id,
             'memo': self.name,
