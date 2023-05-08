@@ -42,6 +42,7 @@
                             <group>
                                 <field name="report_date" />
                                 <field name="memo" />
+                                <field name="net_royalty_total" invisible="1"/>
                             </group>
                         </group>
                         <notebook>

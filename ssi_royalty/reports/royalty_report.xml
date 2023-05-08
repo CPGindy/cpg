@@ -49,7 +49,7 @@
                         <div class="col-3">
                         <p>
                         Royalties Earned : $<span t-esc="'%.2f'% doc.total_due"/><br />
-                        Net Royalty Total : $<span t-esc="'%.2f'% doc.total_due"/>
+                        Net Royalty Total : $<span t-esc="'%.2f'% doc.net_royalty_total"/>
                         </p>
                         
                         </div>
