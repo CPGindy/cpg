@@ -171,10 +171,10 @@ class RoyaltyReport(models.Model):
     date_year = fields.Integer(string='Year of the Date (used in reporting)', compute="_compute_dates", store=True)
     date_month = fields.Integer(string="Month of the Date (used in reporting)", compute="_compute_dates", store=True)
     report_name = fields.Char(string="Report Name", compute="_compute_report_name")
-    net_royalty_total = fields.Float(string="Net Royalty Total", compute="_compute_net_royalty_total")
+    net_royalty_paid = fields.Float(string="Net Royalty Total", compute="_compute_net_royalty_paid")
 
 
-    def _compute_net_royalty_total(self):
+    def _compute_net_royalty_paid(self):
         for rec in self:
             amount = 0.0
             if rec.royalty_line_id and rec.royalty_line_id.filtered(lambda x: x.artist_id):
@@ -187,7 +187,7 @@ class RoyaltyReport(models.Model):
                             for p_line in pool_lines:
                                 amount += p_line.pool_value
             
-            rec.net_royalty_total = rec.total_due - amount
+            rec.net_royalty_paid = rec.total_due - amount
 
     @api.depends('report_date')
     def _compute_dates(self):
