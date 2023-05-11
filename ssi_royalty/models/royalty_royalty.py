@@ -276,6 +276,7 @@ class RoyaltyReport(models.Model):
         payment.write({
             'balance_to_pay': sum([max([line.balance_to_pay - line.available_balance, 0]) for line in payment.pool_payment_line_ids])
         })
+
         return {
             'name': _("Make a Payment"),
             'type': 'ir.actions.act_window',
@@ -286,42 +287,52 @@ class RoyaltyReport(models.Model):
             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
             'target': 'new',
         }
-        # search_pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', self.artist_id.id)])
-        # if search_pool:
-        #     available_balance = search_pool.balance
-        #     return {
-        #     'name': _("Make a Payment"),
-        #     'type': 'ir.actions.act_window',
-        #     'view_type': 'form',
-        #     'view_mode': 'form',
-        #     'res_model': 'pool.payment',
-        #     'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
-        #     'target': 'new',
-        #     'context': {
-        #         'default_artist_id': self.artist_id.id,
-        #         'default_licensor_id': self.licensor_id.id,
-        #         'default_available_balance': available_balance,
-        #         'default_balance_to_pay': self.remaining_balance,
-        #         'default_advance_payment': self.advanced_payment,
-        #         'default_memo': self.name,
-        #         'default_pool_report_id': self.id,
-        #         'default_vendor_journal_id': self.vendor_journal_id.id,
-        #     }}
-        # return {
-        #     'name': _("Make a Payment"),
-        #     'type': 'ir.actions.act_window',
-        #     'view_type': 'form',
-        #     'view_mode': 'form',
-        #     'res_model': 'pool.payment',
-        #     'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
-        #     'target': 'new',
-        #     'context': {
-        #         'default_artist_id': self.artist_id.id,
-        #         'default_licensor_id': self.licensor_id.id,
-        #         'default_available_balance': 0.0,
-        #         'default_balance_to_pay': self.remaining_balance,
-        #         'default_advance_payment': self.advanced_payment,
-        #         'default_memo': self.name,
-        #         'default_pool_report_id': self.id,
-        #         'default_vendor_journal_id': self.vendor_journal_id.id,
-        #     }}
+    
+
+    def action_make_payment_pool(self):
+        all_payments = []
+        for rec in self.filtered(lambda x: x.status == 'draft'):
+            payment = self.env['pool.payment'].create({
+                'licensor_id': rec.licensor_id.id,
+                'memo': rec.name,
+                'pool_report_id': rec.id,
+                'vendor_journal_id': rec.vendor_journal_id.id,
+            })
+            artists = {}
+            for line in rec.royalty_line_id:
+                pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', line.artist_id.id)], limit=1)
+                available_balance = pool.balance if pool else 0
+                advance = line.royalty_value if line.type == 'advance' else 0
+                vals = {
+                    'pool_payment_id': payment.id,
+                    'artist_id': line.artist_id.id,
+                    'balance_to_pay': line.royalty_value,
+                    'available_balance': available_balance,
+                    'advance_payment': advance,
+                    'license_item_id': line.licensed_item.id,
+                }
+                if line.artist_id.id in artists.keys():
+                    payment_line = artists[line.artist_id.id]
+                    payment_line.balance_to_pay += vals['balance_to_pay']
+                    payment_line.advance_payment += vals['advance_payment']
+                else:
+                    payment_line = self.env['pool.payment.line'].create(vals)
+                    artists.update({line.licensed_item.id: payment_line})
+            payment.write({
+                'balance_to_pay': sum([max([line.balance_to_pay - line.available_balance, 0]) for line in payment.pool_payment_line_ids])
+            })
+            all_payments.append(payment)
+        if all_payments:
+            for a_payment in all_payments:
+                a_payment._compute_balance_to_be_posted()
+                a_payment.action_make_payment()
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Payment Was Successfully Made'),
+                    'type': 'success',
+                    'next': {'type': 'ir.actions.act_window_close'},
+            },
+        }
