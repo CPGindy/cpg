@@ -15,7 +15,6 @@
                             <field name="journal_balance"/>
                         </group>
                     </group>
-                    <group>
                         <field name="pool_payment_line_ids" nolabel="1" view_mode="tree">
                             <tree editable="bottom" create="false">
                                 <field name="artist_id" readonly="1"/>
@@ -26,13 +25,31 @@
                                 <field name="remaining_balance" readonly="1" string="Total"/>
                             </tree>
                         </field>
-                    </group>
                 </sheet>
                 <footer>
                     <button name="make_payment" string="Make Bill" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="btn btn-secondary" special="cancel"/>
                 </footer>
             </form>
+        </field>
+    </record>
+    <record id="wizard_pool_payment_tree" model="ir.ui.view">
+        <field name="name">wizard_pool_payment_tree</field>
+        <field name="model">pool.payment</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree>
+                            <field name="licensor_id"/>
+                            <field name="advance_payment" attrs="{'invisible': [('advance_payment', '==', 0)]}"/>
+                            <field name="journal_balance"/>
+            </tree>
+            <!-- <form>
+
+                <footer>
+                    <button name="make_payment" string="Make Bill" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                </footer>
+            </form> -->
         </field>
     </record>
 </odoo>
