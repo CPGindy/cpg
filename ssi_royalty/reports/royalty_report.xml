@@ -81,7 +81,7 @@
                                 <th scope="col" style="width: 15%;">Description</th>
                                 <th scope="col" style="width: 20%;">Product</th>
                                 <th scope="col" style="width: 10%;">Art Ref</th>
-                                <th scope="col" style="width: 15%;" class="text-right">Royalty %</th>
+                                <th scope="col" style="width: 10%;" class="text-right">Royalty %</th>
                                 <th scope="col" style="width: 10%;" class="text-right">Sales</th>
                                 <!-- <th scope="col" style="width: 10%;">Royalty $</th> -->
                                 <!-- <th scope="col" style="width: 10%;">Less Adv</th>
