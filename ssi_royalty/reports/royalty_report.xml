@@ -81,8 +81,8 @@
                                 <th scope="col" style="width: 15%;">Description</th>
                                 <th scope="col" style="width: 20%;">Product</th>
                                 <th scope="col" style="width: 10%;">Art Ref</th>
-                                <th scope="col" style="width: 10%;" class="text-right">Sales</th>
                                 <th scope="col" style="width: 15%;" class="text-right">Royalty %</th>
+                                <th scope="col" style="width: 10%;" class="text-right">Sales</th>
                                 <!-- <th scope="col" style="width: 10%;">Royalty $</th> -->
                                 <!-- <th scope="col" style="width: 10%;">Less Adv</th>
                                 <th scope="col" style="width: 10%;">Adv Paid Dt</th> -->
@@ -105,12 +105,14 @@
                                     <td>
                                         <span t-field="line.licensed_item.licensor_ref"/>
                                     </td>
+                                    <td style="text-align: center;">
+                                        <span t-esc="round(line.royalty_rate * 100, 2)"/><span>%</span>
+                                    </td>
+                                    
                                     <td style="text-align: right;">
                                         <span>$</span><span t-esc="'{:.2f}'.format(sum([l.item_value for l in lines if l.license_product_id.id == product]))"/>
                                     </td>
-                                    <td style="text-align: right;">
-                                        <span t-esc="round(line.royalty_rate * 100, 2)"/><span>%</span>
-                                    </td>
+
                                     <!-- <td style="text-align: right;">
                                         <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines if l.license_product_id.id == product]))"/>
                                     </td> -->
@@ -127,15 +129,16 @@
                                 </tr>
                             </t>
                             <tr>
-                                <td name="td_amount_subtotals" colspan="4" style="border-top-color: black;"><strong>Subtotals</strong></td>
-                                <td name="td_amount_subtotal_sales" colspan="1" style="border-top-color: black;" class="text-right">
+                                <td name="td_amount_subtotals" colspan="5" style="border-top-color: black;"><strong>Subtotals</strong></td>
+                                
+                                <td name="td_amount_subtotal_sales" colspan="1" style="border-top-color: black;text-align: right;" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.item_value for l in lines]))"/>
                                 </td>
-                                <td colspan="1" style="border-top-color: black; border-right: none; border-left: none; border-bottom: none;"/>
+<!--                                 <td colspan="1" style="border-top-color: black; border-right: none; border-left: none; border-bottom: none;"/> -->
                                 <!-- <td name="td_amount_subtotal_royalty" colspan="1" style="border-top-color: black;" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
                                 </td> -->
-                                <td name="td_amount_subtotal" colspan="1" class="text-right" style="border-top-color: black;">
+                                <td name="td_amount_subtotal" colspan="1" class="text-right" style="border-top-color: black;text-align: right;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
                                 </td>
                             </tr>
