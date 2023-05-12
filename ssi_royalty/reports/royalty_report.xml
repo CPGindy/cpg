@@ -145,7 +145,7 @@
                             <tr>
                                 <td colspan="3" style="border-right: none; border-left: none; border-bottom: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Paid by Pool</strong></td>
-                                <td name="td_amount_total" colspan="2" class="text-right text-danger">
+                                <td name="td_amount_total" colspan="2" class="text-right text-danger" style="text-align: right;">
                                     <span>- $</span><span t-esc="'{:.2f}'.format(paid_by_pool)"/>
                                     <!-- <span>- $</span><span t-esc="'{:.2f}'.format(doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance + paid_by_pool)"/> -->
                                 </td>
@@ -155,7 +155,7 @@
                                 <!-- <t t-set="total" t-value="sum([l.royalty_value for l in lines]) - doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance + paid_by_pool"/> -->
                                 <td colspan="3" style="border: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Total</strong></td>
-                                <td name="td_amount_total" colspan="2" class="text-right">
+                                <td name="td_amount_total" colspan="2" class="text-right" style="text-align: right;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(total if total > 0 else 0)"/>
                                 </td>
                             </tr>
@@ -163,7 +163,7 @@
                                 <t t-set="remaining" t-value="doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance"/>
                                 <td colspan="3" style="border: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Pool Balance</strong></td>
-                                <td name="td_amount_total" colspan="2" class="text-right">
+                                <td name="td_amount_total" colspan="2" class="text-right" style="text-align: right;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(remaining if remaining > 0 else 0)"/>
                                 </td>
                             </tr>
