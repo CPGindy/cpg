@@ -35,6 +35,7 @@
         <t t-call="web.external_layout">
             <div class="row zero_min_height">
                 <div class="col-12">
+                    <h4 style="text-align:center"><span t-field="doc.report_name"/></h4>
                     <div style="border-bottom: 1px solid black;"/>
                 </div>
             </div>
@@ -42,13 +43,20 @@
             <div class="page">
                 <div class="oe_structure"/>
                 <div class="mt16">
-                    <div class="row text-left">
-                        <div class="col-auto col-9"><h2><span t-field="doc.licensor_id.name"/></h2></div>
-                        <div class="col-auto col-3">Payment Total : $<span t-esc="'%.2f'% doc.total_due"/></div>
+                    <h3></h3>
+                    <div class="row">
+                        <div class="col-9"><h2><span t-field="doc.licensor_id.name"/></h2></div>
+                        <div class="col-3">
+                        <p>
+                        Royalties Earned : $<span t-esc="'%.2f'% doc.total_due"/><br />
+                        Net Royalty Paid : $<span t-esc="'%.2f'% doc.net_royalty_paid"/>
+                        </p>
+                        
+                        </div>
                     </div>
                 </div>
                 <h6>
-                    <span t-field="doc.name"/>
+                    <div t-field="doc.licensor_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;], &quot;no_marker&quot;: True}"/>
                 </h6>
 
                 <t t-foreach="artists" t-as="artist">
@@ -73,8 +81,8 @@
                                 <th scope="col" style="width: 15%;">Description</th>
                                 <th scope="col" style="width: 20%;">Product</th>
                                 <th scope="col" style="width: 10%;">Art Ref</th>
+                                <th scope="col" style="width: 10%;" class="text-right">Royalty %</th>
                                 <th scope="col" style="width: 10%;" class="text-right">Sales</th>
-                                <th scope="col" style="width: 15%;" class="text-right">Royalty %</th>
                                 <!-- <th scope="col" style="width: 10%;">Royalty $</th> -->
                                 <!-- <th scope="col" style="width: 10%;">Less Adv</th>
                                 <th scope="col" style="width: 10%;">Adv Paid Dt</th> -->
@@ -97,12 +105,14 @@
                                     <td>
                                         <span t-field="line.licensed_item.licensor_ref"/>
                                     </td>
+                                    <td style="text-align: center;">
+                                        <span t-esc="round(line.royalty_rate * 100, 2)"/><span>%</span>
+                                    </td>
+                                    
                                     <td style="text-align: right;">
                                         <span>$</span><span t-esc="'{:.2f}'.format(sum([l.item_value for l in lines if l.license_product_id.id == product]))"/>
                                     </td>
-                                    <td style="text-align: right;">
-                                        <span t-esc="round(line.royalty_rate * 100, 2)"/><span>%</span>
-                                    </td>
+
                                     <!-- <td style="text-align: right;">
                                         <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines if l.license_product_id.id == product]))"/>
                                     </td> -->
@@ -119,22 +129,23 @@
                                 </tr>
                             </t>
                             <tr>
-                                <td name="td_amount_subtotals" colspan="4" style="border-top-color: black;"><strong>Subtotals</strong></td>
-                                <td name="td_amount_subtotal_sales" colspan="1" style="border-top-color: black;" class="text-right">
+                                <td name="td_amount_subtotals" colspan="5" style="border-top-color: black;"><strong>Subtotals</strong></td>
+                                
+                                <td name="td_amount_subtotal_sales" colspan="1" style="border-top-color: black;text-align: right;" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.item_value for l in lines]))"/>
                                 </td>
-                                <td colspan="1" style="border-top-color: black; border-right: none; border-left: none; border-bottom: none;"/>
+<!--                                 <td colspan="1" style="border-top-color: black; border-right: none; border-left: none; border-bottom: none;"/> -->
                                 <!-- <td name="td_amount_subtotal_royalty" colspan="1" style="border-top-color: black;" class="text-right">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
                                 </td> -->
-                                <td name="td_amount_subtotal" colspan="1" class="text-right" style="border-top-color: black;">
+                                <td name="td_amount_subtotal" colspan="1" class="text-right" style="border-top-color: black;text-align: right;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(sum([l.royalty_value for l in lines]))"/>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="3" style="border-right: none; border-left: none; border-bottom: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Paid by Pool</strong></td>
-                                <td name="td_amount_total" colspan="2" class="text-right text-danger">
+                                <td name="td_amount_total" colspan="2" class="text-right text-danger" style="text-align: right;">
                                     <span>- $</span><span t-esc="'{:.2f}'.format(paid_by_pool)"/>
                                     <!-- <span>- $</span><span t-esc="'{:.2f}'.format(doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance + paid_by_pool)"/> -->
                                 </td>
@@ -144,7 +155,7 @@
                                 <!-- <t t-set="total" t-value="sum([l.royalty_value for l in lines]) - doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance + paid_by_pool"/> -->
                                 <td colspan="3" style="border: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Total</strong></td>
-                                <td name="td_amount_total" colspan="2" class="text-right">
+                                <td name="td_amount_total" colspan="2" class="text-right" style="text-align: right;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(total if total > 0 else 0)"/>
                                 </td>
                             </tr>
@@ -152,7 +163,7 @@
                                 <t t-set="remaining" t-value="doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).balance"/>
                                 <td colspan="3" style="border: none;"/>
                                 <td name="td_amount_total_label" colspan="2"><strong>Pool Balance</strong></td>
-                                <td name="td_amount_total" colspan="2" class="text-right">
+                                <td name="td_amount_total" colspan="2" class="text-right" style="text-align: right;">
                                     <span>$</span><span t-esc="'{:.2f}'.format(remaining if remaining > 0 else 0)"/>
                                 </td>
                             </tr>

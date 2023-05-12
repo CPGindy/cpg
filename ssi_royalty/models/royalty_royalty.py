@@ -170,6 +170,24 @@ class RoyaltyReport(models.Model):
     paid_by_vendor_bill = fields.Float(string='Paid By Vendor Bill')
     date_year = fields.Integer(string='Year of the Date (used in reporting)', compute="_compute_dates", store=True)
     date_month = fields.Integer(string="Month of the Date (used in reporting)", compute="_compute_dates", store=True)
+    report_name = fields.Char(string="Report Name", compute="_compute_report_name")
+    net_royalty_paid = fields.Float(string="Net Royalty Total", compute="_compute_net_royalty_paid")
+
+
+    def _compute_net_royalty_paid(self):
+        for rec in self:
+            amount = 0.0
+            if rec.royalty_line_id and rec.royalty_line_id.filtered(lambda x: x.artist_id):
+                artists = list(set([line.artist_id for line in rec.royalty_line_id.filtered(lambda x: x.artist_id)]))
+                for artist in artists:
+                    search_pool= self.env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1)
+                    if search_pool:
+                        pool_lines = self.env['ssi_royalty.pool.line'].search([('value_type', '=', 'out'),('pool_id', '=', search_pool.id),('reference', '=', rec.id)])
+                        if pool_lines:
+                            for p_line in pool_lines:
+                                amount += p_line.pool_value
+            
+            rec.net_royalty_paid = rec.total_due - amount
 
     @api.depends('report_date')
     def _compute_dates(self):
@@ -178,6 +196,27 @@ class RoyaltyReport(models.Model):
             rec.date_month = rec.report_date.month
             # self.date_year = int(datetime.strptime(self.report_date, '%Y-%m-%d %H:%M:%S').year)
             # self.date_month = int(datetime.strptime(self.report_date, '%Y-%m-%d %H:%M:%S').month)
+
+    @api.depends('name', 'report_date')
+    def _compute_report_name(self):
+        for rec in self:
+            name = rec.name
+            if rec.report_date:
+                month = rec.report_date.month
+                quarter_dictionary = {
+                    "Q1" : [1,2,3],
+                    "Q2" : [4,5,6],
+                    "Q3" : [7,8,9],
+                    "Q4" : [10,11,12]
+                }
+                for key,values in quarter_dictionary.items():
+                    for value in values:
+                        if value == month:
+                            name = name + " ("+ str(key) + " - " + str(rec.report_date.year) +")"
+            rec.report_name = name
+
+
+
 
     @api.depends('royalty_line_id')
     def _compute_total_due(self):
