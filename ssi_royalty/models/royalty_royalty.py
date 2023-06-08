@@ -3,6 +3,7 @@ from odoo.exceptions import UserError
 from datetime import date, datetime
 from odoo.tools import float_is_zero
 import time
+import math
 
 
 class Royalty(models.Model):
@@ -189,6 +190,8 @@ class RoyaltyReport(models.Model):
             
             rec.net_royalty_paid = rec.total_due - amount
 
+
+
     @api.depends('report_date')
     def _compute_dates(self):
         for rec in self:
@@ -250,6 +253,33 @@ class RoyaltyReport(models.Model):
 #         for rec in self:
 #             if rec.total_due:
 #                 rec.remaining_balance = rec.total_due
+
+    def send_royalty_report(self):
+        
+        self.ensure_one()
+        lang = self.env.context.get('lang')
+        mail_template = self.env.ref('ssi_royalty.royalty_report_quarter_email_template')
+
+        ctx = {
+            'default_model': 'ssi_royalty.report',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(mail_template),
+            'default_template_id': mail_template.id if mail_template else None,
+            'default_composition_mode': 'comment',
+            'mark_so_as_sent': True,
+            'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            'proforma': self.env.context.get('proforma', False),
+            'force_email': True,
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(False, 'form')],
+            'view_id': False,
+            'target': 'new',
+            'context': ctx,
+        }
 
     @api.model
     def create(self, vals):
