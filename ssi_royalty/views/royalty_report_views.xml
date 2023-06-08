@@ -26,6 +26,7 @@
                         <button name="make_payment_pool" string="Make Bill" type="object" class="oe_highlight o_royalty_sheet_post" attrs="{'invisible': ['|',('status', 'not in', ['draft']), ('rejected', '!=', False)]}" />
                         <button name="reject_royalty" string="Reject" type="object" class="btn-danger" attrs="{'invisible': ['|',('status', 'not in', ['draft']), ('rejected', '!=', False)]}" />
                         <button name="restore_royalty" string="Restore" type="object" class="oe_secondary" attrs="{'invisible': [['rejected','=',False]]}"/>
+                        <button name="send_royalty_report" string="Send" type="object" class="oe_highlight"/>
                         <field name="status" widget="statusbar" statusbar_visible="draft,posted"/>
                     </header>
                     <sheet>
@@ -47,6 +48,7 @@
                             <group>
                                 <field name="report_date" />
                                 <field name="memo" />
+                                <field name="net_royalty_paid" invisible="1"/>
                             </group>
                         </group>
                         <notebook>

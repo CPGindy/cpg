@@ -3,6 +3,7 @@ from odoo.exceptions import UserError
 from datetime import date, datetime
 from odoo.tools import float_is_zero
 import time
+import math
 
 
 class Royalty(models.Model):
@@ -171,6 +172,25 @@ class RoyaltyReport(models.Model):
     date_year = fields.Integer(string='Year of the Date (used in reporting)', compute="_compute_dates", store=True)
     date_month = fields.Integer(string="Month of the Date (used in reporting)", compute="_compute_dates", store=True)
     rejected = fields.Boolean(string='Rejected', default=False, tracking=True)
+    report_name = fields.Char(string="Report Name", compute="_compute_report_name")
+    net_royalty_paid = fields.Float(string="Net Royalty Total", compute="_compute_net_royalty_paid")
+
+
+    def _compute_net_royalty_paid(self):
+        for rec in self:
+            amount = 0.0
+            if rec.royalty_line_id and rec.royalty_line_id.filtered(lambda x: x.artist_id):
+                artists = list(set([line.artist_id for line in rec.royalty_line_id.filtered(lambda x: x.artist_id)]))
+                for artist in artists:
+                    search_pool= self.env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1)
+                    if search_pool:
+                        pool_lines = self.env['ssi_royalty.pool.line'].search([('value_type', '=', 'out'),('pool_id', '=', search_pool.id),('reference', '=', rec.id)])
+                        if pool_lines:
+                            for p_line in pool_lines:
+                                amount += p_line.pool_value
+            
+            rec.net_royalty_paid = rec.total_due - amount
+
 
     @api.depends('report_date')
     def _compute_dates(self):
@@ -179,6 +199,27 @@ class RoyaltyReport(models.Model):
             rec.date_month = rec.report_date.month
             # self.date_year = int(datetime.strptime(self.report_date, '%Y-%m-%d %H:%M:%S').year)
             # self.date_month = int(datetime.strptime(self.report_date, '%Y-%m-%d %H:%M:%S').month)
+
+    @api.depends('name', 'report_date')
+    def _compute_report_name(self):
+        for rec in self:
+            name = rec.name
+            if rec.report_date:
+                month = rec.report_date.month
+                quarter_dictionary = {
+                    "Q1" : [1,2,3],
+                    "Q2" : [4,5,6],
+                    "Q3" : [7,8,9],
+                    "Q4" : [10,11,12]
+                }
+                for key,values in quarter_dictionary.items():
+                    for value in values:
+                        if value == month:
+                            name = name + " ("+ str(key) + " - " + str(rec.report_date.year) +")"
+            rec.report_name = name
+
+
+
 
     @api.depends('royalty_line_id')
     def _compute_total_due(self):
@@ -222,6 +263,33 @@ class RoyaltyReport(models.Model):
     def restore_royalty(self):
         for rec in self:
             rec.update({'rejected': False})
+            
+    def send_royalty_report(self):
+        
+        self.ensure_one()
+        lang = self.env.context.get('lang')
+        mail_template = self.env.ref('ssi_royalty.royalty_report_quarter_email_template')
+
+        ctx = {
+            'default_model': 'ssi_royalty.report',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(mail_template),
+            'default_template_id': mail_template.id if mail_template else None,
+            'default_composition_mode': 'comment',
+            'mark_so_as_sent': True,
+            'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            'proforma': self.env.context.get('proforma', False),
+            'force_email': True,
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(False, 'form')],
+            'view_id': False,
+            'target': 'new',
+            'context': ctx,
+        }
 
     @api.model
     def create(self, vals):
@@ -289,6 +357,7 @@ class RoyaltyReport(models.Model):
         payment.write({
             'balance_to_pay': sum([max([line.balance_to_pay - line.available_balance, 0]) for line in payment.pool_payment_line_ids])
         })
+
         return {
             'name': _("Make a Payment"),
             'type': 'ir.actions.act_window',
@@ -299,42 +368,52 @@ class RoyaltyReport(models.Model):
             'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
             'target': 'new',
         }
-        # search_pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', self.artist_id.id)])
-        # if search_pool:
-        #     available_balance = search_pool.balance
-        #     return {
-        #     'name': _("Make a Payment"),
-        #     'type': 'ir.actions.act_window',
-        #     'view_type': 'form',
-        #     'view_mode': 'form',
-        #     'res_model': 'pool.payment',
-        #     'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
-        #     'target': 'new',
-        #     'context': {
-        #         'default_artist_id': self.artist_id.id,
-        #         'default_licensor_id': self.licensor_id.id,
-        #         'default_available_balance': available_balance,
-        #         'default_balance_to_pay': self.remaining_balance,
-        #         'default_advance_payment': self.advanced_payment,
-        #         'default_memo': self.name,
-        #         'default_pool_report_id': self.id,
-        #         'default_vendor_journal_id': self.vendor_journal_id.id,
-        #     }}
-        # return {
-        #     'name': _("Make a Payment"),
-        #     'type': 'ir.actions.act_window',
-        #     'view_type': 'form',
-        #     'view_mode': 'form',
-        #     'res_model': 'pool.payment',
-        #     'view_id': self.env.ref('ssi_royalty.wizard_pool_payment_form').id,
-        #     'target': 'new',
-        #     'context': {
-        #         'default_artist_id': self.artist_id.id,
-        #         'default_licensor_id': self.licensor_id.id,
-        #         'default_available_balance': 0.0,
-        #         'default_balance_to_pay': self.remaining_balance,
-        #         'default_advance_payment': self.advanced_payment,
-        #         'default_memo': self.name,
-        #         'default_pool_report_id': self.id,
-        #         'default_vendor_journal_id': self.vendor_journal_id.id,
-        #     }}
+    
+
+    def action_make_payment_pool(self):
+        all_payments = []
+        for rec in self.filtered(lambda x: x.status == 'draft'):
+            payment = self.env['pool.payment'].create({
+                'licensor_id': rec.licensor_id.id,
+                'memo': rec.name,
+                'pool_report_id': rec.id,
+                'vendor_journal_id': rec.vendor_journal_id.id,
+            })
+            artists = {}
+            for line in rec.royalty_line_id:
+                pool = self.env['ssi_royalty.pool'].search([('artist_id', '=', line.artist_id.id)], limit=1)
+                available_balance = pool.balance if pool else 0
+                advance = line.royalty_value if line.type == 'advance' else 0
+                vals = {
+                    'pool_payment_id': payment.id,
+                    'artist_id': line.artist_id.id,
+                    'balance_to_pay': line.royalty_value,
+                    'available_balance': available_balance,
+                    'advance_payment': advance,
+                    'license_item_id': line.licensed_item.id,
+                }
+                if line.artist_id.id in artists.keys():
+                    payment_line = artists[line.artist_id.id]
+                    payment_line.balance_to_pay += vals['balance_to_pay']
+                    payment_line.advance_payment += vals['advance_payment']
+                else:
+                    payment_line = self.env['pool.payment.line'].create(vals)
+                    artists.update({line.licensed_item.id: payment_line})
+            payment.write({
+                'balance_to_pay': sum([max([line.balance_to_pay - line.available_balance, 0]) for line in payment.pool_payment_line_ids])
+            })
+            all_payments.append(payment)
+        if all_payments:
+            for a_payment in all_payments:
+                a_payment._compute_balance_to_be_posted()
+                a_payment.action_make_payment()
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Payment Was Successfully Made'),
+                    'type': 'success',
+                    'next': {'type': 'ir.actions.act_window_close'},
+            },
+        }

@@ -196,7 +196,7 @@ class AccountMove(models.Model):
                                         'date': date.today(),
                                         'source_document': rec['name'],
                                         'payment_status': 'draft',
-                                        'royalty_rate': royalty_rate,
+                                        'royalty_rate': 0.0,
                                         'royalty_value': 0.0,
                                         'invoice_id': rec.id,
                                     }
