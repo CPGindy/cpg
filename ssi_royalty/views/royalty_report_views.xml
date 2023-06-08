@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <tree default_order="id desc">
                     <field name="name"/>
+                    <field name="rejected" invisible="1"/>
                     <field name="licensor_id" />
                     <field name="report_date"/>
                     <field name="total_due"/>
@@ -22,14 +23,17 @@
             <field name="arch" type="xml">
                 <form string="Royalty Report">
                     <header>
+                        <button name="make_payment_pool" string="Make Bill" type="object" class="oe_highlight o_royalty_sheet_post" attrs="{'invisible': ['|',('status', 'not in', ['draft']), ('rejected', '!=', False)]}" />
+                        <button name="reject_royalty" string="Reject" type="object" class="btn-danger" attrs="{'invisible': ['|',('status', 'not in', ['draft']), ('rejected', '!=', False)]}" />
+                        <button name="restore_royalty" string="Restore" type="object" class="oe_secondary" attrs="{'invisible': [['rejected','=',False]]}"/>
                         <button name="send_royalty_report" string="Send" type="object" class="oe_highlight"/>
-                        <button name="make_payment_pool" string="Make Bill" type="object" class="oe_highlight o_royalty_sheet_post" attrs="{'invisible': [('status', 'not in', ('draft'))]}" />
                         <field name="status" widget="statusbar" statusbar_visible="draft,posted"/>
                     </header>
                     <sheet>
                         <div name="button_box" class="oe_button_box">
                             <button name="open_vendor_bill" class="oe_stat_button" icon="fa-dollar" type="object" string="Vendor Bill" attrs="{'invisible': [('move_id', '=', False)]}"/>
                         </div>
+                        <widget name="web_ribbon" title="Rejected" bg_color="bg-danger" attrs="{'invisible': [['rejected','=',False]]}"/>
                         <div class="oe_title">
                             <h1>
                                 <field name="name" readonly="1" />
@@ -39,6 +43,7 @@
                             <group>
                                 <field name="licensor_id" />
                                 <field name="move_id" attrs="{'invisible': [('move_id','=',False)] }" />
+                                <field name="rejected" invisible="1"/>
                             </group>
                             <group>
                                 <field name="report_date" />
