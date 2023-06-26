@@ -3,6 +3,7 @@ from odoo.exceptions import UserError
 from datetime import date, datetime
 from odoo.tools import float_is_zero
 import time
+import math
 
 
 class Royalty(models.Model):
@@ -170,6 +171,7 @@ class RoyaltyReport(models.Model):
     paid_by_vendor_bill = fields.Float(string='Paid By Vendor Bill')
     date_year = fields.Integer(string='Year of the Date (used in reporting)', compute="_compute_dates", store=True)
     date_month = fields.Integer(string="Month of the Date (used in reporting)", compute="_compute_dates", store=True)
+    rejected = fields.Boolean(string='Rejected', default=False, tracking=True)
     report_name = fields.Char(string="Report Name", compute="_compute_report_name")
     net_royalty_paid = fields.Float(string="Net Royalty Total", compute="_compute_net_royalty_paid")
 
@@ -188,6 +190,7 @@ class RoyaltyReport(models.Model):
                                 amount += p_line.pool_value
             
             rec.net_royalty_paid = rec.total_due - amount
+
 
     @api.depends('report_date')
     def _compute_dates(self):
@@ -251,6 +254,43 @@ class RoyaltyReport(models.Model):
 #             if rec.total_due:
 #                 rec.remaining_balance = rec.total_due
 
+    def reject_royalty(self):
+        for rec in self:
+            if rec.status != 'draft':
+                raise UserError(_("You can only reject draft report"))
+            rec.update({'rejected': True})
+    
+    def restore_royalty(self):
+        for rec in self:
+            rec.update({'rejected': False})
+            
+    def send_royalty_report(self):
+        
+        self.ensure_one()
+        lang = self.env.context.get('lang')
+        mail_template = self.env.ref('ssi_royalty.royalty_report_quarter_email_template')
+
+        ctx = {
+            'default_model': 'ssi_royalty.report',
+            'default_res_id': self.ids[0],
+            'default_use_template': bool(mail_template),
+            'default_template_id': mail_template.id if mail_template else None,
+            'default_composition_mode': 'comment',
+            'mark_so_as_sent': True,
+            'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            'proforma': self.env.context.get('proforma', False),
+            'force_email': True,
+        }
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'mail.compose.message',
+            'views': [(False, 'form')],
+            'view_id': False,
+            'target': 'new',
+            'context': ctx,
+        }
+
     @api.model
     def create(self, vals):
         if vals.get('name', _('New')) == _('New'):
@@ -286,6 +326,8 @@ class RoyaltyReport(models.Model):
         self.write({'status': 'posted'})
 
     def make_payment_pool(self):
+        if self.rejected:
+            raise UserError(_("You can't make bill for rejected report"))
         payment = self.env['pool.payment'].create({
             'licensor_id': self.licensor_id.id,
             'memo': self.name,

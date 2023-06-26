@@ -35,6 +35,7 @@
         'data/ir_sequence_data.xml',
         'data/ir_config_parameter.xml',
         'data/license_category_data.xml',
+        'data/royalty_email_template.xml',
         'data/royalty_report_data.xml',
 
         'wizard/pool_payment.xml',
