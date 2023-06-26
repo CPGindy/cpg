@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="royalty_report_quarter_email_template" model="mail.template">
+            <field name="name">Royalty Report: Quarter Email Updates</field>
+            <field name="model_id" ref="ssi_royalty.model_ssi_royalty_report"/>
+            <field name="subject">Royalty Report Updates</field>
+            <field name="email_from">{{ (object.env.user.email_formatted or object.env.user.email) }}</field>
+            <field name="partner_to">{{ object.licensor_id.id }}</field>
+            <field name="description">Royalty Report Updates</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+            Welcome to fall:&#41; The leaves are not only turning but falling in Indiana. Here&#39;s hoping that all is well in your world.
+
+            Your Q3 Royalty Report is attached for Crown Point Graphics. Both checks and ACH&#39;s have been mailed or submitted. We want to take this time to share a few updates:
+
+            <br/><br />
+
+            <ol type="1">
+            <li>We have added Total Royalties Earned &#40;All Artists&#41; to the first page of the report. NOTE: Your ACH/Check will reflect Net Royalties due &#40;which takes into account advances etc.&#41;.</li>
+            <li>If Royalties earned are less than $10, we will hold until total due is equal to or greater than $10.</li>
+            <li>We have included page breaks by artist. </li>
+            <li>We do not have the ability to export excel files out of our new Royalty System. </li>
+            <li>The Royalty Report includes sales on all items in the quarter. If an artist is not listed, there were $0 sales in that quarter.</li>
+            </ol>  
+            If you have questions, please don&#39;t hesitate to reach out. We are happy to help. 
+
+            <br />
+            Thank you and we look forward to Q4.
+
+            <br />
+            <br />
+            <br />
+            Have a great week! 
+
+            <br />
+            The Crown Point Graphics Team:&#41;
+    </p>
+</div>
+            </field>
+            <field name="report_template" ref="royalty_report_pdf"/>
+            <field name="lang">{{ object.licensor_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+</data>
+</odoo>
