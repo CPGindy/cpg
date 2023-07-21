@@ -1,0 +1,21 @@
+<odoo>
+    <record id="royalty_report_confirm_views" model="ir.ui.view">
+        <field name="name">royalty.report.confirm.views</field>
+        <field name="model">royalty.report.confirm</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                        <group>
+                            <field name="royalty_ids" invisible="1"/>
+                            <field name="report_date" string="Report Date" required="1"/>
+                        </group>
+                </sheet>
+                <footer>
+                    <button name="generate_reports" string="Generate Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
