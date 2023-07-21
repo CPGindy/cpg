@@ -39,6 +39,7 @@
         'data/royalty_report_data.xml',
 
         'wizard/pool_payment.xml',
+        'wizard/royalty_report_confirm_views.xml',
 
         'reports/royalty_report.xml',
     ],
