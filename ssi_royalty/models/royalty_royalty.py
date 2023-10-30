@@ -153,7 +153,8 @@ class RoyaltyReport(models.Model):
     rejected = fields.Boolean(string='Rejected', default=False, tracking=True)
     report_name = fields.Char(string="Report Name", compute="_compute_report_name")
     net_royalty_paid = fields.Float(string="Net Royalty Total", compute="_compute_net_royalty_paid")
-
+    posted_date = fields.Date(string="Date Posted", compute="_compute_posted_date", store=True)
+    previous_report_date = fields.Date(string="Previous Report Date", compute="_compute_previous_report_date", store=True)
 
     def _compute_net_royalty_paid(self):
         for rec in self:
@@ -197,9 +198,6 @@ class RoyaltyReport(models.Model):
                             name = name + " ("+ str(key) + " - " + str(rec.report_date.year) +")"
             rec.report_name = name
 
-
-
-
     @api.depends('royalty_line_id')
     def _compute_total_due(self):
         for rec in self:
@@ -221,6 +219,28 @@ class RoyaltyReport(models.Model):
                 rec.advanced_payment = total
             else:
                 rec.advanced_payment = 0
+
+    @api.depends('move_id')
+    def _compute_posted_date(self):
+        for rec in self:
+            if not rec.move_id:
+                rec.posted_date = False
+                continue
+            vendor_bill = rec.move_id
+            rec.posted_date = vendor_bill.create_date
+
+    @api.depends('licensor_id')
+    def _compute_previous_report_date(self):
+        for rec in self:
+            if not rec.licensor_id:
+                rec.previous_report_date = date.min
+                continue
+            domain = [('licensor_id', '=', rec.licensor_id.id), ('posted_date', '!=', False)]
+            if rec.posted_date:
+                domain += [('posted_date', '<=', rec.posted_date)]
+            previous_reports = self.search(domain) - rec
+            previous_date = max(previous_reports.mapped('posted_date')) if previous_reports else date.min
+            rec.previous_report_date = previous_date
 
 #     @api.depends('paid_by_pool','total_due')
 #     def _compute_remaining_balance(self):
