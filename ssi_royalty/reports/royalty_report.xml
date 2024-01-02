@@ -66,8 +66,8 @@
                     <!-- Amount paid by pool -->
                     <t t-set="paid_by_pool" t-value="sum([line.pool_value for line in doc.sudo().env['ssi_royalty.pool.line'].search([('pool_id', '=', doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).id), ('value_type', '=', 'out'), ('reference', '=', doc.id)])])"/>
                     <!-- Newly allowed advances -->
-                    <t t-set="first_report_date" t-value="doc.royalty_line_id[0].date"/>
-                    <t t-set="last_report_date" t-value="doc.royalty_line_id[-1].date"/>
+                    <t t-set="first_report_date" t-value="doc.previous_report_date"/>
+                    <t t-set="last_report_date" t-value="doc.posted_date"/>
                     <t t-set="pool_ins" t-value="doc.sudo().env['ssi_royalty.pool.line'].search([('pool_id', '=', doc.sudo().env['ssi_royalty.pool'].search([('artist_id', '=', artist.id)], limit=1).id), ('value_type', '=', 'in'), ('first_sale_date', '&lt;=', last_report_date), ('first_sale_date', '&gt;=', first_report_date)])"/>
 
                     <div class="container row" id="details" style="margin-bottom: 20px; margin-top: 80px;">
