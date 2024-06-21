@@ -25,11 +25,11 @@ class RoyaltyReportConfirm(models.TransientModel):
                         'royalty_line_id' : royalty_line
                     }
                     search_report = self.env['ssi_royalty.report'].create(header_vals)
-                for royalty_line in search_report.royalty_line_id.filtered(lambda l: l.type == "sale_on_item"):
+                for royalty_line in search_report.royalty_line_id.filtered(lambda l: l.type == "sale_on_item").sorted('date'):
                     pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
                     pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', royalty_line.licensed_item.id)])
                     for pool_line in pool_lines:
-                        pool_line.write({'first_sale_date': datetime.now()})
+                        pool_line.write({'first_sale_date': royalty_line.date})
             else:
                 raise UserError(_('Please Select Licensor Before Generating Report'))
             rec.payment_status = 'reported'
