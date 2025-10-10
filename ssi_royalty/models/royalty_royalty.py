@@ -59,16 +59,17 @@ class Royalty(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('name', _('New')) == _('New'):
-            format_name = 'ROL/'+time.strftime("%m", time.localtime()) + time.strftime("%y", time.localtime())+'/'+self.env['ir.sequence'].next_by_code('royalty.royalty.sequence')
-            vals['name'] = format_name or _('New')
-        res = super(Royalty, self).create(vals)
-        for royalty_line in res.filtered(lambda l: l.type == "sale_on_item"):
-            pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
-            pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', royalty_line.licensed_item.id)])
-            for pool_line in pool_lines:
-                pool_line.write({'first_sale_date': datetime.now()})
-        return res
+        for rec in self:
+            if vals.get('name', _('New')) == _('New'):
+                format_name = 'ROL/'+time.strftime("%m", time.localtime()) + time.strftime("%y", time.localtime())+'/'+rec.env['ir.sequence'].next_by_code('royalty.royalty.sequence')
+                vals['name'] = format_name or _('New')
+            res = super(Royalty, rec).create(vals)
+            for royalty_line in res.filtered(lambda l: l.type == "sale_on_item"):
+                pool_id = rec.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
+                pool_lines = rec.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', royalty_line.licensed_item.id)])
+                for pool_line in pool_lines:
+                    pool_line.write({'first_sale_date': datetime.now()})
+            return res
 
     def unlink_from_report(self):
         for rec in self:
