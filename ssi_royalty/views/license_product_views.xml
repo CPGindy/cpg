@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
    <data>
-       
+
       <record model="ir.ui.view" id="license_product_view_list">
          <field name="name">license.product.view.list</field>
          <field name="model">license.product</field>
          <field name="arch" type="xml">
-            <tree>
+            <list>
                <field name="license_item_id" />
                <field name="internal_ref"/>
                <field name="product_id" />
                <field name="royalty_rate" widget="percentage" />
-            </tree>
+            </list>
          </field>
       </record>
-       
+
       <record id="license_product_view_form" model="ir.ui.view">
          <field name="name">license.product.view.form</field>
          <field name="model">license.product</field>
@@ -40,7 +40,7 @@
             </form>
          </field>
       </record>
-       
+
       <record id="license_product_view_search" model="ir.ui.view">
          <field name="name">license.product.view.search</field>
          <field name="model">license.product</field>
@@ -56,13 +56,13 @@
             </search>
          </field>
       </record>
-       
+
       <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_license_product">
          <field name="name">Licensed Product</field>
          <field name="res_model">license.product</field>
-         <field name="view_mode">tree,form</field>
+         <field name="view_mode">list,form</field>
       </record>
-       
+
       <menuitem name="Licensed Product" id="ssi_royalty.license_product_menu" parent="ssi_royalty.license" action="ssi_royalty.action_window_open_license_product" />
    </data>
 </odoo>

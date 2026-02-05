@@ -6,11 +6,11 @@
             <field name="name">ssi_royalty.pool.view.list</field>
             <field name="model">ssi_royalty.pool</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="artist_id"/>
                     <field name="licensor_id"/>
                     <field name="balance" />
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -32,16 +32,15 @@
                         <notebook>
                             <page string="Artist Pool Lines">
                                     <field name="pool_line" nolabel="1">
-                                        <tree editable="bottom">
+                                        <list editable="bottom">
                                             <field name="date"/>
                                             <field name="reference"/>
                                             <field name="value_type"/>
-                                            <!-- <field name="value"/> -->
                                             <field name="pool_value" string="Value"/>
                                             <field name="art_id"/>
                                             <field name="first_sale_date"/>
                                             <field name="is_active"/>
-                                        </tree>
+                                        </list>
                                     </field>
                             </page>
                         </notebook>
@@ -73,7 +72,7 @@
         <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_royalty_pool">
             <field name="name">Artist Pool</field>
             <field name="res_model">ssi_royalty.pool</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
         </record>
 
         <menuitem name="Artist Pool" id="ssi_royalty.royalty_pool_menu" parent="ssi_royalty.royalty" action="ssi_royalty.action_window_open_royalty_pool" />

@@ -6,14 +6,14 @@
             <field name="name">ssi_royalty.report.view.list</field>
             <field name="model">ssi_royalty.report</field>
             <field name="arch" type="xml">
-                <tree default_order="id desc">
+                <list default_order="id desc">
                     <field name="name"/>
-                    <field name="rejected" invisible="1"/>
+                    <field name="rejected" column_invisible="True"/>
                     <field name="licensor_id" />
                     <field name="report_date"/>
                     <field name="total_due"/>
                     <field name="status"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -23,26 +23,26 @@
             <field name="arch" type="xml">
                 <form string="Royalty Report">
                     <header>
-                        <button name="make_payment_pool" string="Make Bill" type="object" class="oe_highlight o_royalty_sheet_post" attrs="{'invisible': ['|',('status', 'not in', ['draft']), ('rejected', '!=', False)]}" />
-                        <button name="reject_royalty" string="Reject" type="object" class="btn-danger" attrs="{'invisible': ['|',('status', 'not in', ['draft']), ('rejected', '!=', False)]}" />
-                        <button name="restore_royalty" string="Restore" type="object" class="oe_secondary" attrs="{'invisible': [['rejected','=',False]]}"/>
+                        <button name="make_payment_pool" string="Make Bill" type="object" class="oe_highlight o_royalty_sheet_post" invisible="status != 'draft' or rejected" />
+                        <button name="reject_royalty" string="Reject" type="object" class="btn-danger" invisible="status != 'draft' or rejected" />
+                        <button name="restore_royalty" string="Restore" type="object" class="oe_secondary" invisible="not rejected"/>
                         <button name="send_royalty_report" string="Send" type="object" class="oe_highlight"/>
                         <field name="status" widget="statusbar" statusbar_visible="draft,posted"/>
                     </header>
                     <sheet>
                         <div name="button_box" class="oe_button_box">
-                            <button name="open_vendor_bill" class="oe_stat_button" icon="fa-dollar" type="object" string="Vendor Bill" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                            <button name="open_vendor_bill" class="oe_stat_button" icon="fa-dollar" type="object" string="Vendor Bill" invisible="not move_id"/>
                         </div>
-                        <widget name="web_ribbon" title="Rejected" bg_color="bg-danger" attrs="{'invisible': [['rejected','=',False]]}"/>
+                        <widget name="web_ribbon" title="Rejected" bg_color="bg-danger" invisible="not rejected"/>
                         <div class="oe_title">
                             <h1>
-                                <field name="name" readonly="1" />
+                                <field name="name" readonly="true" />
                             </h1>
                         </div>
                         <group>
                             <group>
                                 <field name="licensor_id" />
-                                <field name="move_id" attrs="{'invisible': [('move_id','=',False)] }" />
+                                <field name="move_id" invisible="not move_id" />
                                 <field name="rejected" invisible="1"/>
                             </group>
                             <group>
@@ -54,19 +54,19 @@
                         <notebook>
                             <page string="Royalty Lines">
                                 <field name="royalty_line_id" nolabel="1">
-                                    <tree editable="bottom" delete="false">
+                                    <list editable="bottom" delete="false">
                                         <field name="name" />
                                         <field name="license_id" />
                                         <field name="licensed_item" />
                                         <field name="description"/>
                                         <field name="license_product_id" />
-                                        <field name="type" attrs="{'readonly': True}"/>
+                                        <field name="type" readonly="true"/>
                                         <field name="payment_status" />
                                         <field name="artist_id" />
                                         <field name="royalty_rate" widget="percentage" />
                                         <field name="royalty_value" />
                                         <button name="unlink_from_report" icon="fa-trash" type="object" class="oe_edit_only"/>
-                                    </tree>
+                                    </list>
                                 </field>
                                 <group name="note_group" col="8" class="mt-2 mt-md-0">
                                     <group colspan="6" />
@@ -82,9 +82,6 @@
                                         <field name="paid_by_vendor_bill" />
                                         <field name="advanced_payment"/>
                                     </group>
-<!--                                     <group>
-                                        <field name="remaining_balance" />
-                                    </group> -->
                                 </group>
                             </page>
                         </notebook>
@@ -101,7 +98,7 @@
         <record model="ir.actions.act_window" id="ssi_royalty.action_window_open_royalty_report">
             <field name="name">Royalty Report</field>
             <field name="res_model">ssi_royalty.report</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="context">{'search_default_group_licensor_id': 1}</field>
         </record>
 
@@ -119,19 +116,8 @@
             </field>
         </record>
 
-        <!-- <record model="ir.actions.server" id="print_quarterly_report_action">
-            <field name="name">Job Board Print Server Action</field>
-            <field name="model_id" ref="model_royalty_report_pdf"/>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="code">action = model.print_server_action()</field>
-        </record> -->
-
         <menuitem name="Reporting" id="ssi_royalty.royalty_reporting" parent="ssi_royalty.menu_root" />
         <menuitem name="Royalty Report" id="ssi_royalty.royalty_report" parent="ssi_royalty.royalty_reporting" action="ssi_royalty.action_window_open_royalty_report" sequence="0"/>
-
-        <!-- report actions -->
-        <!-- <menuitem id="print_quarterly_report" name="Quarterly Report" parent="ssi_royalty.royalty_reporting" sequence="1" action="print_quarterly_report_action"/> -->
 
     </data>
 </odoo>
