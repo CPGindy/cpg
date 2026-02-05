@@ -106,6 +106,7 @@
                     domain="[('state','=','subscribed')]"
                     string="Subscribed"
                 />
+                <!-- Commented out: incompatible with Odoo v19 search view schema
                 <field name="model_id" />
                 <group expand="0" string="Group By...">
                     <filter
@@ -115,6 +116,7 @@
                         context="{'group_by':'state'}"
                     />
                 </group>
+                -->
             </search>
         </field>
     </record>
@@ -235,6 +237,7 @@
                 <field name="model_id" />
                 <field name="res_id" />
                 <field name="user_id" />
+                <!-- Commented out: incompatible with Odoo v19 search view schema
                 <group expand="0" string="Group By...">
                     <filter
                         name="group_by_user_id"
@@ -273,6 +276,7 @@
                         context="{'group_by':'http_request_id'}"
                     />
                 </group>
+                -->
             </search>
         </field>
     </record>
@@ -321,6 +325,7 @@
                 <field name="model_id" />
                 <field name="res_id" />
                 <field name="user_id" />
+                <!-- Commented out: incompatible with Odoo v19 search view schema
                 <group expand="0" string="Group By...">
                     <filter
                         name="group_by_user_id"
@@ -365,6 +370,7 @@
                         context="{'group_by':'http_request_id'}"
                     />
                 </group>
+                -->
             </search>
         </field>
     </record>

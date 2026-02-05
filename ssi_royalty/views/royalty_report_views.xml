@@ -108,10 +108,12 @@
             <field name="arch" type="xml">
                 <search string="Search Royalty Report">
                     <field name="licensor_id" />
+                    <!-- Commented out: incompatible with Odoo v19 search view schema
                     <group expand="0" string="Group By">
                         <filter string="Licensor" name="group_licensor_id" context="{'group_by': 'licensor_id'}" />
                         <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
                     </group>
+                    -->
                 </search>
             </field>
         </record>
