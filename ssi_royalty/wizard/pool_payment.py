@@ -129,7 +129,7 @@ class PoolPayment(models.TransientModel):
                     pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', sale_line.artist_id.id)])
                     pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', sale_line.license_item_id.id), ('create_date', '<=', sale_line.create_date)])
                     for pool_line in pool_lines:
-                        pool_line.write({'first_sale_date': datetime.now()})
+                        pool_line.write({'first_sale_date': date.today()})
 
             # subtract total without advance from the pool
             pool_diff = balance - pool.balance
@@ -238,7 +238,7 @@ class PoolPayment(models.TransientModel):
                     pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', sale_line.artist_id.id)])
                     pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', sale_line.license_item_id.id), ('create_date', '<=', sale_line.create_date)])
                     for pool_line in pool_lines:
-                        pool_line.write({'first_sale_date': datetime.now()})
+                        pool_line.write({'first_sale_date': date.today()})
 
             # subtract total without advance from the pool
             pool_diff = balance - pool.balance
