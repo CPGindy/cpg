@@ -29,11 +29,13 @@
                <field name="product_id" />
                <field name="customer_sku" />
                <field name="partner_id" />
+               <!-- Commented out: incompatible with Odoo v19 search view schema
                <group expand="0" string="Group By">
                   <filter string="Product" name="product_id" context="{'group_by': 'product_id'}" />
                   <filter string="Customer SKU's" name="customer_sku" context="{'group_by': 'customer_sku'}" />
                   <filter string="Customer" name="partner_id" context="{'group_by': 'partner_id'}" />
                </group>
+               -->
             </search>
          </field>
       </record>

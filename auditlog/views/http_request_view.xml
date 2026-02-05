@@ -41,6 +41,7 @@
                 <field name="name" />
                 <field name="user_id" />
                 <field name="http_session_id" />
+                <!-- Commented out: incompatible with Odoo v19 search view schema
                 <group expand="0" string="Group By...">
                     <filter
                         name="group_by_root_url"
@@ -73,6 +74,7 @@
                         context="{'group_by':'http_session_id'}"
                     />
                 </group>
+                -->
             </search>
         </field>
     </record>
