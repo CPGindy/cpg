@@ -9,21 +9,21 @@
                     <group>
                         <group>
                             <field name="licensor_id"/>
-                            <field name="advance_payment" attrs="{'invisible': [('advance_payment', '==', 0)]}"/>
+                            <field name="advance_payment" invisible="advance_payment == 0"/>
                         </group>
                         <group>
                             <field name="journal_balance"/>
                         </group>
                     </group>
-                        <field name="pool_payment_line_ids" nolabel="1" view_mode="tree">
-                            <tree editable="bottom" create="false">
-                                <field name="artist_id" readonly="1"/>
-                                <field name="advance_payment" readonly="1"/>
-                                <field name="sale_balance" readonly="1"/>
-                                <field name="balance_to_pay" readonly="1" string="Subtotal"/>
-                                <field name="pool_covered" readonly="1"/>
-                                <field name="remaining_balance" readonly="1" string="Total"/>
-                            </tree>
+                        <field name="pool_payment_line_ids" nolabel="1" view_mode="list">
+                            <list editable="bottom" create="false">
+                                <field name="artist_id" readonly="true"/>
+                                <field name="advance_payment" readonly="true"/>
+                                <field name="sale_balance" readonly="true"/>
+                                <field name="balance_to_pay" readonly="true" string="Subtotal"/>
+                                <field name="pool_covered" readonly="true"/>
+                                <field name="remaining_balance" readonly="true" string="Total"/>
+                            </list>
                         </field>
                 </sheet>
                 <footer>
@@ -38,18 +38,11 @@
         <field name="model">pool.payment</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                             <field name="licensor_id"/>
-                            <field name="advance_payment" attrs="{'invisible': [('advance_payment', '==', 0)]}"/>
+                            <field name="advance_payment" column_invisible="True"/>
                             <field name="journal_balance"/>
-            </tree>
-            <!-- <form>
-
-                <footer>
-                    <button name="make_payment" string="Make Bill" type="object" class="oe_highlight"/>
-                    <button string="Cancel" class="btn btn-secondary" special="cancel"/>
-                </footer>
-            </form> -->
+            </list>
         </field>
     </record>
 </odoo>

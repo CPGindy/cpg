@@ -35,7 +35,7 @@ class Royalty(models.Model):
     date = fields.Date(string='Date')
     source_document = fields.Char(string='Source Document')
     payment_status = fields.Selection([('rejected', 'Rejected'),('draft', 'New'),('reported', 'Reported')],
-                                      string='Payment Status', track_visibility="onchange", readonly=True, default='draft')
+                                      string='Payment Status', tracking=True, readonly=True, default='draft')
     royalty_rate = fields.Float(string='Royalty Rate')
     royalty_value = fields.Float(string='Royalty Value')
     royalty_report_id = fields.Many2one('ssi_royalty.report', string='Royalty Report')
@@ -55,7 +55,7 @@ class Royalty(models.Model):
                     pool_id = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
                     pool_lines = self.env['ssi_royalty.pool.line'].search([('pool_id', '=', pool_id.id), ('value_type', '=', 'in'), ('first_sale_date', '=', False), ('art_id', '=', royalty_line.licensed_item.id)])
                     for pool_line in pool_lines:
-                        pool_line.write({'first_sale_date': datetime.now()})
+                        pool_line.write({'first_sale_date': date.today()})
 
     @api.model
     def create(self, vals):
@@ -144,7 +144,7 @@ class RoyaltyReport(models.Model):
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     vendor_journal_id = fields.Many2one('account.journal', string='Journal', check_company=True, domain="[('type', 'in', 'purchase', ('company_id', '=', company_id)]",
         default=_default_vendor_journal_id, help="The payment method used when the expense is paid by the Vendor.")
-    move_id = fields.Many2one('account.move', string='Vendor Bill', readonly=1, track_visibility="onchange")
+    move_id = fields.Many2one('account.move', string='Vendor Bill', readonly=True, tracking=True)
     paid_by_pool = fields.Float(string='Balance Paid By Pool')
     advanced_payment = fields.Float(string='Advanced Payment', compute='_compute_advanced_paid')
 #     remaining_balance = fields.Float(string='Remaining Balance', compute='_compute_remaining_balance')
