@@ -8,11 +8,6 @@ _logger = logging.getLogger(__name__)
 def migrate(cr, version):
     _logger.info("Starting pre-migration: cleaning up sw_multi_search...")
 
-    cr.execute("""
-        DELETE FROM ir_ui_view 
-        WHERE model = 'sw.multi.search' 
-        OR name ILIKE '%%sw_multi_search%%'
-    """)
 
     cr.execute("""
         DELETE FROM ir_ui_menu 
