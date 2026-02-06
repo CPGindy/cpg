@@ -39,7 +39,7 @@
     </p>
 </div>
             </field>
-            <field name="report_template" ref="royalty_report_pdf"/>
+            <field name="report_template_ids" eval="[(4, ref('royalty_report_pdf'))]"/>
             <field name="lang">{{ object.licensor_id.lang }}</field>
             <field name="auto_delete" eval="True"/>
         </record>

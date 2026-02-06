@@ -36,7 +36,7 @@
     <record id="wizard_pool_payment_tree" model="ir.ui.view">
         <field name="name">wizard_pool_payment_tree</field>
         <field name="model">pool.payment</field>
-        <field name="type">tree</field>
+        <field name="type">list</field>
         <field name="arch" type="xml">
             <list>
                             <field name="licensor_id"/>
