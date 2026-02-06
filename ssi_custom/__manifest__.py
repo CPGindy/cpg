@@ -14,7 +14,7 @@
     'website':  "http://www.ssibtr.com",
     'category': 'SSI',
     'version': '19.0.1.0.0',
-    'depends': ['base', 'stock', 'delivery', 'account'],
+    'depends': ['base', 'stock', 'delivery', 'account', 'stock_delivery'],
 
     'data': [
         'security/ir.model.access.csv',
