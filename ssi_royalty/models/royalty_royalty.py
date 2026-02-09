@@ -16,10 +16,14 @@ class Royalty(models.Model):
     def _default_vendor_journal_id(self):
         default_company_id = self.default_get(['company_id'])['company_id']
         return self.env['account.journal'].search([('type', 'in', ['purchase']), ('company_id', '=', default_company_id)], limit=1)
-
+        
     @api.model
     def _default_account_id(self):
-        return self.env['ir.property']._get('property_account_expense_categ_id', 'product.category')
+        category = self.env.ref('product.product_category_all', raise_if_not_found=False)
+        if category:
+            return category.property_account_expense_categ_id
+        return False
+
 
     name = fields.Char(string='Contract', required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
     type = fields.Selection([('advance', 'Advance'),('sale_on_item', 'Sale on Item'),('flat_fee', 'Flat Fee'),('not_licensed', 'Not Licensed')], string='Type')
@@ -57,12 +61,13 @@ class Royalty(models.Model):
                     for pool_line in pool_lines:
                         pool_line.write({'first_sale_date': date.today()})
 
-    @api.model
-    def create(self, vals):
-        if vals.get('name', _('New')) == _('New'):
-            format_name = 'ROL/'+time.strftime("%m", time.localtime()) + time.strftime("%y", time.localtime())+'/'+self.env['ir.sequence'].next_by_code('royalty.royalty.sequence')
-            vals['name'] = format_name or _('New')
-        res = super(Royalty, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', _('New')) == _('New'):
+                format_name = 'ROL/'+time.strftime("%m", time.localtime()) + time.strftime("%y", time.localtime())+'/'+self.env['ir.sequence'].next_by_code('royalty.royalty.sequence')
+                vals['name'] = format_name or _('New')
+        res = super(Royalty, self).create(vals_list)
         for royalty_line in res.filtered(lambda l: l.type == "sale_on_item"):
             pool_ids = self.env['ssi_royalty.pool'].search([('artist_id', '=', royalty_line.artist_id.id)])
             for pool in pool_ids:
