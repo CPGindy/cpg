@@ -272,7 +272,7 @@ class RoyaltyReport(models.Model):
 
         ctx = {
             'default_model': 'ssi_royalty.report',
-            'default_res_id': self.ids[0],
+            'default_res_ids': [self.ids[0]],
             'default_use_template': bool(mail_template),
             'default_template_id': mail_template.id if mail_template else None,
             'default_composition_mode': 'comment',
@@ -292,10 +292,11 @@ class RoyaltyReport(models.Model):
         }
 
     @api.model
-    def create(self, vals):
-        if vals.get('name', _('New')) == _('New'):
-            vals['name'] = self.env['ir.sequence'].next_by_code('royalty.report.sequence') or _('New')
-        res = super(RoyaltyReport, self).create(vals)
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', _('New')) == _('New'):
+                vals['name'] = self.env['ir.sequence'].next_by_code('royalty.report.sequence') or _('New')
+        res = super(RoyaltyReport, self).create(vals_list)
         return res
 
     def unlink(self):
