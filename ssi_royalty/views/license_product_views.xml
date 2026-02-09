@@ -32,11 +32,7 @@
                      </group>
                   </group>
                </sheet>
-               <div class="oe_chatter">
-                  <field name="message_follower_ids" />
-                  <field name="activity_ids" />
-                  <field name="message_ids" />
-               </div>
+               <chatter/>
             </form>
          </field>
       </record>
@@ -49,12 +45,9 @@
                <field name="internal_ref"/>
                <field name="license_item_id" />
                 <field name="product_id" />
-               <!-- Commented out: incompatible with Odoo v19 search view schema
-               <group expand="0" string="Group By">
-                  <filter string="License Item" name="license_item_id" context="{'group_by': 'license_item_id'}" />
-                  <filter string="Product" name="product_id" context="{'group_by': 'product_id'}" />
-               </group>
-               -->
+               <separator/>
+               <filter string="License Item" name="license_item_id" context="{'group_by': 'license_item_id'}" />
+               <filter string="Product" name="product_id" context="{'group_by': 'product_id'}" />
             </search>
          </field>
       </record>

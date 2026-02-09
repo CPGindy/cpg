@@ -45,11 +45,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" />
-                        <field name="activity_ids" />
-                        <field name="message_ids" />
-                    </div>
+                    <chatter/>
                 </form>
             </field>
         </record>
@@ -61,12 +57,9 @@
                 <search string="Search Royalty Pool">
                     <field name="artist_id"/>
                     <field name="licensor_id"/>
-                    <!-- Commented out: incompatible with Odoo v19 search view schema
-                    <group expand="0" string="Group By">
-                        <filter string="Artist" name="artist_id" context="{'group_by': 'artist_id'}"/>
-                        <filter string="Licensor" name="licensor_id" context="{'group_by': 'licensor_id'}"/>
-                    </group>
-                    -->
+                    <separator/>
+                    <filter string="Artist" name="artist_id" context="{'group_by': 'artist_id'}"/>
+                    <filter string="Licensor" name="licensor_id" context="{'group_by': 'licensor_id'}"/>
                 </search>
             </field>
         </record>
