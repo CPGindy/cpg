@@ -16,7 +16,7 @@
     'category': 'SSI',
     'version': '19.0.1.0.0',
 
-    'depends': ['base', 'product','account', 'mail', 'account', 'ssi_custom'],
+    'depends': ['base', 'product', 'account', 'mail', 'ssi_custom'],
 
     'data': [
         'security/ir.model.access.csv',

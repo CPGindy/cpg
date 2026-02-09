@@ -86,11 +86,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" />
-                        <field name="activity_ids" />
-                        <field name="message_ids" />
-                    </div>
+                    <chatter/>
                 </form>
             </field>
         </record>
@@ -108,12 +104,9 @@
             <field name="arch" type="xml">
                 <search string="Search Royalty Report">
                     <field name="licensor_id" />
-                    <!-- Commented out: incompatible with Odoo v19 search view schema
-                    <group expand="0" string="Group By">
-                        <filter string="Licensor" name="group_licensor_id" context="{'group_by': 'licensor_id'}" />
-                        <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
-                    </group>
-                    -->
+                    <separator/>
+                    <filter string="Licensor" name="group_licensor_id" context="{'group_by': 'licensor_id'}" />
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}" />
                 </search>
             </field>
         </record>
