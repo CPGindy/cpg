@@ -63,33 +63,28 @@ class ThrowAwayCache:
         self._transaction = env.transaction
 
     def __enter__(self):
-        """Replace the cache + tocompute on all envs and on the transaction.
+        """Temporarily swap out the transaction's cache data structures.
 
-        It is not enough to replace the cache on the current env, because once
-        a sudo is executed under the scope of this context manager, another new
-        or existing env is fetched which will have the original cache if we
-        don't swap them all out here.
+        In Odoo 19, the Cache object is a facade over the Transaction's
+        field_data/field_dirty/field_data_patches dicts, so we swap those
+        directly instead of replacing the Cache instance.
         """
-        self._original_cache = self._transaction.cache
-        # Also swap out the list of fields to recompute. Their compute methods
-        # may depend on fields in the cache that are not yet flushed, and as is
-        # the case with account.bank.statement.line's _compute_internal_index,
-        # may not be resilient to some of the values (c.q. 'date') missing.
+        self._original_field_data = self._transaction.field_data
+        self._original_field_dirty = self._transaction.field_dirty
+        self._original_field_data_patches = self._transaction.field_data_patches
         self._original_tocompute = self._transaction.tocompute
+        # Install empty data structures for a clean read
+        self._transaction.field_data = defaultdict(dict)
+        self._transaction.field_dirty = defaultdict(OrderedSet)
+        self._transaction.field_data_patches = defaultdict(lambda: defaultdict(list))
         self._transaction.tocompute = defaultdict(OrderedSet)
-        for key, value in self._transaction.tocompute.items():
-            self._original_tocompute[key] = OrderedSet(value)
-        temporary_cache = api.Cache()
-        for env in self._transaction.envs:
-            env.cache = temporary_cache
-        self._transaction.cache = temporary_cache
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Restore the original cache wherever it was replaced."""
-        for env in self._transaction.envs:
-            env.cache = self._original_cache
-        self._transaction.cache = self._original_cache
+        """Restore the original cache data structures."""
+        self._transaction.field_data = self._original_field_data
+        self._transaction.field_dirty = self._original_field_dirty
+        self._transaction.field_data_patches = self._original_field_data_patches
         self._transaction.tocompute = self._original_tocompute
 
 
@@ -448,7 +443,7 @@ class AuditlogRule(models.Model):
             rule_model = self.env["auditlog.rule"]
             fields_list = rule_model.get_auditlog_fields(self)
             records_write = (
-                self.filtered(lambda r: not isinstance(r.id, models.NewId))
+                self.filtered(lambda r: isinstance(r.id, int))
                 .sudo()
                 .with_context(prefetch_fields=False)
             )
