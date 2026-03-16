@@ -147,7 +147,7 @@ class RoyaltyReport(models.Model):
     report_date = fields.Date(string='Initial Report Date')
     currency_id = fields.Many2one('res.currency', string='Currency')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
-    vendor_journal_id = fields.Many2one('account.journal', string='Journal', check_company=True, domain="[('type', 'in', 'purchase', ('company_id', '=', company_id)]",
+    vendor_journal_id = fields.Many2one('account.journal', string='Journal', check_company=True, domain="[('type', '=', 'purchase'), ('company_id', '=', company_id)]",
         default=_default_vendor_journal_id, help="The payment method used when the expense is paid by the Vendor.")
     move_id = fields.Many2one('account.move', string='Vendor Bill', readonly=True, tracking=True)
     paid_by_pool = fields.Float(string='Balance Paid By Pool')
