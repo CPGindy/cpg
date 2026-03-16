@@ -19,8 +19,10 @@ class LicenseLicense(models.Model):
     license_item = fields.One2many('license.item', 'license_id', string='Licensed Items')
     
     
-    @api.model
-    def create(self, vals):
-        if vals.get('contract_id', _('New')) == _('New'):
-            vals['contract_id'] = self.env['ir.sequence'].next_by_code('license.license.sequence') or _('New')
-        return super(LicenseLicense, self).create(vals)
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('contract_id', _('New')) == _('New'):
+                vals['contract_id'] = self.env['ir.sequence'].next_by_code('license.license.sequence') or _('New')
+        return super().create(vals_list)
