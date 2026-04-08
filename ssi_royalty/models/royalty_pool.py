@@ -29,11 +29,12 @@ class RoyaltyPool(models.Model):
                     balance -= line.pool_value
             rec.balance = balance
 
-    @api.model
-    def create(self, vals):
-        if vals.get('name', _('New')) == _('New'):
-            vals['name'] = self.env['ir.sequence'].next_by_code('royalty.pool.sequence') or _('New')
-        return super(RoyaltyPool, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', _('New')) == _('New'):
+                vals['name'] = self.env['ir.sequence'].next_by_code('royalty.pool.sequence') or _('New')
+        return super(RoyaltyPool, self).create(vals_list)
 
 
 class RoyaltyPoolLine(models.Model):
